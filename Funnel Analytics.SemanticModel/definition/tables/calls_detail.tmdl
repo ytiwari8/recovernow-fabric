@@ -141,6 +141,17 @@ table calls_detail
 		displayFolder: Trailing 4 Weeks
 		lineageTag: ebf78ee0-da0d-4e18-8fd3-985b31712619
 
+	/// Inbound voice calls from PPC source. Correct denominator for Cost per Call.
+	measure 'PPC Inbound Calls' = CALCULATE([Inbound Calls], calls_detail[tracking_source_type] = "PPC")
+		formatString: #,##0
+		displayFolder: PPC (paid only)
+		lineageTag: f8ff2df6-8b71-4fde-9f53-b723b5ac37ee
+
+	measure 'T4W PPC Inbound Calls' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([PPC Inbound Calls], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 28 && dim_date[date_key] <= Anchor))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: d5e342ce-356a-4659-9d45-cc3c94d79fa0
+
 	column call_id
 		dataType: int64
 		lineageTag: a0fa09c8-0db4-409b-8583-17a7180f8a24

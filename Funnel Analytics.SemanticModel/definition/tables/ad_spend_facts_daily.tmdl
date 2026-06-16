@@ -106,7 +106,7 @@ table ad_spend_facts_daily
 		lineageTag: 32ccc6ba-a9fa-4100-b784-15d0ffaee052
 
 	/// Ad Spend / PPC Calls (tracking_source_type = PPC).
-	measure 'Cost per Call' = DIVIDE([Ad Spend], [PPC Calls])
+	measure 'Cost per Call' = DIVIDE([Ad Spend], [PPC Inbound Calls])
 		formatString: $#,##0
 		displayFolder: Efficiency
 		lineageTag: e45b28bd-e5f7-47c5-bcef-027bff072eaf
@@ -116,7 +116,7 @@ table ad_spend_facts_daily
 		displayFolder: Trailing 4 Weeks
 		lineageTag: 0800e791-f43d-45cc-be31-7b47126f8b95
 
-	measure 'T4W Cost per Call' = DIVIDE([T4W Ad Spend], [T4W PPC Calls])
+	measure 'T4W Cost per Call' = DIVIDE([T4W Ad Spend], [T4W PPC Inbound Calls])
 		formatString: $#,##0
 		displayFolder: Trailing 4 Weeks
 		lineageTag: c49af3e9-54db-4d03-8e82-0e6ce522d5f9
