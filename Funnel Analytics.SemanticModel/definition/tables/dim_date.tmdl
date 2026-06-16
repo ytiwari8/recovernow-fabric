@@ -1,0 +1,76 @@
+table dim_date
+	lineageTag: a5e3823f-d1cf-4992-989e-3e6ccd97895b
+
+	/// Helper: latest activity date in the current filter context (admits/calls/spend). Anchors the trailing windows so T4W rolls with the date axis/slicer. You can hide this measure in the model.
+	measure '_Anchor Date' = VAR a = MAX(verified_admits[admit_date]) VAR c = MAX(calls_detail[day]) VAR s = MAX(ad_spend_facts_daily[date]) VAR d = MAXX({a, c, s}, [Value]) RETURN IF(ISBLANK(d), BLANK(), d - MOD(WEEKDAY(d, 2) - 4 + 7, 7))
+		formatString: m/d/yyyy
+		displayFolder: Trailing 4 Weeks
+		lineageTag: df8627b4-2dac-421c-9016-172d76f04780
+
+	column date_key
+		dataType: dateTime
+		lineageTag: d16184ef-a033-41e7-aa96-d811279956dc
+		sourceLineageTag: date_key
+		sourceColumn: date_key
+
+	column year
+		dataType: int64
+		lineageTag: 000ef080-dc4d-4cba-9511-bdf6a85661bc
+		sourceLineageTag: year
+		sourceColumn: year
+
+	column month_num
+		dataType: int64
+		lineageTag: 602f38b3-8f75-4e71-82bb-d17b71c9702f
+		sourceLineageTag: month_num
+		sourceColumn: month_num
+
+	column month_name
+		dataType: string
+		lineageTag: cacf95dc-2573-481c-b52f-87cfa196d1a3
+		sourceLineageTag: month_name
+		sourceColumn: month_name
+
+	column year_month
+		dataType: string
+		lineageTag: 9af7c5b2-8b65-432c-bbaf-ac84031cb360
+		sourceLineageTag: year_month
+		sourceColumn: year_month
+
+	column quarter
+		dataType: string
+		lineageTag: a38652ce-a8a7-413d-ab0b-b79e6f273cb0
+		sourceLineageTag: quarter
+		sourceColumn: quarter
+
+	column day_of_week
+		dataType: string
+		lineageTag: 05b97310-71ed-4bdb-afb5-546450929739
+		sourceLineageTag: day_of_week
+		sourceColumn: day_of_week
+
+	column dow_num
+		dataType: int64
+		lineageTag: e647abf0-2e91-44b6-b4c0-c78315531cd6
+		sourceLineageTag: dow_num
+		sourceColumn: dow_num
+
+	column week_ending
+		dataType: dateTime
+		lineageTag: 60304d38-30ee-44cf-8d6e-b57b06ef1042
+		sourceLineageTag: week_ending
+		sourceColumn: week_ending
+
+	column is_weekend
+		dataType: boolean
+		lineageTag: 919eaec3-4369-4134-9c94-065d92aa3551
+		sourceLineageTag: is_weekend
+		sourceColumn: is_weekend
+
+	partition dim_date = entity
+		mode: directLake
+		source
+			entityName: dim_date
+			schemaName: dbo
+			expressionSource: 'DirectLake - funnel_lakehouse'
+

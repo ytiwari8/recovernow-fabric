@@ -1,0 +1,44 @@
+relationship f315e2e3-d4b5-4b53-aaa5-610ce229d440
+	fromColumn: ad_spend_facts_daily.date
+	toColumn: dim_date.date_key
+
+relationship c2d23668-7897-4cd1-bbb2-3300349dc994
+	fromColumn: verified_admits.admit_date
+	toColumn: dim_date.date_key
+
+relationship 76498f1e-1fef-4130-9a6e-559195f6c918
+	fromColumn: calls_detail.day
+	toColumn: dim_date.date_key
+
+relationship b866f014-f74d-450b-88b7-62bcd29f3044
+	fromColumn: admissions_funnel_dazos_history.week_ending
+	toColumn: dim_date.date_key
+
+relationship 08b6f136-4b1c-4c72-9563-69d3aa6256ba
+	fromColumn: admissions_funnel_zoho_history.week_ending
+	toColumn: dim_date.date_key
+
+relationship 260e272c-d0ff-4faa-be4e-8431c159bdc3
+	fromColumn: ad_spend_facts_daily.facility
+	toColumn: dim_facility.facility
+
+relationship 9ed70e86-e078-40a3-b8eb-38230be8a91e
+	fromColumn: verified_admits.facility
+	toColumn: dim_facility.facility
+
+relationship cffb5c9e-4963-4a22-8619-c43b9373d633
+	fromColumn: calls_detail.location
+	toColumn: dim_facility.facility
+
+relationship 58f1b264-afdd-4541-a86b-dd2d07cc250d
+	fromColumn: admissions_funnel_dazos_history.location
+	toColumn: dim_facility.facility
+
+relationship 4e584f54-f949-41fb-81f8-731d810b70ed
+	fromColumn: admissions_funnel_zoho_history.location
+	toColumn: dim_facility.facility
+
+relationship b3e0ff1f-40eb-4ed7-8177-75b27a4ace94
+	fromColumn: vob_detail.created_date
+	toColumn: dim_date.date_key
+

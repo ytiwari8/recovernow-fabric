@@ -1,0 +1,7 @@
+expression 'DirectLake - funnel_lakehouse' =
+		let
+		    Source = AzureStorage.DataLake("https://onelake.dfs.fabric.microsoft.com/fb72ebcf-98cc-4162-85c9-5d2042b8b795/d697189c-e81b-4074-89e8-86c1adfee2a6", [HierarchicalNavigation=true])
+		in
+		    Source
+	lineageTag: 8ece4eda-093d-48a5-b35d-7bb9758bcec2
+

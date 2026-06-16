@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Funnel Analytics"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "1517c88c-1b59-9de6-4e25-a7ae61dac53f"
+  }
+}

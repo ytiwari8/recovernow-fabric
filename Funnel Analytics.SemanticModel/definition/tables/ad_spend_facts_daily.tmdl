@@ -1,0 +1,219 @@
+table ad_spend_facts_daily
+	lineageTag: 16432920-b238-4cab-950e-e9909b174c4a
+
+	/// Total ad cost. Daily grain — slice by dim_date for weekly (Fri-Thu) or calendar-month views.
+	measure 'Ad Spend' = SUM(ad_spend_facts_daily[cost])
+		formatString: $#,##0
+		displayFolder: Spend
+		lineageTag: 201190ff-aa13-4c96-ac9d-08e13e322d52
+
+	measure 'Total Impressions' = SUM(ad_spend_facts_daily[impressions])
+		formatString: #,##0
+		displayFolder: Spend
+		lineageTag: 924dab65-be7b-4804-ab57-930a9ff1eeaa
+
+	measure 'Total Clicks' = SUM(ad_spend_facts_daily[clicks])
+		formatString: #,##0
+		displayFolder: Spend
+		lineageTag: dca27e71-27e9-4840-85b7-306becd94391
+
+	measure 'Total Conversions' = SUM(ad_spend_facts_daily[conversions])
+		formatString: #,##0
+		displayFolder: Spend
+		lineageTag: fe0777f0-12cd-42c2-9929-ad9bc78d8c1f
+
+	measure 'Total Conversions Value' = SUM(ad_spend_facts_daily[conversions_value])
+		formatString: $#,##0
+		displayFolder: Spend
+		lineageTag: d256bc51-51bc-473b-b6c9-df772721def7
+
+	/// Click-through rate (weighted: total clicks / total impressions).
+	measure CTR = DIVIDE([Total Clicks], [Total Impressions])
+		formatString: 0.00%
+		displayFolder: Spend
+		lineageTag: 88a23381-f439-4b4f-a0b9-81b1c0d17da5
+
+	/// Cost per click (weighted).
+	measure 'Avg CPC' = DIVIDE([Ad Spend], [Total Clicks])
+		formatString: $#,##0.00
+		displayFolder: Spend
+		lineageTag: f22c6572-43cc-4463-8deb-b29597196938
+
+	/// Return on ad spend (conversions value / cost), weighted.
+	measure ROAS = DIVIDE([Total Conversions Value], [Ad Spend])
+		formatString: 0.00
+		displayFolder: Spend
+		lineageTag: de50a201-8d09-4155-bb98-4fab68d502b2
+
+	/// Ad Spend / Verified Admits. Works at weekly and monthly grain via dim_date.
+	measure 'Cost per Admit' = DIVIDE([Ad Spend], [PPC Admits])
+		formatString: $#,##0
+		displayFolder: Efficiency
+		lineageTag: 29df3ced-19b5-4921-b308-e8b365c7a29f
+
+	/// Ad Spend / Total VOBs.
+	measure 'Cost per VOB' = DIVIDE([Ad Spend], [PPC VOBs])
+		formatString: $#,##0
+		displayFolder: Efficiency
+		lineageTag: da8962a2-f03f-4879-8d78-52c37fc0c03a
+
+	measure 'T4W Ad Spend' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([Ad Spend], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 28 && dim_date[date_key] <= Anchor))
+		formatString: $#,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: dfbcdaa0-4481-4385-bb30-aef8a844ac00
+
+	measure 'T4W Conversions Value' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([Total Conversions Value], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 28 && dim_date[date_key] <= Anchor))
+		formatString: $#,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: 38657a0f-b367-4785-b6c1-b56f17491742
+
+	/// Trailing-4-week Ad Spend / trailing-4-week Verified Admits.
+	measure 'T4W Cost per Admit' = DIVIDE([T4W Ad Spend], [T4W PPC Admits])
+		formatString: $#,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: 77545987-2b3a-4140-8e0f-a406a534cc77
+
+	measure 'T4W ROAS' = DIVIDE([T4W Conversions Value], [T4W Ad Spend])
+		formatString: 0.00
+		displayFolder: Trailing 4 Weeks
+		lineageTag: e1838b11-2d4b-4860-840e-f2995770c104
+
+	measure 'P4W Ad Spend' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([Ad Spend], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 56 && dim_date[date_key] <= Anchor - 28))
+		formatString: $#,##0
+		displayFolder: Trailing 4 Weeks\Prior & Delta
+		lineageTag: 8f0c4e6a-d96d-4fe8-936d-d79aa5b02805
+
+	measure 'Ad Spend T4W Δ%' = DIVIDE([T4W Ad Spend] - [P4W Ad Spend], [P4W Ad Spend])
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Trailing 4 Weeks\Prior & Delta
+		lineageTag: 83e30c04-8c20-440e-96bf-70cab7a6d36e
+
+	measure 'P4W Cost per Admit' = DIVIDE([P4W Ad Spend], [P4W PPC Admits])
+		formatString: $#,##0
+		displayFolder: Trailing 4 Weeks\Prior & Delta
+		lineageTag: 3bda441f-05d4-4b5c-8f4d-fc40d96c5fcb
+
+	/// Trailing vs prior 4-week change in Cost per Admit (lower is better).
+	measure 'Cost per Admit T4W Δ%' = DIVIDE([T4W Cost per Admit] - [P4W Cost per Admit], [P4W Cost per Admit])
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Trailing 4 Weeks\Prior & Delta
+		lineageTag: 866547d3-fdef-4388-a40f-21f296aa440b
+
+	/// Ad Spend / PPC Leads. PPC-only by definition (paid spend ÷ paid leads).
+	measure 'Cost per Lead' = DIVIDE([Ad Spend], [PPC Leads])
+		formatString: $#,##0
+		displayFolder: Efficiency
+		lineageTag: 32ccc6ba-a9fa-4100-b784-15d0ffaee052
+
+	/// Ad Spend / PPC Calls (tracking_source_type = PPC).
+	measure 'Cost per Call' = DIVIDE([Ad Spend], [PPC Calls])
+		formatString: $#,##0
+		displayFolder: Efficiency
+		lineageTag: e45b28bd-e5f7-47c5-bcef-027bff072eaf
+
+	measure 'T4W Cost per Lead' = DIVIDE([T4W Ad Spend], [T4W PPC Leads])
+		formatString: $#,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: 0800e791-f43d-45cc-be31-7b47126f8b95
+
+	measure 'T4W Cost per Call' = DIVIDE([T4W Ad Spend], [T4W PPC Calls])
+		formatString: $#,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: c49af3e9-54db-4d03-8e82-0e6ce522d5f9
+
+	measure 'T4W Cost per VOB' = DIVIDE([T4W Ad Spend], [T4W PPC VOBs])
+		formatString: $#,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: 34da1e96-47c4-49da-aecd-ecea5e406977
+
+	column date
+		dataType: dateTime
+		lineageTag: 09d6a6a3-8fba-44b6-84e6-f90dc71a9878
+		sourceLineageTag: date
+		sourceColumn: date
+
+	column facility
+		dataType: string
+		lineageTag: ea3ca36b-0051-4274-ab76-432367f8e9a5
+		sourceLineageTag: facility
+		sourceColumn: facility
+
+	column facility_group
+		dataType: string
+		lineageTag: 201ce9d2-3ab5-4a66-9667-173443e3c158
+		sourceLineageTag: facility_group
+		sourceColumn: facility_group
+
+	column channel
+		dataType: string
+		lineageTag: 42a7b7c5-f817-4818-bb6f-da4f82dbe07f
+		sourceLineageTag: channel
+		sourceColumn: channel
+
+	column campaign_id
+		dataType: string
+		lineageTag: 6e93f2d1-461c-4aa5-b098-3b7b7e0ac3ff
+		sourceLineageTag: campaign_id
+		sourceColumn: campaign_id
+
+	column campaign_name
+		dataType: string
+		lineageTag: d9120fd2-f3c4-4821-909b-43adf0d0756d
+		sourceLineageTag: campaign_name
+		sourceColumn: campaign_name
+
+	column account_id
+		dataType: string
+		lineageTag: 240d33b9-61a5-4cef-a49a-77ab192b963e
+		sourceLineageTag: account_id
+		sourceColumn: account_id
+
+	column account_name
+		dataType: string
+		lineageTag: 73960632-5801-44aa-b4b5-58fe5802f541
+		sourceLineageTag: account_name
+		sourceColumn: account_name
+
+	column cost
+		dataType: double
+		lineageTag: 56717da6-1734-446c-8086-9bd16fde3edb
+		sourceLineageTag: cost
+		sourceColumn: cost
+
+	column impressions
+		dataType: int64
+		lineageTag: 7965be22-9238-46e9-9bab-024961be270a
+		sourceLineageTag: impressions
+		sourceColumn: impressions
+
+	column clicks
+		dataType: int64
+		lineageTag: 959c5bc3-edd7-47c1-ae88-38553e06584a
+		sourceLineageTag: clicks
+		sourceColumn: clicks
+
+	column conversions
+		dataType: double
+		lineageTag: ec71847d-c580-4617-b00a-e152955ba3e1
+		sourceLineageTag: conversions
+		sourceColumn: conversions
+
+	column conversions_value
+		dataType: double
+		lineageTag: 851817ec-c2e3-4d81-997e-52a16bf13611
+		sourceLineageTag: conversions_value
+		sourceColumn: conversions_value
+
+	column pulled_at
+		dataType: dateTime
+		lineageTag: 72759135-9518-4251-8351-e9c2d0b18343
+		sourceLineageTag: pulled_at
+		sourceColumn: pulled_at
+
+	partition ad_spend_facts_daily = entity
+		mode: directLake
+		source
+			entityName: ad_spend_facts_daily
+			schemaName: dbo
+			expressionSource: 'DirectLake - funnel_lakehouse'
+

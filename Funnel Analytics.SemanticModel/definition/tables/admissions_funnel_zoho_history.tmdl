@@ -1,0 +1,64 @@
+table admissions_funnel_zoho_history
+	lineageTag: 5596649d-1ac3-49ea-aaba-f87a84b93e37
+
+	column week_ending
+		dataType: dateTime
+		lineageTag: 6cab9f46-2087-4666-ba7f-e1f227badd2c
+		sourceLineageTag: week_ending
+		sourceColumn: week_ending
+
+	column location
+		dataType: string
+		lineageTag: d76a772f-48a9-418b-8460-4a0d9b116e07
+		sourceLineageTag: location
+		sourceColumn: location
+
+	column lead_type
+		dataType: string
+		lineageTag: 5f22a9f1-c383-4e6a-bc90-32a4e4cea517
+		sourceLineageTag: lead_type
+		sourceColumn: lead_type
+
+	column opener
+		dataType: string
+		lineageTag: b209753f-cc0e-4ce1-b6be-0853b1e43b52
+		sourceLineageTag: opener
+		sourceColumn: opener
+
+	column closer
+		dataType: string
+		lineageTag: 74188546-e6dc-4bdb-b4e9-089f74053b87
+		sourceLineageTag: closer
+		sourceColumn: closer
+
+	column leads
+		dataType: int64
+		lineageTag: ecaa3833-77cf-4030-9af8-35ac2cc160e7
+		sourceLineageTag: leads
+		sourceColumn: leads
+
+	column qualified_leads
+		dataType: int64
+		lineageTag: 7c7ed4d6-04d9-415c-ac3d-5a96c8a0167b
+		sourceLineageTag: qualified_leads
+		sourceColumn: qualified_leads
+
+	column vobs
+		dataType: int64
+		lineageTag: d5af2d41-ed3c-4820-918f-0d2ca6807326
+		sourceLineageTag: vobs
+		sourceColumn: vobs
+
+	column admits
+		dataType: int64
+		lineageTag: 45d4b6ad-9516-4305-a3c2-1b453ad1dd78
+		sourceLineageTag: admits
+		sourceColumn: admits
+
+	partition admissions_funnel_zoho_history = entity
+		mode: directLake
+		source
+			entityName: admissions_funnel_zoho_history
+			schemaName: dbo
+			expressionSource: 'DirectLake - funnel_lakehouse'
+

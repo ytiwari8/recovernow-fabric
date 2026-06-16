@@ -1,0 +1,104 @@
+table vob_detail
+	lineageTag: 3e0bdd93-5f2d-4614-aca0-c99dd33505ee
+
+	/// Count of VOB records (Dazos), drillable to detail. Attributed to pulled_by (Created_By).
+	measure 'VOBs Pulled' = COUNTROWS(vob_detail)
+		formatString: #,##0
+		displayFolder: VOB Audit
+		lineageTag: 724e0542-1399-4959-9676-8c759d990677
+
+	measure 'VOBs Cannot Complete' = CALCULATE([VOBs Pulled], vob_detail[vob_stage] = "Cannot be Completed")
+		formatString: #,##0
+		displayFolder: VOB Audit
+		lineageTag: b6a30204-3846-4a93-8d21-4a09567b78de
+
+	/// Share of VOBs that could not be completed — a quality signal by rep/payor.
+	measure 'VOB Cannot Complete %' = DIVIDE([VOBs Cannot Complete], [VOBs Pulled])
+		formatString: 0.0%
+		displayFolder: VOB Audit
+		lineageTag: cb6a49d3-223f-4d02-a8df-f24b42b052f5
+
+	measure 'T4W VOBs Pulled' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([VOBs Pulled], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 28 && dim_date[date_key] <= Anchor))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: f5c7a5fb-63e8-4fe1-8cd6-23d95e30e575
+
+	column vob_id
+		dataType: string
+		lineageTag: 2e54aa66-b6e0-438a-b33a-7130a2b6ae6f
+		sourceLineageTag: vob_id
+		sourceColumn: vob_id
+
+	column created_date
+		dataType: dateTime
+		lineageTag: 8ad8aa34-33f1-4664-9075-658241e88b4f
+		sourceLineageTag: created_date
+		sourceColumn: created_date
+
+	column pulled_by
+		dataType: string
+		lineageTag: bdafcbb2-3b33-416d-a854-e6e269d80057
+		sourceLineageTag: pulled_by
+		sourceColumn: pulled_by
+
+	column source_crm
+		dataType: string
+		lineageTag: a3d79bdf-2caa-417f-b835-4178630de407
+		sourceLineageTag: source_crm
+		sourceColumn: source_crm
+
+	column client_name
+		dataType: string
+		lineageTag: 2dc5fbcf-844e-4da0-b57f-4436d5014967
+		sourceLineageTag: client_name
+		sourceColumn: client_name
+
+	column client_dob
+		dataType: string
+		lineageTag: 6c54b4b6-ded8-4bec-87ed-db67f3074290
+		sourceLineageTag: client_dob
+		sourceColumn: client_dob
+
+	column vob_type
+		dataType: string
+		lineageTag: f7d36c22-1dc1-4db3-9ee6-045c68ba1849
+		sourceLineageTag: vob_type
+		sourceColumn: vob_type
+
+	column vob_stage
+		dataType: string
+		lineageTag: 167193e5-b51b-4260-8b9c-67bf7cf64d8e
+		sourceLineageTag: vob_stage
+		sourceColumn: vob_stage
+
+	column payor
+		dataType: string
+		lineageTag: e0b1a5a1-02da-44cf-b174-799e05818b17
+		sourceLineageTag: payor
+		sourceColumn: payor
+
+	column treatment_program
+		dataType: string
+		lineageTag: 426926fe-862d-42c4-97a8-39a687f556ac
+		sourceLineageTag: treatment_program
+		sourceColumn: treatment_program
+
+	column opportunity
+		dataType: string
+		lineageTag: 8ed47d63-1b13-40e3-99e6-a3525a2e0533
+		sourceLineageTag: opportunity
+		sourceColumn: opportunity
+
+	column build_run_ts
+		dataType: dateTime
+		lineageTag: 7f82c1a8-7394-4f5d-a6aa-ac25266c4cfc
+		sourceLineageTag: build_run_ts
+		sourceColumn: build_run_ts
+
+	partition vob_detail = entity
+		mode: directLake
+		source
+			entityName: vob_detail
+			schemaName: dbo
+			expressionSource: 'DirectLake - funnel_lakehouse'
+

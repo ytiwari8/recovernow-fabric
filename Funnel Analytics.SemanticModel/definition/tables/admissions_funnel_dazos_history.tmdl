@@ -1,0 +1,168 @@
+table admissions_funnel_dazos_history
+	lineageTag: 450d7c88-1216-4a56-8fae-d13b137c3458
+
+	/// Leads across both CRMs (Dazos + Zoho).
+	measure 'Total Leads' = SUM(admissions_funnel_dazos_history[leads]) + SUM(admissions_funnel_zoho_history[leads])
+		formatString: #,##0
+		displayFolder: Funnel
+		lineageTag: cd2b542c-26a7-49cf-abd7-3741c471df41
+
+	/// Verification of benefits across both CRMs.
+	measure 'Total VOBs' = SUM(admissions_funnel_dazos_history[vobs]) + SUM(admissions_funnel_zoho_history[vobs])
+		formatString: #,##0
+		displayFolder: Funnel
+		lineageTag: 0bbd04d5-77e3-4373-a480-6e48941fa3b2
+
+	/// Admits as reported in the weekly funnel tables (both CRMs). See Verified Admits for the de-duplicated truth set.
+	measure 'Funnel Admits' = SUM(admissions_funnel_dazos_history[admits]) + SUM(admissions_funnel_zoho_history[admits])
+		formatString: #,##0
+		displayFolder: Funnel
+		lineageTag: 59cbb74c-17da-4bcd-b442-85d19185364d
+
+	/// Funnel Admits / Total Leads.
+	measure 'Lead to Admit %' = DIVIDE([Funnel Admits], [Total Leads])
+		formatString: 0.0%
+		displayFolder: Funnel
+		lineageTag: 05d6a2c0-dc85-4afa-9e23-0b916d9b33a0
+
+	/// Funnel Admits / Total VOBs.
+	measure 'VOB to Admit %' = DIVIDE([Funnel Admits], [Total VOBs])
+		formatString: 0.0%
+		displayFolder: Funnel
+		lineageTag: c4658e0c-df1d-4994-b001-4991e53bbca3
+
+	measure 'T4W Total Leads' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([Total Leads], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 28 && dim_date[date_key] <= Anchor))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: ad4cade3-3055-4c93-8c20-043796c9e92b
+
+	measure 'T4W Total VOBs' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([Total VOBs], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 28 && dim_date[date_key] <= Anchor))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: 4748bd67-2d65-4e68-869e-0b45850225df
+
+	measure 'T4W Funnel Admits' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([Funnel Admits], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 28 && dim_date[date_key] <= Anchor))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: 9f51ada4-c4df-4bbf-a233-7453117da879
+
+	measure 'T4W VOB to Admit %' = DIVIDE([T4W Funnel Admits], [T4W Total VOBs])
+		formatString: 0.0%
+		displayFolder: Trailing 4 Weeks
+		lineageTag: eb5fa7f7-2f72-4476-998a-92380fc72b8f
+
+	measure 'T4W Lead to Admit %' = DIVIDE([T4W Funnel Admits], [T4W Total Leads])
+		formatString: 0.0%
+		displayFolder: Trailing 4 Weeks
+		lineageTag: 83fadd57-6c0b-4baf-844a-226f04131117
+
+	measure 'P4W Total VOBs' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([Total VOBs], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 56 && dim_date[date_key] <= Anchor - 28))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks\Prior & Delta
+		lineageTag: 26b43b37-54ff-4010-a80b-ac4cca153087
+
+	measure 'P4W Funnel Admits' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([Funnel Admits], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 56 && dim_date[date_key] <= Anchor - 28))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks\Prior & Delta
+		lineageTag: a92a16c9-2f2b-400b-8f43-3e820065ff2e
+
+	measure 'P4W VOB to Admit %' = DIVIDE([P4W Funnel Admits], [P4W Total VOBs])
+		formatString: 0.0%
+		displayFolder: Trailing 4 Weeks\Prior & Delta
+		lineageTag: d82d722c-c085-4be0-b030-5ba701fe96b9
+
+	/// Change in VOB-to-Admit conversion, trailing 4wk vs prior 4wk, in percentage points.
+	measure 'VOB to Admit % T4W Δpp' = [T4W VOB to Admit %] - [P4W VOB to Admit %]
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Trailing 4 Weeks\Prior & Delta
+		lineageTag: dacdf227-a362-42f6-a8fc-d4bffa6c0d40
+
+	/// Leads where lead_type = PPC, both CRMs.
+	measure 'PPC Leads' = CALCULATE(SUM(admissions_funnel_dazos_history[leads]), admissions_funnel_dazos_history[lead_type] = "PPC") + CALCULATE(SUM(admissions_funnel_zoho_history[leads]), admissions_funnel_zoho_history[lead_type] = "PPC")
+		formatString: #,##0
+		displayFolder: PPC (paid only)
+		lineageTag: 7eb34a77-41e5-4774-b015-8dee30241f4c
+
+	/// VOBs where lead_type = PPC, both CRMs.
+	measure 'PPC VOBs' = CALCULATE(SUM(admissions_funnel_dazos_history[vobs]), admissions_funnel_dazos_history[lead_type] = "PPC") + CALCULATE(SUM(admissions_funnel_zoho_history[vobs]), admissions_funnel_zoho_history[lead_type] = "PPC")
+		formatString: #,##0
+		displayFolder: PPC (paid only)
+		lineageTag: b22b88ff-12c2-4576-824f-db2fbc9da991
+
+	measure 'T4W PPC Leads' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([PPC Leads], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 28 && dim_date[date_key] <= Anchor))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: c38872a1-018e-440a-90c1-445eb11a6a95
+
+	measure 'T4W PPC VOBs' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([PPC VOBs], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 28 && dim_date[date_key] <= Anchor))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: 9e9a5c48-16b4-42af-9823-909542dd27a6
+
+	column week_ending
+		dataType: dateTime
+		lineageTag: 5da325a2-728a-489d-b867-d54fc7e1c8e5
+		sourceLineageTag: week_ending
+		sourceColumn: week_ending
+
+	column location
+		dataType: string
+		lineageTag: f7aedaa8-52d2-4320-b7a9-1f7f28c90d24
+		sourceLineageTag: location
+		sourceColumn: location
+
+	column lead_type
+		dataType: string
+		lineageTag: 28d774d0-8987-4640-8e83-6790dfe46c5c
+		sourceLineageTag: lead_type
+		sourceColumn: lead_type
+
+	column opener
+		dataType: string
+		lineageTag: a1fb9c0a-9109-48f0-8b23-23bb068d489d
+		sourceLineageTag: opener
+		sourceColumn: opener
+
+	column closer
+		dataType: string
+		lineageTag: 0c20ea64-c957-4083-a4eb-3aab88ab34e9
+		sourceLineageTag: closer
+		sourceColumn: closer
+
+	column leads
+		dataType: int64
+		lineageTag: 0bb6e2f5-9ded-4be3-ac92-8ba7657d08cb
+		sourceLineageTag: leads
+		sourceColumn: leads
+
+	column opportunities
+		dataType: int64
+		lineageTag: 6650a1b1-f6b2-4dc0-a97a-ee1db5ee64ab
+		sourceLineageTag: opportunities
+		sourceColumn: opportunities
+
+	column vobs
+		dataType: int64
+		lineageTag: 210d626c-8d5d-43a4-a7b3-44f93a6e17f0
+		sourceLineageTag: vobs
+		sourceColumn: vobs
+
+	column viable_vobs
+		dataType: int64
+		lineageTag: df070202-26b4-458e-b468-30072f326867
+		sourceLineageTag: viable_vobs
+		sourceColumn: viable_vobs
+
+	column admits
+		dataType: int64
+		lineageTag: 672714b4-7f17-40c3-aefd-0d7e62730585
+		sourceLineageTag: admits
+		sourceColumn: admits
+
+	partition admissions_funnel_dazos_history = entity
+		mode: directLake
+		source
+			entityName: admissions_funnel_dazos_history
+			schemaName: dbo
+			expressionSource: 'DirectLake - funnel_lakehouse'
+

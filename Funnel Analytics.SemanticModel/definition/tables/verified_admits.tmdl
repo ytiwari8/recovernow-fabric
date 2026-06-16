@@ -1,0 +1,200 @@
+table verified_admits
+	lineageTag: 96f2a539-9715-444f-b51e-804f7b6efd9b
+
+	/// Actual de-duplicated admissions (truth set). Denominator for Cost per Admit.
+	measure 'Verified Admits' = COUNTROWS(verified_admits)
+		formatString: #,##0
+		displayFolder: Admits
+		lineageTag: 8fe7678b-5272-46b2-b9cd-0e0cfa61f345
+
+	/// Verified admits in the last 28 days (4 Fri-Thu weeks) ending at the latest activity date.
+	measure 'T4W Verified Admits' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([Verified Admits], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 28 && dim_date[date_key] <= Anchor))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: a309ce24-56d9-4c3a-b95d-7e8bc7e0e1b4
+
+	/// Verified admits in the prior 4-week window (days 29-56 back).
+	measure 'P4W Verified Admits' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([Verified Admits], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 56 && dim_date[date_key] <= Anchor - 28))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks\Prior & Delta
+		lineageTag: fc33be31-afc1-4f78-b741-a0eb371d344f
+
+	/// Trailing-4-week vs prior-4-week change in verified admits.
+	measure 'Verified Admits T4W Δ%' = DIVIDE([T4W Verified Admits] - [P4W Verified Admits], [P4W Verified Admits])
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Trailing 4 Weeks\Prior & Delta
+		lineageTag: c91a6ddc-94a3-4ad5-8529-0d891a7c29c6
+
+	/// Verified admits where lead_type = PPC. Denominator for Cost per Admit.
+	measure 'PPC Admits' = CALCULATE([Verified Admits], verified_admits[lead_type] = "PPC")
+		formatString: #,##0
+		displayFolder: PPC (paid only)
+		lineageTag: bde9e64b-8daf-407e-9dac-528c452c5bf6
+
+	measure 'T4W PPC Admits' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([PPC Admits], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 28 && dim_date[date_key] <= Anchor))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: 38210e58-f898-44e7-b57b-8a9471ce8c46
+
+	measure 'P4W PPC Admits' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([PPC Admits], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 56 && dim_date[date_key] <= Anchor - 28))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks\Prior & Delta
+		lineageTag: 7acfa174-823c-4d51-853f-4c79f5e0f004
+
+	column entity
+		dataType: string
+		lineageTag: ee4023ce-312f-4e1b-b25b-71b7f78fdbd7
+		sourceLineageTag: entity
+		sourceColumn: entity
+
+	column source_crm
+		dataType: string
+		lineageTag: d8a4b8ac-5f09-4568-903d-888721df14db
+		sourceLineageTag: source_crm
+		sourceColumn: source_crm
+
+	column admit_date
+		dataType: dateTime
+		lineageTag: 850ee65c-c523-4157-85de-fa498b2fc20b
+		sourceLineageTag: admit_date
+		sourceColumn: admit_date
+
+	column mr_number
+		dataType: string
+		lineageTag: a814b562-a49d-4ea5-95e2-e5d674275be0
+		sourceLineageTag: mr_number
+		sourceColumn: mr_number
+
+	column patient_name
+		dataType: string
+		lineageTag: 4dc4fea7-6787-4000-b9af-66647ad68d83
+		sourceLineageTag: patient_name
+		sourceColumn: patient_name
+
+	column facility
+		dataType: string
+		lineageTag: b9cdcafa-d803-44e3-ba4d-e39b4e709465
+		sourceLineageTag: facility
+		sourceColumn: facility
+
+	column program
+		dataType: string
+		lineageTag: fd771352-edff-4bda-a089-3f52a0cf983a
+		sourceLineageTag: program
+		sourceColumn: program
+
+	column admission_rep
+		dataType: string
+		lineageTag: fc02ee4f-1d6b-42bc-9462-63ef1eac5065
+		sourceLineageTag: admission_rep
+		sourceColumn: admission_rep
+
+	column lead_type
+		dataType: string
+		lineageTag: 24e830db-2c24-472d-a6f3-4c1ddf28c657
+		sourceLineageTag: lead_type
+		sourceColumn: lead_type
+
+	column channel
+		dataType: string
+		lineageTag: 77cb5fce-c381-4952-a649-93314a664847
+		sourceLineageTag: channel
+		sourceColumn: channel
+
+	column vob_status
+		dataType: string
+		lineageTag: d21d8b26-5d4e-4243-adcd-1673f13e6a64
+		sourceLineageTag: vob_status
+		sourceColumn: vob_status
+
+	column sales_stage
+		dataType: string
+		lineageTag: 06e32b27-b13f-4379-b159-515faa8e0d46
+		sourceLineageTag: sales_stage
+		sourceColumn: sales_stage
+
+	column opener
+		dataType: string
+		lineageTag: 76b4586e-bd4c-4a06-bc9d-72bd6c1bc527
+		sourceLineageTag: opener
+		sourceColumn: opener
+
+	column bd_rep
+		dataType: string
+		lineageTag: cdfa70c6-6321-4ea6-8db9-06b4ce47b416
+		sourceLineageTag: bd_rep
+		sourceColumn: bd_rep
+
+	column referral_source
+		dataType: string
+		lineageTag: 75b81b35-c87a-46e2-8f92-b79a3fc527ba
+		sourceLineageTag: referral_source
+		sourceColumn: referral_source
+
+	column referring_company
+		dataType: string
+		lineageTag: fd49059d-3d8e-402d-a837-7f106340f5d9
+		sourceLineageTag: referring_company
+		sourceColumn: referring_company
+
+	column payor_category
+		dataType: string
+		lineageTag: 1d1b615b-5768-494e-854f-2fbef7e3decb
+		sourceLineageTag: payor_category
+		sourceColumn: payor_category
+
+	column program_bucket
+		dataType: string
+		lineageTag: bbe8fc31-3a7f-48a0-a4b3-68153a0aa781
+		sourceLineageTag: program_bucket
+		sourceColumn: program_bucket
+
+	column points
+		dataType: double
+		lineageTag: 2b5b9708-8dcb-477d-bb7f-2f026aadc151
+		sourceLineageTag: points
+		sourceColumn: points
+
+	column insurance
+		dataType: string
+		lineageTag: cf446e58-84e5-4518-b4e7-bcd645fd84a9
+		sourceLineageTag: insurance
+		sourceColumn: insurance
+
+	column match_confidence
+		dataType: string
+		lineageTag: d5ba1d10-3e1f-4810-b2f1-ced1343d6d86
+		sourceLineageTag: match_confidence
+		sourceColumn: match_confidence
+
+	column source_file
+		dataType: string
+		lineageTag: e714e533-8ee3-43df-8cc4-d49d8a72795a
+		sourceLineageTag: source_file
+		sourceColumn: source_file
+
+	column dup_flag
+		dataType: boolean
+		lineageTag: bd8e837d-660b-4e57-a9a1-5d63741bd469
+		sourceLineageTag: dup_flag
+		sourceColumn: dup_flag
+
+	column dup_sources
+		dataType: string
+		lineageTag: 151758f8-c660-4c55-a7c3-a53b70dcb3d5
+		sourceLineageTag: dup_sources
+		sourceColumn: dup_sources
+
+	column build_run_ts
+		dataType: dateTime
+		lineageTag: ccbb5676-18d1-4a13-98bf-eedf751e7d45
+		sourceLineageTag: build_run_ts
+		sourceColumn: build_run_ts
+
+	partition verified_admits = entity
+		mode: directLake
+		source
+			entityName: verified_admits
+			schemaName: dbo
+			expressionSource: 'DirectLake - funnel_lakehouse'
+

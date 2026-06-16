@@ -1,0 +1,28 @@
+table dim_facility
+	lineageTag: 8b88f19a-2695-44a0-8ff7-9f7fdd740f13
+
+	column facility
+		dataType: string
+		lineageTag: 8faa34bd-662f-4d5b-b758-0f24c7855415
+		sourceLineageTag: facility
+		sourceColumn: facility
+
+	column entity
+		dataType: string
+		lineageTag: 3639dabe-31a6-4147-b9f3-c573330a3a0c
+		sourceLineageTag: entity
+		sourceColumn: entity
+
+	column region
+		dataType: string
+		lineageTag: 9bc3a0f6-cd23-401b-a742-c63393e369fa
+		sourceLineageTag: region
+		sourceColumn: region
+
+	partition dim_facility = entity
+		mode: directLake
+		source
+			entityName: dim_facility
+			schemaName: dbo
+			expressionSource: 'DirectLake - funnel_lakehouse'
+

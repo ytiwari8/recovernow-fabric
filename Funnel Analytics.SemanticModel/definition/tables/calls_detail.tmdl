@@ -1,0 +1,312 @@
+table calls_detail
+	lineageTag: ee19df3d-b85d-4c1d-a4d6-a99f2289522b
+
+	/// Total calls.
+	measure 'Call Count' = COUNTROWS(calls_detail)
+		formatString: #,##0
+		displayFolder: Calls
+		lineageTag: c1ea13b0-e86c-43cc-8c7e-c42d53789438
+
+	/// Inbound calls flagged as missed.
+	measure 'Missed Inbound' = CALCULATE([Call Count], calls_detail[is_inbound_missed] = TRUE())
+		formatString: #,##0
+		displayFolder: Calls
+		lineageTag: 33bb9d0b-cf85-43f4-962a-6948a99a15e4
+
+	/// Missed inbound calls / all calls.
+	measure 'Missed Inbound %' = DIVIDE([Missed Inbound], [Call Count])
+		formatString: 0.0%
+		displayFolder: Calls
+		lineageTag: a130a64e-d480-4b11-9e9a-7f1f71abd8a0
+
+	/// Average talk time in seconds.
+	measure 'Avg Talk Time (sec)' = AVERAGE(calls_detail[talk_time_sec])
+		formatString: #,##0
+		displayFolder: Calls
+		lineageTag: 0fb015ca-1371-45c0-addc-bb01ac20085c
+
+	/// Connected callbacks / calls needing a callback.
+	measure 'Callback Connect %' = DIVIDE(CALCULATE([Call Count], calls_detail[callback_connected] = TRUE()), CALCULATE([Call Count], calls_detail[needs_callback] = TRUE()))
+		formatString: 0.0%
+		displayFolder: Calls
+		lineageTag: 58b31045-301e-49d5-8e32-eeb0c842d0ab
+
+	measure 'T4W Call Count' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([Call Count], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 28 && dim_date[date_key] <= Anchor))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: cd785862-6585-4531-ad82-6f14d99ef539
+
+	measure 'T4W Missed Inbound' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([Missed Inbound], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 28 && dim_date[date_key] <= Anchor))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: 6edda0c7-b2d8-4382-a130-a855384a4297
+
+	measure 'T4W Missed Inbound %' = DIVIDE([T4W Missed Inbound], [T4W Call Count])
+		formatString: 0.0%
+		displayFolder: Trailing 4 Weeks
+		lineageTag: 1c23d709-45aa-4653-93fb-da8756303019
+
+	measure 'P4W Call Count' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([Call Count], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 56 && dim_date[date_key] <= Anchor - 28))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks\Prior & Delta
+		lineageTag: 30647e74-6fb3-4eda-b216-5830c4bb9e8e
+
+	measure 'Call Count T4W Δ%' = DIVIDE([T4W Call Count] - [P4W Call Count], [P4W Call Count])
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Trailing 4 Weeks\Prior & Delta
+		lineageTag: ad755166-9bc5-49fe-a8d5-b1f6495455c2
+
+	/// Calls where tracking_source_type = PPC (paid). Denominator for Cost per Call.
+	measure 'PPC Calls' = CALCULATE([Call Count], calls_detail[tracking_source_type] = "PPC")
+		formatString: #,##0
+		displayFolder: PPC (paid only)
+		lineageTag: 3d258a60-2819-4746-9f07-71003cbe2a8d
+
+	measure 'T4W PPC Calls' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([PPC Calls], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 28 && dim_date[date_key] <= Anchor))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: d9cbb731-3f86-4161-a8ca-1fae9457bae5
+
+	/// Voice inbound calls (direction = inbound). Excludes SMS/forms/chat.
+	measure 'Inbound Calls' = CALCULATE([Call Count], calls_detail[direction] = "inbound")
+		formatString: #,##0
+		displayFolder: Calls
+		lineageTag: aae9840b-1904-4e91-9501-dc6ce69fc610
+
+	measure 'Missed Inbound Calls' = CALCULATE([Call Count], calls_detail[direction] = "inbound", calls_detail[is_inbound_missed] = TRUE())
+		formatString: #,##0
+		displayFolder: Calls
+		lineageTag: c0a8c0d2-c07f-4f3c-ac3b-ad1fded12769
+
+	measure 'Answered Inbound Calls' = CALCULATE([Call Count], calls_detail[direction] = "inbound", calls_detail[is_inbound_missed] = FALSE())
+		formatString: #,##0
+		displayFolder: Calls
+		lineageTag: 40f806ff-2313-4f44-80ff-054ff3b47837
+
+	/// Missed inbound / total inbound. Slice by tracking_source_type for missed % by source.
+	measure 'Missed Call %' = DIVIDE([Missed Inbound Calls], [Inbound Calls])
+		formatString: 0.0%
+		displayFolder: Calls
+		lineageTag: 2e6cd330-3286-4649-a85c-329bb3fd1587
+
+	measure 'Answer Rate %' = DIVIDE([Answered Inbound Calls], [Inbound Calls])
+		formatString: 0.0%
+		displayFolder: Calls
+		lineageTag: 1d1b5016-6002-4c60-90b0-21cf1142507b
+
+	/// Prior Fri-Thu week. Use on a weekly axis.
+	measure 'Inbound Calls (Prev Week)' = VAR d = MAX(dim_date[week_ending]) RETURN CALCULATE([Inbound Calls], FILTER(ALL(dim_date), dim_date[week_ending] = d - 7))
+		formatString: #,##0
+		displayFolder: Calls\Period over Period
+		lineageTag: 3f9a8c5b-8925-4b49-b919-f4d78abf6766
+
+	measure 'Inbound Calls WoW %' = VAR cur = [Inbound Calls] VAR p = [Inbound Calls (Prev Week)] RETURN DIVIDE(cur - p, p)
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Calls\Period over Period
+		lineageTag: a305a60b-cdd3-4742-86dd-62e8adc0a86c
+
+	/// Prior calendar month. Use on a monthly axis.
+	measure 'Inbound Calls (Prev Month)' = VAR d = MAX(dim_date[date_key]) VAR pm = FORMAT(EDATE(d, -1), "yyyy-MM") RETURN CALCULATE([Inbound Calls], FILTER(ALL(dim_date), dim_date[year_month] = pm))
+		formatString: #,##0
+		displayFolder: Calls\Period over Period
+		lineageTag: f938f3fd-e627-42c8-b4c0-d342729fbe87
+
+	measure 'Inbound Calls MoM %' = VAR cur = [Inbound Calls] VAR p = [Inbound Calls (Prev Month)] RETURN DIVIDE(cur - p, p)
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Calls\Period over Period
+		lineageTag: 19a96b7c-0ea5-4c98-8fc9-555e6346d591
+
+	measure 'T4W Inbound Calls' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([Inbound Calls], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 28 && dim_date[date_key] <= Anchor))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: 7c8a4e83-0c87-41a8-bac4-b124e28ff63c
+
+	measure 'T4W Answered Inbound Calls' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([Answered Inbound Calls], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 28 && dim_date[date_key] <= Anchor))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: d0fb826d-ebad-4f64-b1a1-ba6fa1491631
+
+	measure 'T4W Missed Inbound Calls' = VAR Anchor = [_Anchor Date] RETURN CALCULATE([Missed Inbound Calls], FILTER(ALL(dim_date), dim_date[date_key] > Anchor - 28 && dim_date[date_key] <= Anchor))
+		formatString: #,##0
+		displayFolder: Trailing 4 Weeks
+		lineageTag: 792d1d3d-0a90-4cc9-86a6-6ca8ab1075c5
+
+	measure 'T4W Missed Call %' = DIVIDE([T4W Missed Inbound Calls], [T4W Inbound Calls])
+		formatString: 0.0%
+		displayFolder: Trailing 4 Weeks
+		lineageTag: f997205d-e806-4689-ac92-a59f784af8ce
+
+	measure 'T4W Answer Rate %' = DIVIDE([T4W Answered Inbound Calls], [T4W Inbound Calls])
+		formatString: 0.0%
+		displayFolder: Trailing 4 Weeks
+		lineageTag: ebf78ee0-da0d-4e18-8fd3-985b31712619
+
+	column call_id
+		dataType: int64
+		lineageTag: a0fa09c8-0db4-409b-8583-17a7180f8a24
+		sourceLineageTag: call_id
+		sourceColumn: call_id
+
+	column day
+		dataType: dateTime
+		lineageTag: 92db1497-33e9-4017-8725-29434936e639
+		sourceLineageTag: day
+		sourceColumn: day
+
+	column week_ending
+		dataType: dateTime
+		lineageTag: f92d1e9d-0b3a-408d-9bea-0afddddef34f
+		sourceLineageTag: week_ending
+		sourceColumn: week_ending
+
+	column month_ending
+		dataType: dateTime
+		lineageTag: 02a388a5-93d8-4a62-ae27-34bc34842aa8
+		sourceLineageTag: month_ending
+		sourceColumn: month_ending
+
+	column location
+		dataType: string
+		lineageTag: d6b8b0af-532b-4ad5-8dc2-ba665bb49f05
+		sourceLineageTag: location
+		sourceColumn: location
+
+	column type
+		dataType: string
+		lineageTag: 52a62ffe-3e64-4b26-aa86-b8f34bc82872
+		sourceLineageTag: type
+		sourceColumn: type
+
+	column direction
+		dataType: string
+		lineageTag: 88317494-9a8b-4e2e-bf9d-e636c745106f
+		sourceLineageTag: direction
+		sourceColumn: direction
+
+	column status
+		dataType: string
+		lineageTag: 1e284568-1a38-4361-8954-67b658ff637a
+		sourceLineageTag: status
+		sourceColumn: status
+
+	column raw_status
+		dataType: string
+		lineageTag: f9fb3d37-2918-41b4-a156-e4c504429de8
+		sourceLineageTag: raw_status
+		sourceColumn: raw_status
+
+	column rep
+		dataType: string
+		lineageTag: 87f781c7-2869-4501-8fc0-f98a94d87ecb
+		sourceLineageTag: rep
+		sourceColumn: rep
+
+	column rep_email
+		dataType: string
+		lineageTag: 098624cd-3440-4e4a-a2a4-79621111cfaa
+		sourceLineageTag: rep_email
+		sourceColumn: rep_email
+
+	column tracking_source
+		dataType: string
+		lineageTag: 83c7ee6a-5b6c-4aad-af06-94a06659bed3
+		sourceLineageTag: tracking_source
+		sourceColumn: tracking_source
+
+	column tracking_source_type
+		dataType: string
+		lineageTag: 24093d86-1811-4022-9bdc-08f85b2bf03c
+		sourceLineageTag: tracking_source_type
+		sourceColumn: tracking_source_type
+
+	column tracking_label
+		dataType: string
+		lineageTag: 4724c2b5-219a-4de6-af58-391eceaccf2f
+		sourceLineageTag: tracking_label
+		sourceColumn: tracking_label
+
+	column caller_number
+		dataType: string
+		lineageTag: 36e87df4-96b3-4953-838f-540ce6321fdb
+		sourceLineageTag: caller_number
+		sourceColumn: caller_number
+
+	column is_new_caller
+		dataType: boolean
+		lineageTag: 9c648163-114d-4aa5-80db-6a785b9a810c
+		sourceLineageTag: is_new_caller
+		sourceColumn: is_new_caller
+
+	column talk_time_sec
+		dataType: int64
+		lineageTag: 7bfa7099-cfcf-4e95-b6cf-fdd6bd36a0c6
+		sourceLineageTag: talk_time_sec
+		sourceColumn: talk_time_sec
+
+	column ring_time_sec
+		dataType: int64
+		lineageTag: 754bbf9a-8c22-43e9-8522-4983b9beb43f
+		sourceLineageTag: ring_time_sec
+		sourceColumn: ring_time_sec
+
+	column duration_sec
+		dataType: int64
+		lineageTag: 7f6aeb14-eea2-4ef6-8765-6f5dcc8d845f
+		sourceLineageTag: duration_sec
+		sourceColumn: duration_sec
+
+	column is_inbound_missed
+		dataType: boolean
+		lineageTag: 9de796c9-c9bd-4420-bebd-bafdd0db22de
+		sourceLineageTag: is_inbound_missed
+		sourceColumn: is_inbound_missed
+
+	column needs_callback
+		dataType: boolean
+		lineageTag: 14f570fe-054e-45ce-8f53-45ba2055fa61
+		sourceLineageTag: needs_callback
+		sourceColumn: needs_callback
+
+	column callback_status
+		dataType: string
+		lineageTag: fcb6fc7a-a327-4696-a4b5-5d6e72859e6e
+		sourceLineageTag: callback_status
+		sourceColumn: callback_status
+
+	column callback_minutes
+		dataType: int64
+		lineageTag: 5721b98e-abe8-48a6-81d3-2a975d8d2a3c
+		sourceLineageTag: callback_minutes
+		sourceColumn: callback_minutes
+
+	column callback_connected
+		dataType: boolean
+		lineageTag: d4050a23-e6a5-4cad-92d8-a491dbce6960
+		sourceLineageTag: callback_connected
+		sourceColumn: callback_connected
+
+	column city
+		dataType: string
+		lineageTag: f06649bc-af38-44d7-8736-9f642cf8df9e
+		sourceLineageTag: city
+		sourceColumn: city
+
+	column state
+		dataType: string
+		lineageTag: 27d34886-a022-4032-9ba7-9113312e4005
+		sourceLineageTag: state
+		sourceColumn: state
+
+	column called_at
+		dataType: dateTime
+		lineageTag: 4f50f929-3b71-4ca9-a641-c0bb09a17bda
+		sourceLineageTag: called_at
+		sourceColumn: called_at
+
+	partition calls_detail = entity
+		mode: directLake
+		source
+			entityName: calls_detail
+			schemaName: dbo
+			expressionSource: 'DirectLake - funnel_lakehouse'
+
