@@ -1,0 +1,110 @@
+[
+  {
+    "name": "Tides Edge Daily",
+    "path": "/Files",
+    "target": {
+      "type": "AdlsGen2",
+      "adlsGen2": {
+        "connectionId": "22b91667-4c74-48a0-8bc6-12ffe13cf2c6",
+        "location": "https://stkipu001.dfs.core.windows.net",
+        "subpath": "/kipu-bronze/census/tides-edge/daily"
+      }
+    }
+  },
+  {
+    "name": "RNGA Daily",
+    "path": "/Files",
+    "target": {
+      "type": "AdlsGen2",
+      "adlsGen2": {
+        "connectionId": "22b91667-4c74-48a0-8bc6-12ffe13cf2c6",
+        "location": "https://stkipu001.dfs.core.windows.net",
+        "subpath": "/kipu-bronze/census/rnga/daily"
+      }
+    }
+  },
+  {
+    "name": "RNAL Daily",
+    "path": "/Files",
+    "target": {
+      "type": "AdlsGen2",
+      "adlsGen2": {
+        "connectionId": "22b91667-4c74-48a0-8bc6-12ffe13cf2c6",
+        "location": "https://stkipu001.dfs.core.windows.net",
+        "subpath": "/kipu-bronze/census/rnal/daily"
+      }
+    }
+  },
+  {
+    "name": "Lotus Daily",
+    "path": "/Files",
+    "target": {
+      "type": "AdlsGen2",
+      "adlsGen2": {
+        "connectionId": "22b91667-4c74-48a0-8bc6-12ffe13cf2c6",
+        "location": "https://stkipu001.dfs.core.windows.net",
+        "subpath": "/kipu-bronze/census/lotus/daily"
+      }
+    }
+  },
+  {
+    "name": "Longbranch Daily 03.30.26",
+    "path": "/Files",
+    "target": {
+      "type": "AdlsGen2",
+      "adlsGen2": {
+        "connectionId": "22b91667-4c74-48a0-8bc6-12ffe13cf2c6",
+        "location": "https://stkipu001.dfs.core.windows.net",
+        "subpath": "/kipu-bronze/census/daily"
+      }
+    }
+  },
+  {
+    "name": "Longbranch Daily",
+    "path": "/Files",
+    "target": {
+      "type": "AdlsGen2",
+      "adlsGen2": {
+        "connectionId": "22b91667-4c74-48a0-8bc6-12ffe13cf2c6",
+        "location": "https://stkipu001.dfs.core.windows.net",
+        "subpath": "/kipu-bronze/census/longbranch/daily"
+      }
+    }
+  },
+  {
+    "name": "Green Acres Daily",
+    "path": "/Files",
+    "target": {
+      "type": "AdlsGen2",
+      "adlsGen2": {
+        "connectionId": "22b91667-4c74-48a0-8bc6-12ffe13cf2c6",
+        "location": "https://stkipu001.dfs.core.windows.net",
+        "subpath": "/kipu-bronze/census/green-acres/daily"
+      }
+    }
+  },
+  {
+    "name": "Graceland Daily",
+    "path": "/Files",
+    "target": {
+      "type": "AdlsGen2",
+      "adlsGen2": {
+        "connectionId": "22b91667-4c74-48a0-8bc6-12ffe13cf2c6",
+        "location": "https://stkipu001.dfs.core.windows.net",
+        "subpath": "/kipu-bronze/census/graceland/daily"
+      }
+    }
+  },
+  {
+    "name": "CRC Daily",
+    "path": "/Files",
+    "target": {
+      "type": "AdlsGen2",
+      "adlsGen2": {
+        "connectionId": "22b91667-4c74-48a0-8bc6-12ffe13cf2c6",
+        "location": "https://stkipu001.dfs.core.windows.net",
+        "subpath": "/kipu-bronze/census/chattanooga/daily"
+      }
+    }
+  }
+]

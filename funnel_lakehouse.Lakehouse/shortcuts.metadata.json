@@ -1,0 +1,15 @@
+[
+  {
+    "name": "census_clean",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/census_clean",
+        "itemId": "41379bf5-904a-a3ce-47a8-d6ec68cab2d5",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "artifactType": "Lakehouse"
+      }
+    }
+  }
+]
