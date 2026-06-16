@@ -1,0 +1,48 @@
+/// Static date spine covering budget months Aug 2025 through Dec 2026. month_label shows short month name only (Jan, Feb...). month_sort is a sequential integer 1-17 for correct chronological ordering.
+table dim_month
+	lineageTag: a4bc2795-075e-409c-b10a-19408b724dd7
+
+	column month
+		lineageTag: 74affa7e-7530-403f-a435-8b86e8214e75
+		isNameInferred
+		sourceColumn: [month]
+
+	column month_label
+		lineageTag: 2dafe737-02fa-4819-bbec-c901ccad01dd
+		isNameInferred
+		sourceColumn: [month_label]
+		sortByColumn: month_sort
+
+	column month_sort
+		lineageTag: 1f1877c5-a2b0-4b42-8351-deb241b59207
+		isNameInferred
+		sourceColumn: [month_sort]
+
+	partition dim_month = calculated
+		mode: import
+		source =
+				DATATABLE(
+				    "month", STRING,
+				    "month_label", STRING,
+				    "month_sort", INTEGER,
+				    {
+				        {"2025-08", "Aug", 1},
+				        {"2025-09", "Sep", 2},
+				        {"2025-10", "Oct", 3},
+				        {"2025-11", "Nov", 4},
+				        {"2025-12", "Dec", 5},
+				        {"2026-01", "Jan", 6},
+				        {"2026-02", "Feb", 7},
+				        {"2026-03", "Mar", 8},
+				        {"2026-04", "Apr", 9},
+				        {"2026-05", "May", 10},
+				        {"2026-06", "Jun", 11},
+				        {"2026-07", "Jul", 12},
+				        {"2026-08", "Aug", 13},
+				        {"2026-09", "Sep", 14},
+				        {"2026-10", "Oct", 15},
+				        {"2026-11", "Nov", 16},
+				        {"2026-12", "Dec", 17}
+				    }
+				)
+

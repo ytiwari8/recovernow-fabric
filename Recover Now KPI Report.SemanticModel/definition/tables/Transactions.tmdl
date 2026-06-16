@@ -1,0 +1,291 @@
+table Transactions
+	lineageTag: 3a9e9783-6c85-4751-91d1-180cfbf179e1
+
+	/// Net collections: sum of revenue transaction amounts (credits positive, debits negative).
+	measure 'Net Collections' =
+			CALCULATE(
+			    SUM('Transactions'[amount]),
+			    KEEPFILTERS('Transactions'[Cleaned Type] = "Revenue")
+			)
+		formatString: $#,##0;($#,##0)
+		displayFolder: KPIs
+		lineageTag: 05e32f69-ea14-4982-bf3f-5de17ce33d49
+
+	/// Net collections for VA transactions only (description contains 'VA').
+	measure 'Net Collections - VA' =
+			CALCULATE(
+			    SUM('Transactions'[amount]),
+			    KEEPFILTERS('Transactions'[Cleaned Type] = "Revenue"),
+			    'Transactions'[va_flag] = "VA"
+			)
+		formatString: $#,##0;($#,##0)
+		displayFolder: KPIs
+		lineageTag: 048cf131-bca5-4ed3-a242-63e229379ea0
+
+	/// Trailing 4-week net collections: sums Revenue amounts for the 4 weeks ending on the current week_ending in context.
+	measure 'Net Collections T4W' =
+			VAR _WeekEnd = SELECTEDVALUE('Transactions'[Week Ending])
+			VAR _4WeeksAgo = _WeekEnd - 27
+			RETURN
+			    IF(
+			        NOT ISBLANK(_WeekEnd),
+			        CALCULATE(
+			            SUM('Transactions'[amount]),
+			            KEEPFILTERS('Transactions'[Cleaned Type] = "Revenue"),
+			            'Transactions'[Week Ending] >= _4WeeksAgo,
+			            'Transactions'[Week Ending] <= _WeekEnd,
+			            ALL('Transactions'[Week Ending])
+			        ),
+			        CALCULATE(
+			            SUM('Transactions'[amount]),
+			            KEEPFILTERS('Transactions'[Cleaned Type] = "Revenue")
+			        )
+			    )
+		formatString: $#,##0;($#,##0)
+		displayFolder: KPIs
+		lineageTag: d4c7f266-e908-4e70-83ca-4c98bc61bdb7
+
+	/// Net collections for Non-VA transactions only (description does not contain 'VA').
+	measure 'Net Collections - Non-VA' =
+			CALCULATE(
+			    SUM('Transactions'[amount]),
+			    KEEPFILTERS('Transactions'[Cleaned Type] = "Revenue"),
+			    'Transactions'[va_flag] = "Non-VA"
+			)
+		formatString: $#,##0;($#,##0)
+		displayFolder: KPIs
+		lineageTag: c02e3dd8-c573-4e3e-ad62-f394d19ef25c
+
+	/// Weekly net cash flow: sum of all transaction amounts regardless of type — revenue, expenses, salaries, transfers in/out. Represents the true net change in cash for the week.
+	measure 'Net Cash Flow' = SUM('Transactions'[amount])
+		formatString: $#,##0;($#,##0)
+		displayFolder: KPIs
+		lineageTag: 6cac1d4d-f7a0-4152-a71c-0d698f969683
+
+	/// Trailing 4-week net cash flow: rolling sum of all transaction amounts across the 4 weeks ending on the current Week Ending in context.
+	measure 'Net Cash Flow T4W' =
+			VAR _WeekEnd = SELECTEDVALUE('Transactions'[Week Ending])
+			VAR _4WeeksAgo = _WeekEnd - 27
+			RETURN
+			    IF(
+			        NOT ISBLANK(_WeekEnd),
+			        CALCULATE(
+			            SUM('Transactions'[amount]),
+			            'Transactions'[Week Ending] >= _4WeeksAgo,
+			            'Transactions'[Week Ending] <= _WeekEnd,
+			            ALL('Transactions'[Week Ending])
+			        ),
+			        SUM('Transactions'[amount])
+			    )
+		formatString: $#,##0;($#,##0)
+		displayFolder: KPIs
+		lineageTag: eb83951b-6da3-4022-b0dd-1a3a277dc70b
+
+	/// Returns the most recent Week Ending date in transactions as a formatted string for display in a card visual.
+	measure 'Report As Of - Cash' = FORMAT(MAX('Transactions'[Week Ending]), "M/D/YY")
+		formatString: @
+		displayFolder: KPIs
+		lineageTag: d5c37a91-9dd8-423f-8746-ca22324ecb79
+
+	column 'Source.Name'
+		dataType: string
+		isHidden
+		lineageTag: 28376a54-56f9-4572-bdef-704f68a86ca2
+		summarizeBy: none
+		sourceColumn: Source.Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column transaction_id
+		dataType: string
+		isHidden
+		lineageTag: 5fa13457-c7a1-4dec-afa2-492e327381e6
+		summarizeBy: none
+		sourceColumn: transaction_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column date
+		dataType: dateTime
+		formatString: Long Date
+		displayFolder: Dimensions
+		lineageTag: 1e87de2f-4a53-4f41-a1e9-4d15b836aa85
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column account
+		dataType: string
+		displayFolder: Dimensions
+		lineageTag: 753a1a63-980e-464e-9baf-b9a386c00451
+		summarizeBy: none
+		sourceColumn: account
+
+		annotation SummarizationSetBy = Automatic
+
+	column entity
+		dataType: string
+		displayFolder: Dimensions
+		lineageTag: 4e959181-20a8-459b-aea1-b515fea692d8
+		summarizeBy: none
+		sourceColumn: entity
+
+		annotation SummarizationSetBy = Automatic
+
+	column institution
+		dataType: string
+		displayFolder: Dimensions
+		lineageTag: 7922632c-4618-44d9-95c4-5a183dbc2ee1
+		summarizeBy: none
+		sourceColumn: institution
+
+		annotation SummarizationSetBy = Automatic
+
+	column amount
+		dataType: double
+		displayFolder: KPIs
+		lineageTag: bd498ee8-88c4-4408-9adf-45a2aafc7b79
+		summarizeBy: sum
+		sourceColumn: amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column direction
+		dataType: string
+		displayFolder: Dimensions
+		lineageTag: 2d7040c3-7d66-4dfe-93f8-00ac178ebc54
+		summarizeBy: none
+		sourceColumn: direction
+
+		annotation SummarizationSetBy = Automatic
+
+	column counterparty
+		dataType: string
+		displayFolder: Dimensions
+		lineageTag: be2ddbc2-c98b-4a63-a79e-55fd07c5ff0d
+		summarizeBy: none
+		sourceColumn: counterparty
+
+		annotation SummarizationSetBy = Automatic
+
+	column description
+		dataType: string
+		displayFolder: Dimensions
+		lineageTag: 897ba982-c467-4e1d-a9de-59884cdd6cd5
+		summarizeBy: none
+		sourceColumn: description
+
+		annotation SummarizationSetBy = Automatic
+
+	column status
+		dataType: string
+		displayFolder: Dimensions
+		lineageTag: ff7271b4-a354-4992-96fa-4644f1a969b3
+		summarizeBy: none
+		sourceColumn: status
+
+		annotation SummarizationSetBy = Automatic
+
+	column category
+		dataType: string
+		displayFolder: Dimensions
+		lineageTag: a96890e1-3928-49f0-80df-4a5c902e303b
+		summarizeBy: none
+		sourceColumn: category
+
+		annotation SummarizationSetBy = Automatic
+
+	column category_override
+		dataType: string
+		displayFolder: Dimensions
+		lineageTag: 166078a7-625b-45fb-9827-9de6b42b7cf5
+		summarizeBy: none
+		sourceColumn: category_override
+
+		annotation SummarizationSetBy = Automatic
+
+	column Type
+		dataType: string
+		isHidden
+		lineageTag: ffc2bf85-64d0-44bb-9c2b-108914656c96
+		summarizeBy: none
+		sourceColumn: Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Cleaned Type'
+		dataType: string
+		displayFolder: Dimensions
+		lineageTag: 24dc0828-c81a-4b0b-9757-585e9579c37f
+		summarizeBy: none
+		sourceColumn: Cleaned Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Week Ending'
+		dataType: dateTime
+		formatString: M/D/YY
+		displayFolder: Dimensions
+		lineageTag: 22c2fade-da3d-42df-a51c-842e3db3ca44
+		summarizeBy: none
+		sourceColumn: Week Ending
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	/// Flags transactions as VA if description contains 'VA', otherwise Non-VA.
+	column va_flag = IF(SEARCH("VA", 'Transactions'[description], 1, 0) > 0, "VA", "Non-VA")
+		dataType: string
+		displayFolder: Dimensions
+		lineageTag: cbe095b5-41f6-401c-8ab0-993212854476
+		summarizeBy: none
+
+	/// Facility-level code joining to dim_entity. Maps bank entity+account combination to a single facility code: Widespread accounts disaggregate to TER/Lotus/GAW/GLR/CRC; Recover Now Georgia/Alabama become RNGA/RNAL; Longbranch and EDTC pass through.
+	column facility_code =
+			SWITCH(
+			    TRUE(),
+			    'Transactions'[entity] = "Longbranch", "Longbranch",
+			    'Transactions'[entity] = "EDTC", "EDTC",
+			    'Transactions'[entity] = "Recover Now Georgia", "RNGA",
+			    'Transactions'[entity] = "Recover Now Alabama", "RNAL",
+			    'Transactions'[entity] = "Widespread" && 'Transactions'[account] = "Tides Edge Recovery", "TER",
+			    'Transactions'[entity] = "Widespread" && 'Transactions'[account] = "LOTUS WELLNESS", "Lotus",
+			    'Transactions'[entity] = "Widespread" && 'Transactions'[account] = "GREEN ACRES", "GAW",
+			    'Transactions'[entity] = "Widespread" && 'Transactions'[account] = "new grace land", "GLR",
+			    'Transactions'[entity] = "Widespread" && 'Transactions'[account] = "chattanooga", "CRC",
+			    BLANK()
+			)
+		dataType: string
+		displayFolder: Dimensions
+		lineageTag: dfe8bf88-0d85-447f-8212-a0a7a30cd466
+		summarizeBy: none
+
+	/// Last day of the month the transaction occurred in. Used to align bank transactions to monthly grain for joining with budget and historical tables.
+	column month_ending = EOMONTH('Transactions'[date], 0)
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		displayFolder: Dimensions
+		lineageTag: 1a96541f-fa8a-472b-abc3-5f368363ec63
+		summarizeBy: none
+
+	partition Transactions = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(Web.Contents("https://netorg8522087-my.sharepoint.com/personal/data_recovernow_com/Documents/Bank%20Transactions/Bank%20Data.xlsx"), null, true),
+				    Table2_Table = Source{[Item="Table2",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(Table2_Table,{{"Source.Name", type text}, {"transaction_id", type text}, {"date", type date}, {"account", type text}, {"entity", type text}, {"institution", type text}, {"amount", type number}, {"direction", type text}, {"counterparty", type any}, {"description", type text}, {"status", type text}, {"category", type text}, {"category_override", type any}, {"Type", type text}, {"Cleaned Type", type text}, {"Week Ending", type date}}),
+				    #"Filtered Rows" = Table.SelectRows(#"Changed Type", each true)
+				in
+				    #"Filtered Rows"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

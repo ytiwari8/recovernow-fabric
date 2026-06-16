@@ -1,0 +1,75 @@
+table ctm_facility_mapping
+	lineageTag: 1332626e-0db1-468e-ba13-b5ed3bc98c0b
+	sourceLineageTag: [dbo].[ctm_facility_mapping]
+
+	column account_id
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: f722e97d-a0f9-4304-8c6d-0462113f1e1e
+		sourceLineageTag: account_id
+		summarizeBy: sum
+		sourceColumn: account_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column account_name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: e393063a-4d81-42a3-afa2-03618637973e
+		sourceLineageTag: account_name
+		summarizeBy: none
+		sourceColumn: account_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column source_name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 63a145e6-6282-41f1-a522-47c1dd964801
+		sourceLineageTag: source_name
+		summarizeBy: none
+		sourceColumn: source_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column num_tracking_numbers
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 2e89aa09-2838-4ecf-959d-66f883d4a9f6
+		sourceLineageTag: num_tracking_numbers
+		summarizeBy: sum
+		sourceColumn: num_tracking_numbers
+
+		annotation SummarizationSetBy = Automatic
+
+	column facility
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 7c9d0ce5-f928-4d38-aff4-ada755856413
+		sourceLineageTag: facility
+		summarizeBy: none
+		sourceColumn: facility
+
+		annotation SummarizationSetBy = Automatic
+
+	column notes
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 2f5d0c49-0dbe-4050-9b8b-dbf8efa6b341
+		sourceLineageTag: notes
+		summarizeBy: none
+		sourceColumn: notes
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ctm_facility_mapping = entity
+		mode: directLake
+		source
+			entityName: ctm_facility_mapping
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,19 @@
+table dim_bucket
+	lineageTag: f9a0b771-65c0-45c0-b04e-97780374447d
+
+	column bucket
+		lineageTag: aafcf784-e4a1-4379-91fd-13d162fc2333
+		isNameInferred
+		sourceColumn: [bucket]
+		sortByColumn: sort_order
+
+	column sort_order
+		isHidden
+		lineageTag: a280f514-e313-496c-b2db-94e1140cb3d0
+		isNameInferred
+		sourceColumn: [sort_order]
+
+	partition dim_bucket = calculated
+		mode: import
+		source = DATATABLE("bucket", STRING, "sort_order", INTEGER, {{"VA RTC", 1}, {"Commercial RTC", 2}, {"Private Pay RTC", 3}, {"VA NORA M&F", 4}, {"Commercial/VA IOP", 5}, {"EDTC", 6}, {"Other", 99}})
+

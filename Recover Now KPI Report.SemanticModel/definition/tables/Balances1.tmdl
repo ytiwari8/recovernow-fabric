@@ -1,0 +1,108 @@
+table Balances1
+	lineageTag: ec7d03fb-1687-4662-87f7-e587fde90451
+
+	column 'Source.Name'
+		dataType: string
+		lineageTag: e5795e85-ec93-4e39-875b-5bd17ff50f33
+		summarizeBy: none
+		sourceColumn: Source.Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column snapshot_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 05b6c168-d450-405b-b172-e86339a1b972
+		summarizeBy: none
+		sourceColumn: snapshot_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column week_ending
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 8dcecaac-a5eb-4503-bb94-d597434c3502
+		summarizeBy: none
+		sourceColumn: week_ending
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column account
+		dataType: string
+		lineageTag: 04ba8484-0cc9-4b12-bd39-242556e40f43
+		summarizeBy: none
+		sourceColumn: account
+
+		annotation SummarizationSetBy = Automatic
+
+	column entity
+		dataType: string
+		lineageTag: 7b39758b-735e-4157-9061-1788d8619eec
+		summarizeBy: none
+		sourceColumn: entity
+
+		annotation SummarizationSetBy = Automatic
+
+	column institution
+		dataType: string
+		lineageTag: 4ed2b062-1f41-44bd-95a1-035c3a505886
+		summarizeBy: none
+		sourceColumn: institution
+
+		annotation SummarizationSetBy = Automatic
+
+	column mask
+		dataType: int64
+		formatString: 0
+		lineageTag: aa93017c-2ec0-4330-b11b-cd8ce25bf172
+		summarizeBy: sum
+		sourceColumn: mask
+
+		annotation SummarizationSetBy = Automatic
+
+	column current_balance
+		dataType: double
+		lineageTag: 62b0f262-f7cc-45c4-a8b6-f77d842fd162
+		summarizeBy: sum
+		sourceColumn: current_balance
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column available_balance
+		dataType: double
+		lineageTag: 9f8a348f-8508-4deb-a700-1bb61f9f1ae2
+		summarizeBy: sum
+		sourceColumn: available_balance
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column currency
+		dataType: string
+		lineageTag: 2497f961-f499-4c99-a014-a6a169528220
+		summarizeBy: none
+		sourceColumn: currency
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Balances1 = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(Web.Contents("https://netorg8522087-my.sharepoint.com/personal/data_recovernow_com/Documents/Bank%20Transactions/Bank%20Data.xlsx"), null, true),
+				    Balances_Table = Source{[Item="Balances",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(Balances_Table,{{"Source.Name", type text}, {"snapshot_date", type date}, {"week_ending", type date}, {"account", type text}, {"entity", type text}, {"institution", type text}, {"mask", Int64.Type}, {"current_balance", type number}, {"available_balance", type number}, {"currency", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

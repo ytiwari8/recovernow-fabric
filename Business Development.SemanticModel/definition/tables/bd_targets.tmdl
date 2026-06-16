@@ -1,0 +1,61 @@
+table bd_targets
+	lineageTag: 4ca6aa5d-afd9-4633-8511-eff065f8ec18
+	sourceLineageTag: [dbo].[bd_targets]
+
+	column era
+		dataType: string
+		lineageTag: 4306cd99-0bd8-4450-ae7d-a4a74db1e569
+		sourceLineageTag: era
+		summarizeBy: none
+		sourceColumn: era
+
+		annotation SummarizationSetBy = Automatic
+
+	column bucket
+		dataType: string
+		lineageTag: 9646ae6e-5ddb-446a-a6e0-0bcc9933142a
+		sourceLineageTag: bucket
+		summarizeBy: none
+		sourceColumn: bucket
+
+		annotation SummarizationSetBy = Automatic
+
+	column admit_target
+		dataType: int64
+		formatString: 0
+		lineageTag: 760ce0e2-74e9-4876-acae-1990ce1823cd
+		sourceLineageTag: admit_target
+		summarizeBy: sum
+		sourceColumn: admit_target
+
+		annotation SummarizationSetBy = Automatic
+
+	column point_unit
+		dataType: double
+		lineageTag: 5c682e69-d587-4d84-8d11-72a6b030f87d
+		sourceLineageTag: point_unit
+		summarizeBy: sum
+		sourceColumn: point_unit
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column point_target
+		dataType: double
+		lineageTag: b195e810-2d02-4e4a-b3c5-6c3d3133bc01
+		sourceLineageTag: point_target
+		summarizeBy: sum
+		sourceColumn: point_target
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition bd_targets = entity
+		mode: directLake
+		source
+			entityName: bd_targets
+			schemaName: dbo
+			expressionSource: 'DirectLake - funnel_lakehouse'
+

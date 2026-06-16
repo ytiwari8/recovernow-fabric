@@ -1,0 +1,53 @@
+table budget
+	lineageTag: 9b170387-9d2c-4b0d-a22e-3a6a879c4020
+
+	column month
+		dataType: string
+		lineageTag: ca6f5883-d448-4d0e-968c-1846989b9ec5
+		summarizeBy: none
+		sourceColumn: month
+
+		annotation SummarizationSetBy = Automatic
+
+	column budget_category
+		dataType: string
+		lineageTag: 03864908-5091-40d5-bcda-97de480ca345
+		summarizeBy: none
+		sourceColumn: budget_category
+
+		annotation SummarizationSetBy = Automatic
+
+	column budget_adc
+		dataType: double
+		lineageTag: 6c25b98d-ae4f-47ee-8d4e-32bf51bd9835
+		summarizeBy: sum
+		sourceColumn: budget_adc
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column budget_adc_total
+		dataType: double
+		lineageTag: d70987c9-44d6-47bc-865f-b9e8d84f9d53
+		summarizeBy: sum
+		sourceColumn: budget_adc_total
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition budget = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("ljnbfyiwxwkuji25h72yz4rawu-z7vxf66mtbredbojluqefofxsu.datawarehouse.fabric.microsoft.com"),
+				    kipu_lakehouse = Source{[Name="kipu_lakehouse"]}[Data],
+				    dbo_budget = kipu_lakehouse{[Schema="dbo",Item="budget"]}[Data]
+				in
+				    dbo_budget
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

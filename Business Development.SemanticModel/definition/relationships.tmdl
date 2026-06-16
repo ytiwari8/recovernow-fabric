@@ -1,0 +1,16 @@
+relationship bd_admit_source_admission_date_dim_date_Date
+	fromColumn: bd_admit_source.admission_date
+	toColumn: dim_date.Date
+
+relationship bd_admit_source_bucket_dim_bucket_bucket
+	fromColumn: bd_admit_source.bucket
+	toColumn: dim_bucket.bucket
+
+relationship bd_targets_bucket_dim_bucket_bucket
+	fromColumn: bd_targets.bucket
+	toColumn: dim_bucket.bucket
+
+relationship census_clean_census_date_dim_date_Date
+	fromColumn: census_clean.census_date
+	toColumn: dim_date.Date
+

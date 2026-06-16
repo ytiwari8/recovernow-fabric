@@ -1,0 +1,450 @@
+table census_clean
+	lineageTag: ec187007-c96c-4d62-8385-2f4498d05efa
+	sourceLineageTag: [dbo].[census_clean]
+
+	column discharge_type
+		dataType: string
+		lineageTag: 3e51da85-b37f-46c7-8bc8-1e329c370d5f
+		sourceLineageTag: discharge_type
+		summarizeBy: none
+		sourceColumn: discharge_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column insurance_company
+		dataType: string
+		lineageTag: 515aae77-b4d8-4b8c-9589-fc1620ba9cfb
+		sourceLineageTag: insurance_company
+		summarizeBy: none
+		sourceColumn: insurance_company
+
+		annotation SummarizationSetBy = Automatic
+
+	column census_date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: e4c8f2be-e0a8-45aa-af2f-4130232de0cc
+		sourceLineageTag: census_date
+		summarizeBy: none
+		sourceColumn: census_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column extraction_timestamp
+		dataType: string
+		lineageTag: 9f63395a-33a5-4644-ab00-db963f4f4835
+		sourceLineageTag: extraction_timestamp
+		summarizeBy: none
+		sourceColumn: extraction_timestamp
+
+		annotation SummarizationSetBy = Automatic
+
+	column facility
+		dataType: string
+		lineageTag: 9f57fa1d-e25d-46c3-b014-19ba3aebf841
+		sourceLineageTag: facility
+		summarizeBy: none
+		sourceColumn: facility
+
+		annotation SummarizationSetBy = Automatic
+
+	column casefile_id
+		dataType: string
+		lineageTag: 16f6a537-7f54-42c3-9cb6-c3fddf47bc4b
+		sourceLineageTag: casefile_id
+		summarizeBy: none
+		sourceColumn: casefile_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column mr_number
+		dataType: string
+		lineageTag: 55b064fe-f5d2-49db-80f4-12db27a38b98
+		sourceLineageTag: mr_number
+		summarizeBy: none
+		sourceColumn: mr_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column first_name
+		dataType: string
+		lineageTag: 611dfad0-9a01-49fe-b06c-7e9b94246bc4
+		sourceLineageTag: first_name
+		summarizeBy: none
+		sourceColumn: first_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_name
+		dataType: string
+		lineageTag: bba58e78-c803-4449-a2cd-f37716c235e9
+		sourceLineageTag: last_name
+		summarizeBy: none
+		sourceColumn: last_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column dob
+		dataType: string
+		lineageTag: c9ccb043-ec2c-4203-842c-5ca53bc9117b
+		sourceLineageTag: dob
+		summarizeBy: none
+		sourceColumn: dob
+
+		annotation SummarizationSetBy = Automatic
+
+	column gender
+		dataType: string
+		lineageTag: b0cd7e55-5578-4908-9922-0de7f87d34f6
+		sourceLineageTag: gender
+		summarizeBy: none
+		sourceColumn: gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column race
+		dataType: string
+		lineageTag: a6ca9f60-c008-49e3-a23f-82fecdf1534d
+		sourceLineageTag: race
+		summarizeBy: none
+		sourceColumn: race
+
+		annotation SummarizationSetBy = Automatic
+
+	column ethnicity
+		dataType: string
+		lineageTag: 26fe3e5a-e1b4-4a42-b3f6-b1629b778181
+		sourceLineageTag: ethnicity
+		summarizeBy: none
+		sourceColumn: ethnicity
+
+		annotation SummarizationSetBy = Automatic
+
+	column admission_date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 120f6f85-16b4-46ca-a1df-82fc34668bd3
+		sourceLineageTag: admission_date
+		summarizeBy: none
+		sourceColumn: admission_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column discharge_date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 56293096-e025-4f40-bd72-a7ca87ba647f
+		sourceLineageTag: discharge_date
+		summarizeBy: none
+		sourceColumn: discharge_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column discharge_type_code
+		dataType: string
+		lineageTag: c8233330-9fa7-4e8f-bd7a-6d7487ef9c52
+		sourceLineageTag: discharge_type_code
+		summarizeBy: none
+		sourceColumn: discharge_type_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column discharge_or_transition_name
+		dataType: string
+		lineageTag: bc42d7ae-77db-4b12-8927-10b9496118e0
+		sourceLineageTag: discharge_or_transition_name
+		summarizeBy: none
+		sourceColumn: discharge_or_transition_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column anticipated_discharge_date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 59511477-c736-4d91-98aa-a30b03899032
+		sourceLineageTag: anticipated_discharge_date
+		summarizeBy: none
+		sourceColumn: anticipated_discharge_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column level_of_care
+		dataType: string
+		lineageTag: a146c5d7-62d5-435b-a583-617fb64add17
+		sourceLineageTag: level_of_care
+		summarizeBy: none
+		sourceColumn: level_of_care
+
+		annotation SummarizationSetBy = Automatic
+
+	column next_level_of_care
+		dataType: string
+		lineageTag: ae4ab478-d4bc-491d-b0f3-0355dea99795
+		sourceLineageTag: next_level_of_care
+		summarizeBy: none
+		sourceColumn: next_level_of_care
+
+		annotation SummarizationSetBy = Automatic
+
+	column program
+		dataType: string
+		lineageTag: 949ca4e9-6978-4d1b-99cb-985b5ea0a6e8
+		sourceLineageTag: program
+		summarizeBy: none
+		sourceColumn: program
+
+		annotation SummarizationSetBy = Automatic
+
+	column location_id
+		dataType: int64
+		formatString: 0
+		lineageTag: c6c1b18c-aeee-4844-a011-77fa6551ecd2
+		sourceLineageTag: location_id
+		summarizeBy: sum
+		sourceColumn: location_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column location_name
+		dataType: string
+		lineageTag: a530f70e-b98e-4579-a25e-78a15e26b44f
+		sourceLineageTag: location_name
+		summarizeBy: none
+		sourceColumn: location_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column building_name
+		dataType: string
+		lineageTag: 91a024bb-6179-4b61-8b84-49a91f8fb9f7
+		sourceLineageTag: building_name
+		summarizeBy: none
+		sourceColumn: building_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column room_name
+		dataType: string
+		lineageTag: 54c286e6-919c-434b-8f64-7eb5752d2ebb
+		sourceLineageTag: room_name
+		summarizeBy: none
+		sourceColumn: room_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column bed_name
+		dataType: string
+		lineageTag: 47ac124c-1772-4211-884b-346a0fce28df
+		sourceLineageTag: bed_name
+		summarizeBy: none
+		sourceColumn: bed_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column payment_method
+		dataType: string
+		lineageTag: 883abf81-4ccf-4498-8d1a-694b02f70770
+		sourceLineageTag: payment_method
+		summarizeBy: none
+		sourceColumn: payment_method
+
+		annotation SummarizationSetBy = Automatic
+
+	column payment_method_category
+		dataType: string
+		lineageTag: dfe2d9fe-c1c0-470f-896b-eb97359d492b
+		sourceLineageTag: payment_method_category
+		summarizeBy: none
+		sourceColumn: payment_method_category
+
+		annotation SummarizationSetBy = Automatic
+
+	column referrer_name
+		dataType: string
+		lineageTag: b34ba4fa-98f6-4ea3-a78c-89ee87da6567
+		sourceLineageTag: referrer_name
+		summarizeBy: none
+		sourceColumn: referrer_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column first_contact_name
+		dataType: string
+		lineageTag: a7dfe8b2-f9a6-480e-97fa-9058f8555bdb
+		sourceLineageTag: first_contact_name
+		summarizeBy: none
+		sourceColumn: first_contact_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column pre_admission_status
+		dataType: string
+		lineageTag: 758b19d4-17d0-4633-932e-3387873a81f9
+		sourceLineageTag: pre_admission_status
+		summarizeBy: none
+		sourceColumn: pre_admission_status
+
+		annotation SummarizationSetBy = Automatic
+
+	column address_city
+		dataType: string
+		lineageTag: 66679ce9-569b-483d-8a3e-b22ba65e9e50
+		sourceLineageTag: address_city
+		summarizeBy: none
+		sourceColumn: address_city
+
+		annotation SummarizationSetBy = Automatic
+
+	column state
+		dataType: string
+		lineageTag: 934d34f0-0e12-43a0-a1be-7f27b66f86eb
+		sourceLineageTag: state
+		summarizeBy: none
+		sourceColumn: state
+
+		annotation SummarizationSetBy = Automatic
+
+	column address_zip
+		dataType: string
+		lineageTag: 9880f160-e72d-444c-a676-8b7517423f15
+		sourceLineageTag: address_zip
+		summarizeBy: none
+		sourceColumn: address_zip
+
+		annotation SummarizationSetBy = Automatic
+
+	column preferred_language
+		dataType: string
+		lineageTag: b8ef3f7d-7b16-4ca8-85cb-59eaa7e7e5fa
+		sourceLineageTag: preferred_language
+		summarizeBy: none
+		sourceColumn: preferred_language
+
+		annotation SummarizationSetBy = Automatic
+
+	column diagnosis_codes
+		dataType: string
+		lineageTag: 6e70df63-40ee-4e90-a4bd-5cb426cef94e
+		sourceLineageTag: diagnosis_codes
+		summarizeBy: none
+		sourceColumn: diagnosis_codes
+
+		annotation SummarizationSetBy = Automatic
+
+	column date_of_death
+		dataType: string
+		lineageTag: 43965cb9-e283-49d2-8d69-40ac7c97a088
+		sourceLineageTag: date_of_death
+		summarizeBy: none
+		sourceColumn: date_of_death
+
+		annotation SummarizationSetBy = Automatic
+
+	column cause_of_death
+		dataType: string
+		lineageTag: be01639c-a08b-45b1-bd1b-9e9aa6ba6831
+		sourceLineageTag: cause_of_death
+		summarizeBy: none
+		sourceColumn: cause_of_death
+
+		annotation SummarizationSetBy = Automatic
+
+	column created_at
+		dataType: string
+		lineageTag: 803c92b0-0a41-40a6-9d66-5d183e4223ad
+		sourceLineageTag: created_at
+		summarizeBy: none
+		sourceColumn: created_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_updated_at
+		dataType: string
+		lineageTag: ad3b3b0b-f8cd-45a5-aef6-a150949819db
+		sourceLineageTag: last_updated_at
+		summarizeBy: none
+		sourceColumn: last_updated_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column program_group
+		dataType: string
+		lineageTag: d59e1a35-af5b-432e-a055-2619b79da7ad
+		sourceLineageTag: program_group
+		summarizeBy: none
+		sourceColumn: program_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column payor_group
+		dataType: string
+		lineageTag: 8f8ed899-0c9f-473e-b1fb-67af4546fa74
+		sourceLineageTag: payor_group
+		summarizeBy: none
+		sourceColumn: payor_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column discharge_group
+		dataType: string
+		lineageTag: 1012b921-c31c-4e90-a341-51bce8ce3c37
+		sourceLineageTag: discharge_group
+		summarizeBy: none
+		sourceColumn: discharge_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column day_of_week
+		dataType: string
+		lineageTag: 037e5e0e-568b-45a6-8291-75b53ef668ac
+		sourceLineageTag: day_of_week
+		summarizeBy: none
+		sourceColumn: day_of_week
+
+		annotation SummarizationSetBy = Automatic
+
+	column month
+		dataType: string
+		lineageTag: 9f522440-b749-4e9b-a303-dc41a750e282
+		sourceLineageTag: month
+		summarizeBy: none
+		sourceColumn: month
+
+		annotation SummarizationSetBy = Automatic
+
+	column week_ending
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 51c41cc7-86ff-4465-9926-65ca24caa6b0
+		sourceLineageTag: week_ending
+		summarizeBy: none
+		sourceColumn: week_ending
+
+		annotation SummarizationSetBy = Automatic
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: e3b710d4-a435-4475-9aad-b4a07fe90773
+		sourceLineageTag: year
+		summarizeBy: sum
+		sourceColumn: year
+
+		annotation SummarizationSetBy = Automatic
+
+	column budget_category
+		dataType: string
+		lineageTag: bbfe5657-5353-430a-a89c-42bc7b374a9b
+		sourceLineageTag: budget_category
+		summarizeBy: none
+		sourceColumn: budget_category
+
+		annotation SummarizationSetBy = Automatic
+
+	partition census_clean = entity
+		mode: directLake
+		source
+			entityName: census_clean
+			schemaName: dbo
+			expressionSource: 'DirectLake - funnel_lakehouse'
+

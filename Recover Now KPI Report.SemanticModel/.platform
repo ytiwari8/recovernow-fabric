@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Recover Now KPI Report"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "28f23f43-720e-a572-48c6-a3c2e0a57674"
+  }
+}

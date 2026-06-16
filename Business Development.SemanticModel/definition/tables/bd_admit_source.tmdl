@@ -1,0 +1,178 @@
+table bd_admit_source
+	lineageTag: 5c1377fd-f010-486f-82b7-1dc48a03860f
+	sourceLineageTag: [dbo].[bd_admit_source]
+
+	column mr_number
+		dataType: string
+		lineageTag: 7094876e-3d3e-4291-826f-99bf7ab045a4
+		sourceLineageTag: mr_number
+		summarizeBy: none
+		sourceColumn: mr_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column patient_name
+		dataType: string
+		lineageTag: d3e90974-dc70-41e0-bf2c-6a7123d24a80
+		sourceLineageTag: patient_name
+		summarizeBy: none
+		sourceColumn: patient_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column admission_date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 9dd6927f-2f01-4cc8-a8b6-376915b3d255
+		sourceLineageTag: admission_date
+		summarizeBy: none
+		sourceColumn: admission_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column facility
+		dataType: string
+		lineageTag: 19b48f12-696f-4f2c-a8e1-bb0c891687eb
+		sourceLineageTag: facility
+		summarizeBy: none
+		sourceColumn: facility
+
+		annotation SummarizationSetBy = Automatic
+
+	column location
+		dataType: string
+		lineageTag: dce98a4b-81c4-4fde-9c98-a81f29ece398
+		sourceLineageTag: location
+		summarizeBy: none
+		sourceColumn: location
+
+		annotation SummarizationSetBy = Automatic
+
+	column program
+		dataType: string
+		lineageTag: d02c0888-8c83-4f9f-8f4f-28e7046ade36
+		sourceLineageTag: program
+		summarizeBy: none
+		sourceColumn: program
+
+		annotation SummarizationSetBy = Automatic
+
+	column program_bucket
+		dataType: string
+		lineageTag: 92885b4f-5c40-4490-9cce-96fc31699237
+		sourceLineageTag: program_bucket
+		summarizeBy: none
+		sourceColumn: program_bucket
+
+		annotation SummarizationSetBy = Automatic
+
+	column insurance
+		dataType: string
+		lineageTag: 0d56b06b-5d40-40de-bff1-e63b61824e57
+		sourceLineageTag: insurance
+		summarizeBy: none
+		sourceColumn: insurance
+
+		annotation SummarizationSetBy = Automatic
+
+	column payor_category
+		dataType: string
+		lineageTag: 42c1a5ce-e6fd-4d3e-b076-19f17680af13
+		sourceLineageTag: payor_category
+		summarizeBy: none
+		sourceColumn: payor_category
+
+		annotation SummarizationSetBy = Automatic
+
+	column points
+		dataType: double
+		lineageTag: 73e5a766-2c68-403e-b5f8-9cacea0afc49
+		sourceLineageTag: points
+		summarizeBy: sum
+		sourceColumn: points
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column bucket
+		dataType: string
+		lineageTag: 8e95e3fd-3b9e-4932-8b20-c58c95a2d25a
+		sourceLineageTag: bucket
+		summarizeBy: none
+		sourceColumn: bucket
+
+		annotation SummarizationSetBy = Automatic
+
+	column referral_source
+		dataType: string
+		lineageTag: 7109a7bb-7739-47df-b412-a6bc05d19613
+		sourceLineageTag: referral_source
+		summarizeBy: none
+		sourceColumn: referral_source
+
+		annotation SummarizationSetBy = Automatic
+
+	column referring_company
+		dataType: string
+		lineageTag: b3fc5269-2985-468c-aba9-87c478bf3b28
+		sourceLineageTag: referring_company
+		summarizeBy: none
+		sourceColumn: referring_company
+
+		annotation SummarizationSetBy = Automatic
+
+	column bd_contact
+		dataType: string
+		lineageTag: 7dfd094d-665a-4788-8ac1-70016180198f
+		sourceLineageTag: bd_contact
+		summarizeBy: none
+		sourceColumn: bd_contact
+
+		annotation SummarizationSetBy = Automatic
+
+	column bd_contact_2
+		dataType: string
+		lineageTag: 12f974b5-7522-4624-9bf7-dfea617e49d8
+		sourceLineageTag: bd_contact_2
+		summarizeBy: none
+		sourceColumn: bd_contact_2
+
+		annotation SummarizationSetBy = Automatic
+
+	column period_era
+		dataType: string
+		lineageTag: 99843c86-8bd4-46e5-83d6-898025935bc5
+		sourceLineageTag: period_era
+		summarizeBy: none
+		sourceColumn: period_era
+
+		annotation SummarizationSetBy = Automatic
+
+	column build_run_ts
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: bf8e14d6-e8ad-4779-abbb-20e434c25701
+		sourceLineageTag: build_run_ts
+		summarizeBy: none
+		sourceColumn: build_run_ts
+
+		annotation SummarizationSetBy = Automatic
+
+	column week_ending
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 05470ec9-6c07-4a1d-adf6-2d09cff973b6
+		sourceLineageTag: week_ending
+		summarizeBy: none
+		sourceColumn: week_ending
+
+		annotation SummarizationSetBy = Automatic
+
+	partition bd_admit_source = entity
+		mode: directLake
+		source
+			entityName: bd_admit_source
+			schemaName: dbo
+			expressionSource: 'DirectLake - funnel_lakehouse'
+

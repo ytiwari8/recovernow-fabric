@@ -1,0 +1,133 @@
+table ctm_daily_agent_stats
+	lineageTag: d35283de-160f-4d6e-bdaf-67cb407f5e22
+	sourceLineageTag: [dbo].[ctm_daily_agent_stats]
+
+	column call_date
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: date
+		lineageTag: 3e38d431-e855-4525-b0e0-f8cf9a2920af
+		sourceLineageTag: call_date
+		summarizeBy: none
+		sourceColumn: call_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column agent_id
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: aa5d24d8-5125-4fb2-98d3-48d1d128becc
+		sourceLineageTag: agent_id
+		summarizeBy: none
+		sourceColumn: agent_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column agent_name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: a8285c04-22bd-4660-ab08-c3c39edcc62c
+		sourceLineageTag: agent_name
+		summarizeBy: none
+		sourceColumn: agent_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column agent_email
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 65aead66-5e32-4e8b-92eb-7ddc150c8b97
+		sourceLineageTag: agent_email
+		summarizeBy: none
+		sourceColumn: agent_email
+
+		annotation SummarizationSetBy = Automatic
+
+	column calls_answered
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 881c7762-e9ff-4f01-b732-49e7b22b9e72
+		sourceLineageTag: calls_answered
+		summarizeBy: sum
+		sourceColumn: calls_answered
+
+		annotation SummarizationSetBy = Automatic
+
+	column calls_missed_assigned
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 9565e48f-6cb2-48a5-aa92-01ad8f6b7753
+		sourceLineageTag: calls_missed_assigned
+		summarizeBy: sum
+		sourceColumn: calls_missed_assigned
+
+		annotation SummarizationSetBy = Automatic
+
+	column callbacks_made
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 59e5d2a2-9bb8-44f6-9284-e6f11badfab5
+		sourceLineageTag: callbacks_made
+		summarizeBy: sum
+		sourceColumn: callbacks_made
+
+		annotation SummarizationSetBy = Automatic
+
+	column talk_time_seconds
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 0fd4f029-df7f-47fd-a747-c81eb5eafa13
+		sourceLineageTag: talk_time_seconds
+		summarizeBy: sum
+		sourceColumn: talk_time_seconds
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_voice_calls
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 50505ae8-e460-463a-9ff3-c0093ec4bdd4
+		sourceLineageTag: total_voice_calls
+		summarizeBy: sum
+		sourceColumn: total_voice_calls
+
+		annotation SummarizationSetBy = Automatic
+
+	column avg_talk_time_seconds
+		dataType: double
+		sourceProviderType: float
+		lineageTag: 932111a4-ebe3-4bfa-bfdb-50727edb5bb2
+		sourceLineageTag: avg_talk_time_seconds
+		summarizeBy: sum
+		sourceColumn: avg_talk_time_seconds
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column answer_rate_pct
+		dataType: double
+		sourceProviderType: float
+		lineageTag: 55b952ad-397f-4b72-80ce-3247f517188f
+		sourceLineageTag: answer_rate_pct
+		summarizeBy: sum
+		sourceColumn: answer_rate_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition ctm_daily_agent_stats = entity
+		mode: directLake
+		source
+			entityName: ctm_daily_agent_stats
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table
+

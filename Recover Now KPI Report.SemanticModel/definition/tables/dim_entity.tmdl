@@ -1,0 +1,52 @@
+/// Master entity dimension. fiscal_year_start_month controls YTD windows: 1=calendar, 4=NTM Apr-Mar for Widespread facilities. parent_entity groups facilities under Recover Now or Widespread.
+table dim_entity
+	lineageTag: 96280780-7e20-4c87-86cf-01f2bbc26e5c
+
+	column facility_code
+		lineageTag: c810d05f-691c-47f5-a508-3bb9dadb3111
+		isNameInferred
+		sourceColumn: [facility_code]
+
+	column display_name
+		lineageTag: fae91c88-c258-4af8-898d-c52cf48b6043
+		isNameInferred
+		sourceColumn: [display_name]
+
+	column parent_entity
+		lineageTag: 9648243f-209f-4007-83b3-37c589cce3da
+		isNameInferred
+		sourceColumn: [parent_entity]
+
+	column fiscal_year_start_month
+		lineageTag: b27c875c-9019-4b79-b8e3-805c36e68537
+		isNameInferred
+		sourceColumn: [fiscal_year_start_month]
+
+	column sort_order
+		lineageTag: 2efdbaf9-4863-4f98-89be-ba3cf01c37d5
+		isNameInferred
+		sourceColumn: [sort_order]
+
+	partition dim_entity = calculated
+		mode: import
+		source =
+				DATATABLE(
+				    "facility_code", STRING,
+				    "display_name", STRING,
+				    "parent_entity", STRING,
+				    "fiscal_year_start_month", INTEGER,
+				    "sort_order", INTEGER,
+				    {
+				        {"Longbranch", "Longbranch", "Recover Now", 1, 1},
+				        {"EDTC", "EDTC", "Recover Now", 1, 2},
+				        {"RNGA", "Recover Now Georgia", "Recover Now", 1, 3},
+				        {"RNAL", "Recover Now Alabama", "Recover Now", 1, 4},
+				        {"RNH", "Recover Now HQ", "Recover Now", 1, 5},
+				        {"TER", "TER", "Widespread", 4, 6},
+				        {"Lotus", "Lotus", "Widespread", 4, 7},
+				        {"GAW", "GAW", "Widespread", 4, 8},
+				        {"GLR", "GLR", "Widespread", 4, 9},
+				        {"CRC", "CRC", "Widespread", 4, 10}
+				    }
+				)
+

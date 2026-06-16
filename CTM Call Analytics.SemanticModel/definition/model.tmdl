@@ -1,0 +1,22 @@
+model Model
+	culture: en-US
+	collation: Latin1_General_100_BIN2_UTF8
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["DatabaseQuery"]
+
+annotation PBI_ProTooling = ["MCP-PBIModeling"]
+
+ref table ctm_unmapped_log
+ref table ctm_calls_raw
+ref table ctm_daily_agent_stats
+ref table ctm_daily_facility_stats
+ref table ctm_facility_mapping
+ref table _Measures
+

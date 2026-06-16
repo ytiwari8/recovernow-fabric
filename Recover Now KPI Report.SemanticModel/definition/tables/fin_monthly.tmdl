@@ -1,0 +1,174 @@
+/// Unified actuals fact table at month/entity/type grain. Combines bank Transactions (2022+) for all entities with fin_historical (2025 Widespread facilities). Bank-sourced expense amounts are sign-flipped to positive to match historical convention. Transfers excluded. Source column tags origin.
+table fin_monthly
+	lineageTag: e5895a16-70db-40f2-b299-06c5b3c608eb
+
+	/// Total revenue for current filter context, from unified actuals (bank actuals for 2026+, historical for 2025 Widespread).
+	measure Revenue = CALCULATE(SUM('fin_monthly'[amount]), 'fin_monthly'[type] = "Revenue")
+		formatString: $#,##0;($#,##0)
+		displayFolder: 01 Actuals
+		lineageTag: 3e9872f1-4d05-4923-a0a6-6671cebb2622
+
+	/// Total Salaries and Wages for current filter context. Sign-normalized to positive.
+	measure S&W = CALCULATE(SUM('fin_monthly'[amount]), 'fin_monthly'[type] = "Salaries and Wages")
+		formatString: $#,##0;($#,##0)
+		displayFolder: 01 Actuals
+		lineageTag: fac985ea-b658-4110-bbaa-860965d22bd0
+
+	/// Total Other Expenses (non-S&W operating expenses) for current filter context.
+	measure 'Other Expenses' = CALCULATE(SUM('fin_monthly'[amount]), 'fin_monthly'[type] = "Other Expenses")
+		formatString: $#,##0;($#,##0)
+		displayFolder: 01 Actuals
+		lineageTag: 9938b94c-924a-4472-ac42-053e5051e1b7
+
+	/// EBITDA = Revenue - S&W - Other Expenses. Simple definition, no D&A or management fee adjustments.
+	measure EBITDA = [Revenue] - [S&W] - [Other Expenses]
+		formatString: $#,##0;($#,##0)
+		displayFolder: 01 Actuals
+		lineageTag: de47d4d8-a167-41e3-8a73-482f88f14f74
+
+	/// Revenue from the same calendar month(s) one year earlier as defined by current filter context. Returns blank when no prior-year data exists.
+	measure 'Revenue PY' = VAR PYMonths = SELECTCOLUMNS(VALUES('fin_monthly'[month_ending]), "py_month", EDATE('fin_monthly'[month_ending], -12)) RETURN CALCULATE([Revenue], ALL('fin_monthly'[month_ending], 'fin_monthly'[fiscal_year], 'fin_monthly'[fiscal_period]), TREATAS(PYMonths, 'fin_monthly'[month_ending]))
+		formatString: $#,##0;($#,##0)
+		displayFolder: 03 Prior Year
+		lineageTag: 6996dced-4809-4945-9019-658dd94323c7
+
+	/// S&W from one year earlier.
+	measure 'S&W PY' = VAR PYMonths = SELECTCOLUMNS(VALUES('fin_monthly'[month_ending]), "py_month", EDATE('fin_monthly'[month_ending], -12)) RETURN CALCULATE([S&W], ALL('fin_monthly'[month_ending], 'fin_monthly'[fiscal_year], 'fin_monthly'[fiscal_period]), TREATAS(PYMonths, 'fin_monthly'[month_ending]))
+		formatString: $#,##0;($#,##0)
+		displayFolder: 03 Prior Year
+		lineageTag: 8182e813-fa8f-43ab-8dcb-c47bd460d0e0
+
+	/// Other Expenses from one year earlier.
+	measure 'Other Expenses PY' = VAR PYMonths = SELECTCOLUMNS(VALUES('fin_monthly'[month_ending]), "py_month", EDATE('fin_monthly'[month_ending], -12)) RETURN CALCULATE([Other Expenses], ALL('fin_monthly'[month_ending], 'fin_monthly'[fiscal_year], 'fin_monthly'[fiscal_period]), TREATAS(PYMonths, 'fin_monthly'[month_ending]))
+		formatString: $#,##0;($#,##0)
+		displayFolder: 03 Prior Year
+		lineageTag: a7d93c9b-3097-43ee-a925-88bb1f163c63
+
+	/// EBITDA one year ago. Derived from PY components.
+	measure 'EBITDA PY' = [Revenue PY] - [S&W PY] - [Other Expenses PY]
+		formatString: $#,##0;($#,##0)
+		displayFolder: 03 Prior Year
+		lineageTag: 477a9020-8618-43d8-a069-e42d4fc96a13
+
+	/// Revenue year-over-year growth. Uses ABS in denominator to handle sign edge cases.
+	measure 'Revenue YoY %' = DIVIDE([Revenue] - [Revenue PY], ABS([Revenue PY]))
+		formatString: 0.0%;(0.0%);--
+		displayFolder: 04 YoY
+		lineageTag: 46953d12-1607-498d-be49-a7fbcf5170c8
+
+	/// EBITDA year-over-year growth.
+	measure 'EBITDA YoY %' = DIVIDE([EBITDA] - [EBITDA PY], ABS([EBITDA PY]))
+		formatString: 0.0%;(0.0%);--
+		displayFolder: 04 YoY
+		lineageTag: f63a74d8-9c60-441a-9ef2-26bdb31a0db0
+
+	/// Fiscal year-to-date revenue, computed per-entity using each entity's own fiscal year. Anchored to TODAY(). Widespread fiscal year is Apr-Mar; all others are calendar.
+	measure 'Revenue YTD' = SUMX('dim_entity', VAR fy_start = 'dim_entity'[fiscal_year_start_month] VAR today_date = TODAY() VAR todayFY = YEAR(EDATE(today_date, -(fy_start - 1))) VAR todayFP = MONTH(EDATE(today_date, -(fy_start - 1))) VAR entCode = 'dim_entity'[facility_code] RETURN CALCULATE([Revenue], FILTER(ALL('fin_monthly'), 'fin_monthly'[entity] = entCode && 'fin_monthly'[fiscal_year] = todayFY && 'fin_monthly'[fiscal_period] <= todayFP)))
+		formatString: $#,##0;($#,##0)
+		displayFolder: 05 Fiscal YTD Actuals
+		lineageTag: 6ffb312a-d776-4e34-b05f-a50d765a612f
+
+	/// Fiscal YTD S&W.
+	measure 'S&W YTD' = SUMX('dim_entity', VAR fy_start = 'dim_entity'[fiscal_year_start_month] VAR today_date = TODAY() VAR todayFY = YEAR(EDATE(today_date, -(fy_start - 1))) VAR todayFP = MONTH(EDATE(today_date, -(fy_start - 1))) VAR entCode = 'dim_entity'[facility_code] RETURN CALCULATE([S&W], FILTER(ALL('fin_monthly'), 'fin_monthly'[entity] = entCode && 'fin_monthly'[fiscal_year] = todayFY && 'fin_monthly'[fiscal_period] <= todayFP)))
+		formatString: $#,##0;($#,##0)
+		displayFolder: 05 Fiscal YTD Actuals
+		lineageTag: 4db34276-63f4-4232-ae20-6feeca47d69f
+
+	/// Fiscal YTD Other Expenses.
+	measure 'Other Expenses YTD' = SUMX('dim_entity', VAR fy_start = 'dim_entity'[fiscal_year_start_month] VAR today_date = TODAY() VAR todayFY = YEAR(EDATE(today_date, -(fy_start - 1))) VAR todayFP = MONTH(EDATE(today_date, -(fy_start - 1))) VAR entCode = 'dim_entity'[facility_code] RETURN CALCULATE([Other Expenses], FILTER(ALL('fin_monthly'), 'fin_monthly'[entity] = entCode && 'fin_monthly'[fiscal_year] = todayFY && 'fin_monthly'[fiscal_period] <= todayFP)))
+		formatString: $#,##0;($#,##0)
+		displayFolder: 05 Fiscal YTD Actuals
+		lineageTag: 5422da2f-54ff-40cd-ba00-9a0fb7ced751
+
+	/// Fiscal YTD EBITDA, derived from YTD components.
+	measure 'EBITDA YTD' = [Revenue YTD] - [S&W YTD] - [Other Expenses YTD]
+		formatString: $#,##0;($#,##0)
+		displayFolder: 05 Fiscal YTD Actuals
+		lineageTag: 090e7647-2bff-46c1-abac-aa3840382009
+
+	/// Actual revenue YTD relative to budget YTD. Positive = beating budget.
+	measure 'Revenue vs Budget YTD %' = DIVIDE([Revenue YTD] - [Revenue Budget YTD], ABS([Revenue Budget YTD]))
+		formatString: 0.0%;(0.0%);--
+		displayFolder: 07 Variance YTD
+		lineageTag: 806a7521-9e5b-4da4-bfc1-8fc03c8ce424
+
+	/// Actual EBITDA YTD relative to budget YTD.
+	measure 'EBITDA vs Budget YTD %' = DIVIDE([EBITDA YTD] - [EBITDA Budget YTD], ABS([EBITDA Budget YTD]))
+		formatString: 0.0%;(0.0%);--
+		displayFolder: 07 Variance YTD
+		lineageTag: 5888b129-2e45-4871-81bc-817a45d80d8a
+
+	column month_ending
+		lineageTag: 31e508b1-48ec-46c3-9d69-0da2b0318fd2
+		isNameInferred
+		sourceColumn: [month_ending]
+
+	column entity
+		lineageTag: 3b69aa89-836b-4481-8737-c95a171afaf0
+		isNameInferred
+		sourceColumn: [entity]
+
+	column type
+		lineageTag: 72d4f2c2-d6ef-48a5-9a46-8d6b31e894db
+		isNameInferred
+		sourceColumn: [type]
+
+	column amount
+		lineageTag: c13732ee-1fd7-4767-8adb-c66a09e56e40
+		isNameInferred
+		sourceColumn: [amount]
+
+	column source
+		lineageTag: 03189dcd-5590-485a-99ee-acb800cf2c33
+		isNameInferred
+		sourceColumn: [source]
+
+	/// Fiscal year this row belongs to. For Widespread facilities (Apr-Mar fiscal year), Apr 2026 through Mar 2027 all return 2026. For all others (calendar year), returns the calendar year directly.
+	column fiscal_year = YEAR(EDATE('fin_monthly'[month_ending], -(RELATED('dim_entity'[fiscal_year_start_month]) - 1)))
+		dataType: int64
+		displayFolder: Fiscal Calendar
+		lineageTag: 8b5a38ae-1246-4928-8c79-8eadbb48d98f
+		summarizeBy: none
+
+	/// Month number within the fiscal year (1=first month of fiscal year, 12=last). For Widespread, April is period 1 and March is period 12. For others, this equals calendar month.
+	column fiscal_period = MONTH(EDATE('fin_monthly'[month_ending], -(RELATED('dim_entity'[fiscal_year_start_month]) - 1)))
+		dataType: int64
+		displayFolder: Fiscal Calendar
+		lineageTag: 86aa535d-d415-4061-a621-c59e48c139f7
+		summarizeBy: none
+
+	partition fin_monthly = calculated
+		mode: import
+		source =
+				VAR T_clean =
+				    FILTER('Transactions',
+				        'Transactions'[Cleaned Type] IN {"Revenue", "Salaries and Wages", "Other Expenses"}
+				        && NOT(ISBLANK('Transactions'[facility_code]))
+				    )
+				VAR FromBank =
+				    ADDCOLUMNS(
+				        SUMMARIZE(T_clean,
+				            'Transactions'[month_ending],
+				            'Transactions'[facility_code],
+				            'Transactions'[Cleaned Type]
+				        ),
+				        "raw_amount", CALCULATE(SUM('Transactions'[amount]))
+				    )
+				VAR FromBankFormatted =
+				    SELECTCOLUMNS(FromBank,
+				        "month_ending", 'Transactions'[month_ending],
+				        "entity", 'Transactions'[facility_code],
+				        "type", 'Transactions'[Cleaned Type],
+				        "amount", IF('Transactions'[Cleaned Type] = "Revenue", [raw_amount], -1 * [raw_amount]),
+				        "source", "Bank Actuals"
+				    )
+				VAR FromHistorical =
+				    SELECTCOLUMNS('fin_historical',
+				        "month_ending", 'fin_historical'[month_ending],
+				        "entity", 'fin_historical'[entity],
+				        "type", 'fin_historical'[type],
+				        "amount", 'fin_historical'[amount],
+				        "source", "Historical"
+				    )
+				RETURN UNION(FromBankFormatted, FromHistorical)
+

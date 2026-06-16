@@ -1,0 +1,69 @@
+table data_validation
+	lineageTag: a146c8e3-c67e-4f77-82b5-4f6838330cfe
+
+	column unmapped_program_days
+		dataType: int64
+		formatString: 0
+		lineageTag: 0a395d36-f630-4997-960e-b7d378f0da61
+		summarizeBy: sum
+		sourceColumn: unmapped_program_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column unmapped_insurance_days
+		dataType: int64
+		formatString: 0
+		lineageTag: 861a5ec4-4bf8-4192-86bc-88a21078802e
+		summarizeBy: sum
+		sourceColumn: unmapped_insurance_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column unmapped_discharge_days
+		dataType: int64
+		formatString: 0
+		lineageTag: 997e4038-b1df-4c16-8099-08d3b3fcce1e
+		summarizeBy: sum
+		sourceColumn: unmapped_discharge_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_patient_days
+		dataType: int64
+		formatString: 0
+		lineageTag: 5ad47212-337a-48db-8b56-86b3bc03a3fa
+		summarizeBy: sum
+		sourceColumn: total_patient_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column data_status
+		dataType: string
+		lineageTag: 892bcaec-074b-4638-a6e2-902dd93c5f39
+		summarizeBy: none
+		sourceColumn: data_status
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_checked
+		dataType: string
+		lineageTag: 420de251-97ca-47a3-8ab4-3c51671ef67a
+		summarizeBy: none
+		sourceColumn: last_checked
+
+		annotation SummarizationSetBy = Automatic
+
+	partition data_validation = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("ljnbfyiwxwkuji25h72yz4rawu-z7vxf66mtbredbojluqefofxsu.datawarehouse.fabric.microsoft.com"),
+				    kipu_lakehouse = Source{[Name="kipu_lakehouse"]}[Data],
+				    dbo_data_validation = kipu_lakehouse{[Schema="dbo",Item="data_validation"]}[Data]
+				in
+				    dbo_data_validation
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

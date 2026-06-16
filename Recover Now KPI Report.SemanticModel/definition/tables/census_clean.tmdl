@@ -1,0 +1,1735 @@
+table census_clean
+	lineageTag: 178f3241-3078-4abb-b8ba-805f7760a456
+
+	/// Average Daily Census. Weekly ADC = patient-days / distinct census dates, with the denominator held at the week/facility grain so the measure stays additive when split by payor, program, or other per-patient attributes (segments sum to the facility total). Absent weeks count as 0 so every segment averages over the same week set. At multi-week grain, averages the per-week ADC. Facility/location totals are identical to the prior definition.
+	measure ADC =
+			VAR _WeekTable =
+			    CALCULATETABLE(
+			        VALUES('census_clean'[week_ending]),
+			        ALLEXCEPT(
+			            'census_clean',
+			            'census_clean'[month],
+			            'census_clean'[year],
+			            'census_clean'[census_date],
+			            'census_clean'[week_ending],
+			            'census_clean'[facility],
+			            'census_clean'[location_name],
+			            'census_clean'[location_id]
+			        )
+			    )
+			RETURN
+			    AVERAGEX(
+			        _WeekTable,
+			        VAR _wk = 'census_clean'[week_ending]
+			        VAR _num =
+			            COALESCE(
+			                CALCULATE(COUNTROWS('census_clean'), 'census_clean'[week_ending] = _wk),
+			                0
+			            )
+			        VAR _den =
+			            CALCULATE(
+			                DISTINCTCOUNT('census_clean'[census_date]),
+			                ALLEXCEPT(
+			                    'census_clean',
+			                    'census_clean'[month],
+			                    'census_clean'[year],
+			                    'census_clean'[census_date],
+			                    'census_clean'[facility],
+			                    'census_clean'[location_name],
+			                    'census_clean'[location_id]
+			                ),
+			                'census_clean'[week_ending] = _wk
+			            )
+			        RETURN DIVIDE(_num, _den)
+			    )
+		formatString: #,##0.0
+		displayFolder: KPIs
+		lineageTag: fbcc6de2-9eed-4cb9-a34b-0b715b024a75
+
+	/// Utilization for Longbranch Eating Disorder Treatment Center. ADC / 17 licensed beds.
+	measure 'Util % - Longbranch Eating Disorder' =
+			VAR _ADC =
+			    CALCULATE(
+			        [ADC],
+			        'census_clean'[location_name] = "Eating Disorder Treatment Center"
+			    )
+			RETURN
+			    DIVIDE(_ADC, 17)
+		formatString: 0.0%
+		displayFolder: Utilization
+		lineageTag: c7c320e8-5d3c-493d-913e-19a2bd5745ed
+
+	/// Utilization for Longbranch Recovery Center inpatient program. ADC / 32 licensed beds.
+	measure 'Util % - Longbranch Inpatient' =
+			VAR _ADC =
+			    CALCULATE(
+			        [ADC],
+			        'census_clean'[location_name] = "Longbranch Recovery Center",
+			        'census_clean'[program_group_consolidated] = "Inpatient"
+			    )
+			RETURN
+			    DIVIDE(_ADC, 58)
+		formatString: 0.0%
+		displayFolder: Utilization
+		lineageTag: e652cb87-68ea-4eba-9e5f-a1c7d9bb13a1
+
+	/// Utilization for Longbranch Wellness Center - Covington NORA program. ADC / 27 licensed beds.
+	measure 'Util % - Longbranch NORA' =
+			VAR _ADC =
+			    CALCULATE(
+			        [ADC],
+			        'census_clean'[location_name] = "Longbranch Wellness Center - Covington",
+			        'census_clean'[program_group_consolidated] = "NORA"
+			    )
+			RETURN
+			    DIVIDE(_ADC, 27)
+		formatString: 0.0%
+		displayFolder: Utilization
+		lineageTag: 5dcd4627-8fcc-4d5b-8d4a-5e9ca789493f
+
+	/// Utilization for Lotus Wellness. ADC / 22 licensed beds.
+	measure 'Util % - Lotus Wellness' =
+			VAR _ADC =
+			    CALCULATE(
+			        [ADC],
+			        'census_clean'[facility] = "Lotus Wellness"
+			    )
+			RETURN
+			    DIVIDE(_ADC, 22)
+		formatString: 0.0%
+		displayFolder: Utilization
+		lineageTag: b59d738f-243d-4ef9-a77e-ea3f16a293d5
+
+	/// Utilization for Recover Now Georgia. ADC / 24 licensed beds.
+	measure 'Util % - RNGA' =
+			VAR _ADC =
+			    CALCULATE(
+			        [ADC],
+			        'census_clean'[facility] = "RNGA"
+			    )
+			RETURN
+			    DIVIDE(_ADC, 24)
+		formatString: 0.0%
+		displayFolder: Utilization
+		lineageTag: 16b13efe-6906-45b0-b5b6-17080d658e57
+
+	/// Utilization for Green Acres Recovery. ADC / 26 licensed beds.
+	measure 'Util % - Green Acres' =
+			VAR _ADC =
+			    CALCULATE(
+			        [ADC],
+			        'census_clean'[facility] = "Green Acres Recovery"
+			    )
+			RETURN
+			    DIVIDE(_ADC, 26)
+		formatString: 0.0%
+		displayFolder: Utilization
+		lineageTag: 71f513cc-84ad-4f04-b0b5-3679311d0d4e
+
+	/// Utilization for Tides Edge Recovery. ADC / 38 licensed beds.
+	measure 'Util % - Tides Edge' =
+			VAR _ADC =
+			    CALCULATE(
+			        [ADC],
+			        'census_clean'[facility] = "Tides Edge Recovery"
+			    )
+			RETURN
+			    DIVIDE(_ADC, 38)
+		formatString: 0.0%
+		displayFolder: Utilization
+		lineageTag: cb437bbb-97d9-4dd9-adb9-2f167d251a48
+
+	/// Weekly admits: distinct casefiles whose first census date (MIN census_date) falls within the current week_ending context. Uses MIN census_date instead of admission_date = census_date to handle facilities where the first census row is recorded the day after admission.
+	measure Admits =
+			VAR _WeekEnd = SELECTEDVALUE('census_clean'[week_ending])
+			VAR _WeekStart = _WeekEnd - 6
+			RETURN
+			    IF(
+			        NOT ISBLANK(_WeekEnd),
+			        CALCULATE(
+			            DISTINCTCOUNT('census_clean'[casefile_id]),
+			            FILTER(
+			                SUMMARIZE(
+			                    ALL('census_clean'),
+			                    'census_clean'[casefile_id],
+			                    "_FirstCensus", MIN('census_clean'[census_date])
+			                ),
+			                [_FirstCensus] >= _WeekStart && [_FirstCensus] <= _WeekEnd
+			            )
+			        ),
+			        CALCULATE(
+			            DISTINCTCOUNT('census_clean'[casefile_id]),
+			            'census_clean'[census_date] = 'census_clean'[admission_date]
+			        )
+			    )
+		formatString: #,##0
+		displayFolder: KPIs
+		lineageTag: 790d4fb3-eb6d-488f-bc09-b0e26851080a
+
+	/// Count of distinct discharged casefiles (rows with a discharge date) in context. Used as denominator for ALOS and AMA Rate.
+	measure Discharges =
+			CALCULATE(
+			    DISTINCTCOUNT('census_clean'[casefile_id]),
+			    NOT(ISBLANK('census_clean'[discharge_date]))
+			)
+		formatString: #,##0
+		displayFolder: KPIs
+		lineageTag: ba5baf64-8fa7-4d1a-8f29-12ae529076cd
+
+	/// Count of distinct casefiles discharged AMA (discharge_group = AMA).
+	measure 'AMA Discharges' =
+			CALCULATE(
+			    DISTINCTCOUNT('census_clean'[casefile_id]),
+			    'census_clean'[discharge_group] = "AMA"
+			)
+		formatString: #,##0
+		displayFolder: KPIs
+		lineageTag: c0b989a3-ce4b-4318-965f-fb619f524ec5
+
+	/// AMA Rate: AMA discharges / total discharges.
+	measure 'AMA Rate' = DIVIDE([AMA Discharges], [Discharges])
+		formatString: 0.0%
+		displayFolder: KPIs
+		lineageTag: d5d88f0d-41d4-4d4d-834f-a58e41c1a802
+
+	/// Average length of stay in days: for each discharged casefile, compute discharge_date - admission_date, then average across distinct casefiles in context.
+	measure 'Avg LOS' =
+			AVERAGEX(
+			    FILTER(
+			        SUMMARIZE(
+			            'census_clean',
+			            'census_clean'[casefile_id],
+			            "_admit",  MIN('census_clean'[admission_date]),
+			            "_dc",     MIN('census_clean'[discharge_date])
+			        ),
+			        NOT(ISBLANK([_dc]))
+			    ),
+			    [_dc] - [_admit]
+			)
+		formatString: #,##0.0
+		displayFolder: KPIs
+		lineageTag: 232cceff-c721-4ece-bc00-76833f7e598d
+
+	/// Target ADC of 9 for VA Abita.
+	measure 'Target ADC - VA Abita' = 9
+		formatString: #,##0.0
+		displayFolder: Targets
+		lineageTag: 8e525dd0-9e0a-48e9-85c1-626b09ae4172
+
+	/// Target utilization of 83% across all facilities.
+	measure 'Target Utilization %' = 0.83
+		formatString: 0.0%
+		displayFolder: Targets
+		lineageTag: b99bbcd0-6c5d-421f-88c4-3aaca78547e1
+
+	/// Returns the most recent week_ending date in the census data as a formatted string for display in a card visual.
+	measure 'Report As Of' = FORMAT(MAX('census_clean'[week_ending]), "M/D/YY")
+		formatString: @
+		displayFolder: KPIs
+		lineageTag: 2bf3cb4a-81a4-4f73-9e40-a0a829ad9f59
+
+	/// Budgeted ADC for EDTC. Uses dim_month[month] as context so future months show even without census data.
+	measure 'Budget ADC - EDTC' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            SUM('budget'[budget_adc]),
+			            'budget'[budget_category] = "EDTC",
+			            'budget'[month] = _Month
+			        )
+			    )
+		formatString: #,##0.0
+		displayFolder: Targets
+		lineageTag: a73e2e64-d3c3-4ec7-9955-963ad45319f9
+
+	/// Budgeted ADC for NORA. Uses dim_month[month] as context.
+	measure 'Budget ADC - NORA' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            SUM('budget'[budget_adc]),
+			            'budget'[budget_category] = "NORA",
+			            'budget'[month] = _Month
+			        )
+			    )
+		formatString: #,##0.0
+		displayFolder: Targets
+		lineageTag: 26204fc2-7fac-4433-991e-c3f28d09d5fb
+
+	/// Total budgeted ADC (budget_adc_total) for the month in dim_month context.
+	measure 'Budget ADC - Total' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            MAX('budget'[budget_adc_total]),
+			            'budget'[month] = _Month
+			        )
+			    )
+		formatString: #,##0.0
+		displayFolder: Targets
+		lineageTag: 43817e31-e1df-4f05-84fc-ccc53c364203
+
+	/// Monthly actual ADC for EDTC. Filters census_clean to the month from dim_month context.
+	measure 'Actual ADC - EDTC' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            [ADC],
+			            'census_clean'[month] = _Month,
+			            'census_clean'[location_name] = "Eating Disorder Treatment Center"
+			        ),
+			        0
+			    )
+		formatString: #,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: 9d7d5914-38d0-446d-a711-8fedef588922
+
+	/// Monthly actual ADC for NORA. Filters census_clean to the month from dim_month context.
+	measure 'Actual ADC - NORA' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            [ADC],
+			            'census_clean'[month] = _Month,
+			            'census_clean'[location_name] = "Longbranch Wellness Center - Covington",
+			            'census_clean'[program_group_consolidated] = "NORA"
+			        ),
+			        0
+			    )
+		formatString: #,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: 12481d6b-93e2-467c-ae3b-a9a136733c32
+
+	/// Variance (Actual minus Budget) for EDTC ADC. Positive = above budget.
+	measure 'Variance ADC - EDTC' =
+			VAR _Actual = [Actual ADC - EDTC]
+			VAR _Budget = [Budget ADC - EDTC]
+			RETURN IF(NOT ISBLANK(_Actual) && NOT ISBLANK(_Budget), _Actual - _Budget)
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: 43ebcfb9-9555-41f4-bddf-06fc0542b66c
+
+	/// Variance (Actual minus Budget) for NORA ADC. Positive = above budget.
+	measure 'Variance ADC - NORA' =
+			VAR _Actual = [Actual ADC - NORA]
+			VAR _Budget = [Budget ADC - NORA]
+			RETURN IF(NOT ISBLANK(_Actual) && NOT ISBLANK(_Budget), _Actual - _Budget)
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: 069cd3d6-a5e3-4e7e-b92f-201ca6bc968f
+
+	/// Variance % (Actual vs Budget) for EDTC. Positive = above budget.
+	measure 'Variance % - EDTC' = DIVIDE([Actual ADC - EDTC] - [Budget ADC - EDTC], [Budget ADC - EDTC])
+		formatString: +0.0%;-0.0%
+		displayFolder: Budget vs Actual
+		lineageTag: bbecaae7-3aca-40bd-9d9b-126eb0fd80ef
+
+	/// Variance % (Actual vs Budget) for NORA. Positive = above budget.
+	measure 'Variance % - NORA' = DIVIDE([Actual ADC - NORA] - [Budget ADC - NORA], [Budget ADC - NORA])
+		formatString: +0.0%;-0.0%
+		displayFolder: Budget vs Actual
+		lineageTag: d131f442-4705-40cf-ba05-a86d6404d71f
+
+	/// Variance of Util % vs 83% target for Longbranch Eating Disorder. Positive = above target.
+	measure 'Variance vs Target Util - EDTC' =
+			VAR _Util = [Util % - Longbranch Eating Disorder]
+			RETURN IF(NOT ISBLANK(_Util), _Util - [Target Utilization %])
+		formatString: +0.0%;-0.0%
+		displayFolder: Budget vs Actual
+		lineageTag: 5cca6926-1eec-44ef-bbe3-d5ac63274b8f
+
+	/// Variance of Util % vs 83% target for Longbranch Inpatient. Positive = above target.
+	measure 'Variance vs Target Util - LRC Inpatient' =
+			VAR _Util = [Util % - Longbranch Inpatient]
+			RETURN IF(NOT ISBLANK(_Util), _Util - [Target Utilization %])
+		formatString: +0.0%;-0.0%
+		displayFolder: Budget vs Actual
+		lineageTag: fb457bcf-d84b-4137-99e3-6f8181918fc0
+
+	/// Variance of Util % vs 83% target for Longbranch NORA. Positive = above target.
+	measure 'Variance vs Target Util - NORA' =
+			VAR _Util = [Util % - Longbranch NORA]
+			RETURN IF(NOT ISBLANK(_Util), _Util - [Target Utilization %])
+		formatString: +0.0%;-0.0%
+		displayFolder: Budget vs Actual
+		lineageTag: e4f57920-2f49-416e-86d2-e1df97bad890
+
+	/// Variance of Util % vs 83% target for Lotus Wellness. Positive = above target.
+	measure 'Variance vs Target Util - Lotus' =
+			VAR _Util = [Util % - Lotus Wellness]
+			RETURN IF(NOT ISBLANK(_Util), _Util - [Target Utilization %])
+		formatString: +0.0%;-0.0%
+		displayFolder: Budget vs Actual
+		lineageTag: d916bbe4-2edc-4e99-af58-6dc0c1cdd01d
+
+	/// Variance of Util % vs 83% target for RNGA. Positive = above target.
+	measure 'Variance vs Target Util - RNGA' =
+			VAR _Util = [Util % - RNGA]
+			RETURN IF(NOT ISBLANK(_Util), _Util - [Target Utilization %])
+		formatString: +0.0%;-0.0%
+		displayFolder: Budget vs Actual
+		lineageTag: 9c6d7d0f-d665-402f-88b2-07f0543b865a
+
+	/// Variance of Util % vs 83% target for Green Acres. Positive = above target.
+	measure 'Variance vs Target Util - Green Acres' =
+			VAR _Util = [Util % - Green Acres]
+			RETURN IF(NOT ISBLANK(_Util), _Util - [Target Utilization %])
+		formatString: +0.0%;-0.0%
+		displayFolder: Budget vs Actual
+		lineageTag: 6a657527-7be8-43e8-be71-08a358fcedd2
+
+	/// Variance of Util % vs 83% target for Tides Edge. Positive = above target.
+	measure 'Variance vs Target Util - Tides Edge' =
+			VAR _Util = [Util % - Tides Edge]
+			RETURN IF(NOT ISBLANK(_Util), _Util - [Target Utilization %])
+		formatString: +0.0%;-0.0%
+		displayFolder: Budget vs Actual
+		lineageTag: 4b85489c-efd6-4834-ba3b-ace7ad50bd63
+
+	/// Budgeted ADC for VA Abita (budget_category = VA Abita). Uses dim_month context.
+	measure 'Budget ADC - VA Abita' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            SUM('budget'[budget_adc]),
+			            'budget'[budget_category] = "VA Abita",
+			            'budget'[month] = _Month
+			        )
+			    )
+		formatString: #,##0.0
+		displayFolder: Targets
+		lineageTag: 8d665ec1-bc59-438b-b47e-fa9e6e5f5c00
+
+	/// Budgeted ADC for Other Abita (budget_category = Other Abita). Uses dim_month context.
+	measure 'Budget ADC - Other Abita' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            SUM('budget'[budget_adc]),
+			            'budget'[budget_category] = "Other Abita",
+			            'budget'[month] = _Month
+			        )
+			    )
+		formatString: #,##0.0
+		displayFolder: Targets
+		lineageTag: 4c7e1a9e-a216-4d51-b8df-fd1f5fcc807b
+
+	/// Total budgeted ADC for Longbranch Recovery Center. Sums VA Abita + Other Abita budget categories.
+	measure 'Budget ADC - Abita Total' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            SUM('budget'[budget_adc]),
+			            'budget'[budget_category] IN {"VA Abita", "Other Abita"},
+			            'budget'[month] = _Month
+			        )
+			    )
+		formatString: #,##0.0
+		displayFolder: Targets
+		lineageTag: 7e7d9534-1dce-4712-95f6-7a3809c388e9
+
+	/// Budgeted ADC for Lotus Wellness. Hardcoded at 18 for all months.
+	measure 'Budget ADC - Lotus' = 19
+		formatString: #,##0.0
+		displayFolder: Targets
+		lineageTag: 48f8f635-ab19-4aec-836d-6a213fa6742a
+
+	/// Budgeted ADC for Green Acres Recovery. Hardcoded at 21 for all months.
+	measure 'Budget ADC - Green Acres' = 21
+		formatString: #,##0.0
+		displayFolder: Targets
+		lineageTag: 58fcd92e-d294-4fc0-95f6-4dfa1a2b44be
+
+	/// Budgeted ADC for Tides Edge Recovery. Hardcoded at 32 for all months.
+	measure 'Budget ADC - Tides' = 32
+		formatString: #,##0.0
+		displayFolder: Targets
+		lineageTag: ec04a426-df95-40cb-a3f7-2293fa61639c
+
+	/// Budgeted ADC for Chattanooga Recovery Center. Hardcoded at 28 for all months.
+	measure 'Budget ADC - CRC' = 28
+		formatString: #,##0.0
+		displayFolder: Targets
+		lineageTag: ef37d808-f718-4d7d-80a1-172d12094372
+
+	/// Budgeted ADC for Graceland Recovery. Hardcoded at 28 for all months.
+	measure 'Budget ADC - Graceland' = 28
+		formatString: #,##0.0
+		displayFolder: Targets
+		lineageTag: 102d1516-bbbc-415e-9bf8-404c2c4ace6d
+
+	/// Actual ADC for VA patients at Longbranch Recovery Center (payor_group = VA).
+	measure 'Actual ADC - VA Abita' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            [ADC],
+			            'census_clean'[month] = _Month,
+			            'census_clean'[location_name] = "Longbranch Recovery Center",
+			            'census_clean'[payor_group] = "VA"
+			        ),
+			        0
+			    )
+		formatString: #,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: 480d7b84-de04-4906-8cfb-5db8a0286337
+
+	/// Actual ADC for non-VA patients at Longbranch Recovery Center (payor_group <> VA).
+	measure 'Actual ADC - Other Abita' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            [ADC],
+			            'census_clean'[month] = _Month,
+			            'census_clean'[location_name] = "Longbranch Recovery Center",
+			            'census_clean'[payor_group] <> "VA"
+			        ),
+			        0
+			    )
+		formatString: #,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: b9f33b45-4b73-406e-9fc6-92ba05029b5e
+
+	/// Total actual ADC for all patients at Longbranch Recovery Center (all payors, all programs).
+	measure 'Actual ADC - Abita Total' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            [ADC],
+			            'census_clean'[month] = _Month,
+			            'census_clean'[location_name] = "Longbranch Recovery Center"
+			        ),
+			        0
+			    )
+		formatString: #,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: 806a8205-bda7-4aaf-9239-c8b1e46c781b
+
+	/// Actual ADC for Lotus Wellness.
+	measure 'Actual ADC - Lotus' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            [ADC],
+			            'census_clean'[month] = _Month,
+			            'census_clean'[facility] = "Lotus Wellness"
+			        ),
+			        0
+			    )
+		formatString: #,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: bf71ce81-1510-49c6-889c-0e8179194a4b
+
+	/// Actual ADC for Green Acres Recovery.
+	measure 'Actual ADC - Green Acres' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            [ADC],
+			            'census_clean'[month] = _Month,
+			            'census_clean'[facility] = "Green Acres Recovery"
+			        ),
+			        0
+			    )
+		formatString: #,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: 2631e596-4bed-4ed4-8abf-391c09b26c80
+
+	/// Actual ADC for Tides Edge Recovery.
+	measure 'Actual ADC - Tides' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            [ADC],
+			            'census_clean'[month] = _Month,
+			            'census_clean'[facility] = "Tides Edge Recovery"
+			        ),
+			        0
+			    )
+		formatString: #,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: e9d6e66a-0fce-4be5-a0d8-b53669abc861
+
+	/// Actual ADC for Chattanooga Recovery Center.
+	measure 'Actual ADC - CRC' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            [ADC],
+			            'census_clean'[month] = _Month,
+			            'census_clean'[facility] = "Chattanooga Recovery Center"
+			        ),
+			        0
+			    )
+		formatString: #,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: 75a20425-5c2d-4318-aca8-1befe1b15656
+
+	/// Actual ADC for Graceland Recovery.
+	measure 'Actual ADC - Graceland' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            [ADC],
+			            'census_clean'[month] = _Month,
+			            'census_clean'[facility] = "Graceland Recovery"
+			        ),
+			        0
+			    )
+		formatString: #,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: 68da1100-fea2-48f4-926f-bbe501deba55
+
+	/// Variance ADC for VA Abita.
+	measure 'Variance ADC - VA Abita' =
+			VAR _A = [Actual ADC - VA Abita]
+			VAR _B = [Budget ADC - VA Abita]
+			RETURN IF(NOT ISBLANK(_B), _A - _B)
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: adc1d417-b578-4e4a-8102-05c8a64ab5c9
+
+	/// Variance ADC for Other Abita.
+	measure 'Variance ADC - Other Abita' =
+			VAR _A = [Actual ADC - Other Abita]
+			VAR _B = [Budget ADC - Other Abita]
+			RETURN IF(NOT ISBLANK(_B), _A - _B)
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: 9b446122-90f0-47a1-8047-abc9aba28308
+
+	/// Variance ADC for Abita Total.
+	measure 'Variance ADC - Abita Total' =
+			VAR _A = [Actual ADC - Abita Total]
+			VAR _B = [Budget ADC - Abita Total]
+			RETURN IF(NOT ISBLANK(_B), _A - _B)
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: 33248859-0d84-4bc3-b18a-52e7973ba7d9
+
+	/// Variance ADC for Lotus.
+	measure 'Variance ADC - Lotus' = [Actual ADC - Lotus] - [Budget ADC - Lotus]
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: 0ab4dcd6-7f19-4d69-95cd-1008d4e287b2
+
+	/// Variance ADC for Green Acres.
+	measure 'Variance ADC - Green Acres' = [Actual ADC - Green Acres] - [Budget ADC - Green Acres]
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: ab328295-7398-4920-8d1f-2a6c58b5bd85
+
+	/// Variance ADC for Tides.
+	measure 'Variance ADC - Tides' = [Actual ADC - Tides] - [Budget ADC - Tides]
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: 38d13d4f-0c7b-42ea-9d7d-7ca54ed9d3b2
+
+	/// Variance ADC for CRC.
+	measure 'Variance ADC - CRC' = [Actual ADC - CRC] - [Budget ADC - CRC]
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: 6a75522d-5341-4cca-96b2-ed4049f541a3
+
+	/// Variance ADC for Graceland.
+	measure 'Variance ADC - Graceland' = [Actual ADC - Graceland] - [Budget ADC - Graceland]
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: 4dd95e5c-137e-4dbc-81a8-6efc9fc80621
+
+	/// Variance % vs budget for VA Abita.
+	measure 'Variance % - VA Abita' = DIVIDE([Actual ADC - VA Abita] - [Budget ADC - VA Abita], [Budget ADC - VA Abita])
+		formatString: +0.0%;-0.0%
+		displayFolder: Budget vs Actual
+		lineageTag: 337bdd11-d1d2-4a7a-8e37-23838a660883
+
+	/// Variance % vs budget for Other Abita.
+	measure 'Variance % - Other Abita' = DIVIDE([Actual ADC - Other Abita] - [Budget ADC - Other Abita], [Budget ADC - Other Abita])
+		formatString: +0.0%;-0.0%
+		displayFolder: Budget vs Actual
+		lineageTag: 856fbd87-e0c8-4a44-980b-10b2fb55e086
+
+	/// Variance % vs budget for Abita Total.
+	measure 'Variance % - Abita Total' = DIVIDE([Actual ADC - Abita Total] - [Budget ADC - Abita Total], [Budget ADC - Abita Total])
+		formatString: +0.0%;-0.0%
+		displayFolder: Budget vs Actual
+		lineageTag: 12ff2b52-a16b-40e6-b877-0ca95ed10656
+
+	/// Variance % vs budget for Lotus.
+	measure 'Variance % - Lotus' = DIVIDE([Actual ADC - Lotus] - [Budget ADC - Lotus], [Budget ADC - Lotus])
+		formatString: +0.0%;-0.0%
+		displayFolder: Budget vs Actual
+		lineageTag: aea13c7d-ab78-4381-bf00-d428cb9e801e
+
+	/// Variance % vs budget for Green Acres.
+	measure 'Variance % - Green Acres' = DIVIDE([Actual ADC - Green Acres] - [Budget ADC - Green Acres], [Budget ADC - Green Acres])
+		formatString: +0.0%;-0.0%
+		displayFolder: Budget vs Actual
+		lineageTag: ed5b0591-b856-45a5-af95-a0b40cb46383
+
+	/// Variance % vs budget for Tides.
+	measure 'Variance % - Tides' = DIVIDE([Actual ADC - Tides] - [Budget ADC - Tides], [Budget ADC - Tides])
+		formatString: +0.0%;-0.0%
+		displayFolder: Budget vs Actual
+		lineageTag: f2589b13-4eb5-4ff3-af49-4d6c3e0e6e97
+
+	/// Variance % vs budget for CRC.
+	measure 'Variance % - CRC' = DIVIDE([Actual ADC - CRC] - [Budget ADC - CRC], [Budget ADC - CRC])
+		formatString: +0.0%;-0.0%
+		displayFolder: Budget vs Actual
+		lineageTag: 5874e39c-1761-413d-b1d2-e56e20a91084
+
+	/// Variance % vs budget for Graceland.
+	measure 'Variance % - Graceland' = DIVIDE([Actual ADC - Graceland] - [Budget ADC - Graceland], [Budget ADC - Graceland])
+		formatString: +0.0%;-0.0%
+		displayFolder: Budget vs Actual
+		lineageTag: b9c99321-1780-4b18-aa17-9607c17ccf63
+
+	/// Budgeted ADC for RNGA (budget_category = RNGA). Variable by month, starts Jan 2026.
+	measure 'Budget ADC - RNGA' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            SUM('budget'[budget_adc]),
+			            'budget'[budget_category] = "RNGA",
+			            'budget'[month] = _Month
+			        )
+			    )
+		formatString: #,##0.0
+		displayFolder: Targets
+		lineageTag: 285d9774-bfd3-484d-83cc-dd4b83796472
+
+	/// Budgeted ADC for RNAL (budget_category = RNAL). Variable by month, starts Apr 2026.
+	measure 'Budget ADC - RNAL' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            SUM('budget'[budget_adc]),
+			            'budget'[budget_category] = "RNAL",
+			            'budget'[month] = _Month
+			        )
+			    )
+		formatString: #,##0.0
+		displayFolder: Targets
+		lineageTag: 72115f2c-a8fb-44e9-9aef-17065b1f829d
+
+	/// Actual ADC for RNGA (facility = RNGA).
+	measure 'Actual ADC - RNGA' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            [ADC],
+			            'census_clean'[month] = _Month,
+			            'census_clean'[facility] = "RNGA"
+			        ),
+			        0
+			    )
+		formatString: #,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: fa2b51b5-b7fd-4304-a4a2-3659104d094e
+
+	/// Actual ADC for RNAL (facility = RNAL). Returns 0 until patients arrive — facility name placeholder matches future KIPU data.
+	measure 'Actual ADC - RNAL' =
+			VAR _Month = SELECTEDVALUE('dim_month'[month])
+			RETURN
+			    IF(
+			        NOT ISBLANK(_Month),
+			        CALCULATE(
+			            [ADC],
+			            'census_clean'[month] = _Month,
+			            'census_clean'[facility] = "RNAL"
+			        ),
+			        0
+			    )
+		formatString: #,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: b87c9dad-1e4f-4f11-afdc-b3a66ac32d5e
+
+	/// Variance ADC for RNGA.
+	measure 'Variance ADC - RNGA' =
+			VAR _A = [Actual ADC - RNGA]
+			VAR _B = [Budget ADC - RNGA]
+			RETURN IF(NOT ISBLANK(_B), _A - _B)
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: 9a3e504b-9d34-4947-a6a0-b78a56a44030
+
+	/// Variance ADC for RNAL.
+	measure 'Variance ADC - RNAL' =
+			VAR _A = [Actual ADC - RNAL]
+			VAR _B = [Budget ADC - RNAL]
+			RETURN IF(NOT ISBLANK(_B), _A - _B)
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: Budget vs Actual
+		lineageTag: 0ea11ad5-43c1-432a-93d2-4e008e6860a0
+
+	/// Variance % vs budget for RNGA.
+	measure 'Variance % - RNGA' = DIVIDE([Actual ADC - RNGA] - [Budget ADC - RNGA], [Budget ADC - RNGA])
+		formatString: +0.0%;-0.0%
+		displayFolder: Budget vs Actual
+		lineageTag: cd21a228-474c-4d70-8cfa-42f2f6221e85
+
+	/// Variance % vs budget for RNAL.
+	measure 'Variance % - RNAL' = DIVIDE([Actual ADC - RNAL] - [Budget ADC - RNAL], [Budget ADC - RNAL])
+		formatString: +0.0%;-0.0%
+		displayFolder: Budget vs Actual
+		lineageTag: 9fd00385-2c73-4467-8597-91447bac24ed
+
+	/// Latest 2026 month with census data. Used as the YTD cutoff for all YTD measures.
+	measure 'YTD Cutoff Month' = CALCULATE(MAX('census_clean'[month]), 'census_clean'[month] >= "2026-01")
+		formatString: @
+		displayFolder: YTD
+		lineageTag: 4f4bfb21-cd76-49bf-b378-774b89cac9a4
+
+	/// YTD average budget ADC for EDTC. Averages monthly budget from 2026-01 through latest actual month.
+	measure 'YTD Budget - EDTC' =
+			VAR _Cutoff = [YTD Cutoff Month]
+			VAR _MonthCount = CALCULATE(COUNTROWS('budget'), 'budget'[budget_category] = "EDTC", 'budget'[month] >= "2026-01", 'budget'[month] <= _Cutoff)
+			RETURN DIVIDE(
+			    CALCULATE(SUM('budget'[budget_adc]), 'budget'[budget_category] = "EDTC", 'budget'[month] >= "2026-01", 'budget'[month] <= _Cutoff),
+			    _MonthCount
+			)
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: a8f6c481-1c7e-40ba-bba8-07dde0166389
+
+	/// YTD average budget ADC for VA Abita.
+	measure 'YTD Budget - VA Abita' =
+			VAR _Cutoff = [YTD Cutoff Month]
+			VAR _MonthCount = CALCULATE(COUNTROWS('budget'), 'budget'[budget_category] = "VA Abita", 'budget'[month] >= "2026-01", 'budget'[month] <= _Cutoff)
+			RETURN DIVIDE(
+			    CALCULATE(SUM('budget'[budget_adc]), 'budget'[budget_category] = "VA Abita", 'budget'[month] >= "2026-01", 'budget'[month] <= _Cutoff),
+			    _MonthCount
+			)
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 743654d6-f7e5-457d-8c1c-34d5b8b31399
+
+	/// YTD average budget ADC for Other Abita.
+	measure 'YTD Budget - Other Abita' =
+			VAR _Cutoff = [YTD Cutoff Month]
+			VAR _MonthCount = CALCULATE(COUNTROWS('budget'), 'budget'[budget_category] = "Other Abita", 'budget'[month] >= "2026-01", 'budget'[month] <= _Cutoff)
+			RETURN DIVIDE(
+			    CALCULATE(SUM('budget'[budget_adc]), 'budget'[budget_category] = "Other Abita", 'budget'[month] >= "2026-01", 'budget'[month] <= _Cutoff),
+			    _MonthCount
+			)
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: f5e1bec8-ad16-497b-b241-b2003cfbfe94
+
+	/// YTD average budget ADC for Abita Total (VA Abita + Other Abita).
+	measure 'YTD Budget - Abita Total' =
+			VAR _Cutoff = [YTD Cutoff Month]
+			VAR _MonthCount = CALCULATE(DISTINCTCOUNT('budget'[month]), 'budget'[budget_category] IN {"VA Abita", "Other Abita"}, 'budget'[month] >= "2026-01", 'budget'[month] <= _Cutoff)
+			VAR _TotalBudget = CALCULATE(SUM('budget'[budget_adc]), 'budget'[budget_category] IN {"VA Abita", "Other Abita"}, 'budget'[month] >= "2026-01", 'budget'[month] <= _Cutoff)
+			RETURN DIVIDE(_TotalBudget, _MonthCount)
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 6029102d-6034-40d7-a2f1-01a0a4776a27
+
+	/// YTD average budget ADC for NORA.
+	measure 'YTD Budget - NORA' =
+			VAR _Cutoff = [YTD Cutoff Month]
+			VAR _MonthCount = CALCULATE(COUNTROWS('budget'), 'budget'[budget_category] = "NORA", 'budget'[month] >= "2026-01", 'budget'[month] <= _Cutoff)
+			RETURN DIVIDE(
+			    CALCULATE(SUM('budget'[budget_adc]), 'budget'[budget_category] = "NORA", 'budget'[month] >= "2026-01", 'budget'[month] <= _Cutoff),
+			    _MonthCount
+			)
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: fd0dc0b2-afac-40d4-8e5a-feda70570ab0
+
+	/// YTD average budget ADC for RNGA.
+	measure 'YTD Budget - RNGA' =
+			VAR _Cutoff = [YTD Cutoff Month]
+			VAR _MonthCount = CALCULATE(COUNTROWS('budget'), 'budget'[budget_category] = "RNGA", 'budget'[month] >= "2026-01", 'budget'[month] <= _Cutoff)
+			RETURN DIVIDE(
+			    CALCULATE(SUM('budget'[budget_adc]), 'budget'[budget_category] = "RNGA", 'budget'[month] >= "2026-01", 'budget'[month] <= _Cutoff),
+			    _MonthCount
+			)
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: a5a66dbf-f8ef-49b6-af0c-0445084ef77c
+
+	/// YTD average budget ADC for RNAL.
+	measure 'YTD Budget - RNAL' =
+			VAR _Cutoff = [YTD Cutoff Month]
+			VAR _MonthCount = CALCULATE(COUNTROWS('budget'), 'budget'[budget_category] = "RNAL", 'budget'[month] >= "2026-01", 'budget'[month] <= _Cutoff)
+			RETURN DIVIDE(
+			    CALCULATE(SUM('budget'[budget_adc]), 'budget'[budget_category] = "RNAL", 'budget'[month] >= "2026-01", 'budget'[month] <= _Cutoff),
+			    _MonthCount
+			)
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 70abb69f-c814-462a-a073-9eed7118a0fe
+
+	/// YTD average budget ADC for Lotus (flat rate of 18).
+	measure 'YTD Budget - Lotus' = 19
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: caa4a1f3-344f-4fad-8f77-1cb2a53cda06
+
+	/// YTD average budget ADC for Green Acres (flat rate of 21).
+	measure 'YTD Budget - Green Acres' = 21
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 694dd583-1dc1-4dbd-96c7-a59511c9474f
+
+	/// YTD average budget ADC for Tides (flat rate of 32).
+	measure 'YTD Budget - Tides' = 32
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 9ecdde39-fdb4-4642-a576-de7a450e14a2
+
+	/// YTD average budget ADC for CRC (flat rate of 28).
+	measure 'YTD Budget - CRC' = 28
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 77cc0083-704a-425e-81ea-19bfa7da191b
+
+	/// YTD average budget ADC for Graceland (flat rate of 28).
+	measure 'YTD Budget - Graceland' = 28
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: cc88a4d0-5ddf-4774-88b6-8e67b9d0fd43
+
+	/// YTD Actual ADC for EDTC. Averages ADC across Jan-current 2026 months.
+	measure 'YTD Actual - EDTC' =
+			CALCULATE(
+			    [ADC],
+			    'census_clean'[month] >= "2026-01",
+			    'census_clean'[location_name] = "Eating Disorder Treatment Center"
+			)
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 4eeaf0ed-a720-47ad-917d-184f83db4358
+
+	/// YTD Actual ADC for VA Abita (LRC, payor = VA).
+	measure 'YTD Actual - VA Abita' =
+			CALCULATE(
+			    [ADC],
+			    'census_clean'[month] >= "2026-01",
+			    'census_clean'[location_name] = "Longbranch Recovery Center",
+			    'census_clean'[payor_group] = "VA"
+			)
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: f28f349f-f1ea-42fd-8cec-bbafcea4c6cf
+
+	/// YTD Actual ADC for Other Abita (LRC, payor <> VA).
+	measure 'YTD Actual - Other Abita' =
+			CALCULATE(
+			    [ADC],
+			    'census_clean'[month] >= "2026-01",
+			    'census_clean'[location_name] = "Longbranch Recovery Center",
+			    'census_clean'[payor_group] <> "VA"
+			)
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: c8b3e9cc-803e-42ba-ae0e-922def068ec9
+
+	/// YTD Actual ADC for Abita Total (all of LRC).
+	measure 'YTD Actual - Abita Total' =
+			CALCULATE(
+			    [ADC],
+			    'census_clean'[month] >= "2026-01",
+			    'census_clean'[location_name] = "Longbranch Recovery Center"
+			)
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 3c8d1fb0-c9d3-433a-8a13-4b38584b8b6e
+
+	/// YTD Actual ADC for NORA (LWC Covington).
+	measure 'YTD Actual - NORA' =
+			CALCULATE(
+			    [ADC],
+			    'census_clean'[month] >= "2026-01",
+			    'census_clean'[location_name] = "Longbranch Wellness Center - Covington",
+			    'census_clean'[program_group_consolidated] = "NORA"
+			)
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 324325c8-b74b-47ae-a5d6-179551804efc
+
+	/// YTD Actual ADC for RNGA.
+	measure 'YTD Actual - RNGA' =
+			CALCULATE(
+			    [ADC],
+			    'census_clean'[month] >= "2026-01",
+			    'census_clean'[facility] = "RNGA"
+			)
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: cea1bf7b-309e-4a7c-9426-ae5a449e4263
+
+	/// YTD Actual ADC for RNAL. Returns 0 until patients arrive.
+	measure 'YTD Actual - RNAL' =
+			VAR _A = CALCULATE(
+			    [ADC],
+			    'census_clean'[month] >= "2026-01",
+			    'census_clean'[facility] = "RNAL"
+			)
+			RETURN IF(ISBLANK(_A), 0, _A)
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 6decb5d4-31c9-4d94-a2cc-76375cbf1a0e
+
+	/// YTD Actual ADC for Lotus Wellness.
+	measure 'YTD Actual - Lotus' =
+			CALCULATE(
+			    [ADC],
+			    'census_clean'[month] >= "2026-01",
+			    'census_clean'[facility] = "Lotus Wellness"
+			)
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 56e7a75b-f004-4bc4-bd25-94d78704c6ba
+
+	/// YTD Actual ADC for Green Acres.
+	measure 'YTD Actual - Green Acres' =
+			CALCULATE(
+			    [ADC],
+			    'census_clean'[month] >= "2026-01",
+			    'census_clean'[facility] = "Green Acres Recovery"
+			)
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 1ac78442-ab02-4928-802a-9cfceeaa4cfa
+
+	/// YTD Actual ADC for Tides.
+	measure 'YTD Actual - Tides' =
+			CALCULATE(
+			    [ADC],
+			    'census_clean'[month] >= "2026-01",
+			    'census_clean'[facility] = "Tides Edge Recovery"
+			)
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: aaaa63b4-112e-4c39-824f-272223bd708b
+
+	/// YTD Actual ADC for CRC.
+	measure 'YTD Actual - CRC' =
+			CALCULATE(
+			    [ADC],
+			    'census_clean'[month] >= "2026-01",
+			    'census_clean'[facility] = "Chattanooga Recovery Center"
+			)
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 3f7cc4b3-df2e-46ee-b891-95d986c329ef
+
+	/// YTD Actual ADC for Graceland.
+	measure 'YTD Actual - Graceland' =
+			CALCULATE(
+			    [ADC],
+			    'census_clean'[month] >= "2026-01",
+			    'census_clean'[facility] = "Graceland Recovery"
+			)
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: aceb3329-caa1-475f-abd0-678791ef85f7
+
+	/// YTD Variance ADC for EDTC.
+	measure 'YTD Variance - EDTC' = [YTD Actual - EDTC] - [YTD Budget - EDTC]
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: YTD
+		lineageTag: 9ec4d253-f103-40eb-8e64-aad5889cf470
+
+	/// YTD Variance ADC for VA Abita.
+	measure 'YTD Variance - VA Abita' = [YTD Actual - VA Abita] - [YTD Budget - VA Abita]
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: YTD
+		lineageTag: d2668bed-95bb-456f-b01d-c5c8abe9b33f
+
+	/// YTD Variance ADC for Abita Total.
+	measure 'YTD Variance - Abita Total' = [YTD Actual - Abita Total] - [YTD Budget - Abita Total]
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: YTD
+		lineageTag: dfbe5584-3c8c-4f4f-a2c0-f3918c572c40
+
+	/// YTD Variance ADC for NORA.
+	measure 'YTD Variance - NORA' = [YTD Actual - NORA] - [YTD Budget - NORA]
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: YTD
+		lineageTag: bac3a5d6-8f22-4f81-a4ad-ec79fdc189e6
+
+	/// YTD Variance ADC for RNGA.
+	measure 'YTD Variance - RNGA' = [YTD Actual - RNGA] - [YTD Budget - RNGA]
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: YTD
+		lineageTag: 724503ad-c0f0-4248-ad2e-0119da3b3355
+
+	/// YTD Variance ADC for RNAL.
+	measure 'YTD Variance - RNAL' = [YTD Actual - RNAL] - [YTD Budget - RNAL]
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: YTD
+		lineageTag: d8fb307b-786b-4d21-9af0-55eeb3c55176
+
+	/// YTD Variance ADC for Lotus.
+	measure 'YTD Variance - Lotus' = [YTD Actual - Lotus] - [YTD Budget - Lotus]
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: YTD
+		lineageTag: 2c82f795-de1a-4553-a09c-ee4a94bee45b
+
+	/// YTD Variance ADC for Green Acres.
+	measure 'YTD Variance - Green Acres' = [YTD Actual - Green Acres] - [YTD Budget - Green Acres]
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: YTD
+		lineageTag: 743411f8-c359-49f9-a942-126fcc148e51
+
+	/// YTD Variance ADC for Tides.
+	measure 'YTD Variance - Tides' = [YTD Actual - Tides] - [YTD Budget - Tides]
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: YTD
+		lineageTag: 231efd12-7454-40bd-a4b4-1338d20aee9c
+
+	/// YTD Variance ADC for CRC.
+	measure 'YTD Variance - CRC' = [YTD Actual - CRC] - [YTD Budget - CRC]
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: YTD
+		lineageTag: c1c52ab9-b118-4a99-bcf5-47fc334dc53b
+
+	/// YTD Variance ADC for Graceland.
+	measure 'YTD Variance - Graceland' = [YTD Actual - Graceland] - [YTD Budget - Graceland]
+		formatString: #,##0.0;-#,##0.0
+		displayFolder: YTD
+		lineageTag: c64aa76b-c878-4acc-8a81-ab32a340f3b3
+
+	/// YTD Variance % for EDTC.
+	measure 'YTD Variance % - EDTC' = DIVIDE([YTD Actual - EDTC] - [YTD Budget - EDTC], [YTD Budget - EDTC])
+		formatString: +0.0%;-0.0%
+		displayFolder: YTD
+		lineageTag: 316be9ce-2dc0-4090-a660-0043929fc3de
+
+	/// YTD Variance % for VA Abita.
+	measure 'YTD Variance % - VA Abita' = DIVIDE([YTD Actual - VA Abita] - [YTD Budget - VA Abita], [YTD Budget - VA Abita])
+		formatString: +0.0%;-0.0%
+		displayFolder: YTD
+		lineageTag: aa5c7ac7-64dc-48d6-916c-69b26f04d180
+
+	/// YTD Variance % for Abita Total.
+	measure 'YTD Variance % - Abita Total' = DIVIDE([YTD Actual - Abita Total] - [YTD Budget - Abita Total], [YTD Budget - Abita Total])
+		formatString: +0.0%;-0.0%
+		displayFolder: YTD
+		lineageTag: f8c93221-bff4-4eed-a788-7937d7eebc09
+
+	/// YTD Variance % for NORA.
+	measure 'YTD Variance % - NORA' = DIVIDE([YTD Actual - NORA] - [YTD Budget - NORA], [YTD Budget - NORA])
+		formatString: +0.0%;-0.0%
+		displayFolder: YTD
+		lineageTag: 265a9369-aae5-4916-9d14-431b3e85cd24
+
+	/// YTD Variance % for RNGA.
+	measure 'YTD Variance % - RNGA' = DIVIDE([YTD Actual - RNGA] - [YTD Budget - RNGA], [YTD Budget - RNGA])
+		formatString: +0.0%;-0.0%
+		displayFolder: YTD
+		lineageTag: a4c862e1-421c-4b59-91ff-eb6f95f8cd07
+
+	/// YTD Variance % for RNAL.
+	measure 'YTD Variance % - RNAL' = DIVIDE([YTD Actual - RNAL] - [YTD Budget - RNAL], [YTD Budget - RNAL])
+		formatString: +0.0%;-0.0%
+		displayFolder: YTD
+		lineageTag: 396a8472-972e-4a3b-bdbd-962230af05f7
+
+	/// YTD Variance % for Lotus.
+	measure 'YTD Variance % - Lotus' = DIVIDE([YTD Actual - Lotus] - [YTD Budget - Lotus], [YTD Budget - Lotus])
+		formatString: +0.0%;-0.0%
+		displayFolder: YTD
+		lineageTag: 171a7203-3309-44cc-8500-9c23aa54b86f
+
+	/// YTD Variance % for Green Acres.
+	measure 'YTD Variance % - Green Acres' = DIVIDE([YTD Actual - Green Acres] - [YTD Budget - Green Acres], [YTD Budget - Green Acres])
+		formatString: +0.0%;-0.0%
+		displayFolder: YTD
+		lineageTag: 0d680762-0d24-419e-86fc-a6570bc6a4bf
+
+	/// YTD Variance % for Tides.
+	measure 'YTD Variance % - Tides' = DIVIDE([YTD Actual - Tides] - [YTD Budget - Tides], [YTD Budget - Tides])
+		formatString: +0.0%;-0.0%
+		displayFolder: YTD
+		lineageTag: e765c149-abc0-4a00-bc12-53e8b5eb3f20
+
+	/// YTD Variance % for CRC.
+	measure 'YTD Variance % - CRC' = DIVIDE([YTD Actual - CRC] - [YTD Budget - CRC], [YTD Budget - CRC])
+		formatString: +0.0%;-0.0%
+		displayFolder: YTD
+		lineageTag: 17999ddc-8996-4c05-89d9-4de973322d31
+
+	/// YTD Variance % for Graceland.
+	measure 'YTD Variance % - Graceland' = DIVIDE([YTD Actual - Graceland] - [YTD Budget - Graceland], [YTD Budget - Graceland])
+		formatString: +0.0%;-0.0%
+		displayFolder: YTD
+		lineageTag: e8c13df6-3733-4493-b132-5d951df177a0
+
+	/// Peak 2026 budgeted ADC for EDTC. Highest single month budget value across all 2026 months.
+	measure 'Peak Budget - EDTC' = 17
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: adbb60a4-6586-48f3-b226-8d8e2f4078f4
+
+	/// Peak 2026 budgeted ADC for VA Abita.
+	measure 'Peak Budget - VA Abita' = CALCULATE(MAX('budget'[budget_adc]), 'budget'[budget_category] = "VA Abita", 'budget'[month] >= "2026-01")
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: f61aa618-4d6e-4806-9528-ea983c630f1a
+
+	/// Peak 2026 budgeted ADC for Other Abita.
+	measure 'Peak Budget - Other Abita' = CALCULATE(MAX('budget'[budget_adc]), 'budget'[budget_category] = "Other Abita", 'budget'[month] >= "2026-01")
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 73332b21-108f-49fe-9db8-10334dc3a2db
+
+	/// Peak 2026 budgeted ADC for Abita Total. Finds the month with highest combined VA Abita + Other Abita budget.
+	measure 'Peak Budget - Abita Total' = 58
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 42dc8134-3c9a-48fb-b9f2-de8f1b2ac0bc
+
+	/// Peak 2026 budgeted ADC for NORA. Set to 24.
+	measure 'Peak Budget - NORA' = 27
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: e4383615-b6ed-4571-928d-eb02fd044252
+
+	/// Peak 2026 budgeted ADC for RNGA.
+	measure 'Peak Budget - RNGA' = 24
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 29e984b5-1a05-448d-b458-76ce8eec7cf4
+
+	/// Peak 2026 budgeted ADC for RNAL.
+	measure 'Peak Budget - RNAL' = 25
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: b9cd2756-9f83-4316-ae9a-623bc8e9cc40
+
+	/// Peak 2026 budgeted ADC for Lotus. Flat rate of 18.
+	measure 'Peak Budget - Lotus' = 22
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 9166da3c-d3e7-4a08-a511-643f97e0ade9
+
+	/// Peak 2026 budgeted ADC for Green Acres. Flat rate of 21.
+	measure 'Peak Budget - Green Acres' = 26
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 34b2637d-57b5-4673-967d-f1e7941f610d
+
+	/// Peak 2026 budgeted ADC for Tides. Flat rate of 32.
+	measure 'Peak Budget - Tides' = 38
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 915687a7-cb20-43ec-8efe-4fe296e3120e
+
+	/// Peak 2026 budgeted ADC for CRC. Flat rate of 28.
+	measure 'Peak Budget - CRC' = 28
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: dee81ab5-b648-4e27-b324-3c723c0825b5
+
+	/// Peak 2026 budgeted ADC for Graceland. Flat rate of 28.
+	measure 'Peak Budget - Graceland' = 28
+		formatString: #,##0.0
+		displayFolder: YTD
+		lineageTag: 366ede56-a883-43a3-92bb-dd5aa999c8d3
+
+	measure 'Util % - RNAL' =
+			VAR _ADC =
+			    CALCULATE(
+			        [ADC],
+			        'census_clean'[facility] = "RNAL"
+			    )
+			RETURN
+			    DIVIDE(_ADC, 25)
+		lineageTag: 7099ed6b-be3c-4694-a548-149325fe9fdd
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column discharge_type
+		dataType: string
+		lineageTag: a07a8d31-2828-4bf1-906f-7f7b28a879d5
+		summarizeBy: none
+		sourceColumn: discharge_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column insurance_company
+		dataType: string
+		lineageTag: 3ebeb0c9-4ad1-4a4a-85e5-2ab79490e08b
+		summarizeBy: none
+		sourceColumn: insurance_company
+
+		annotation SummarizationSetBy = Automatic
+
+	column program
+		dataType: string
+		lineageTag: 9e02325c-32ed-4701-885c-9847b74a24ae
+		summarizeBy: none
+		sourceColumn: program
+
+		annotation SummarizationSetBy = Automatic
+
+	column census_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 570ae591-631c-4d6c-8212-1cdd8c2fbc4a
+		summarizeBy: none
+		sourceColumn: census_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column extraction_timestamp
+		dataType: string
+		lineageTag: 2615abaa-126a-4301-8e0b-defa58fca539
+		summarizeBy: none
+		sourceColumn: extraction_timestamp
+
+		annotation SummarizationSetBy = Automatic
+
+	column casefile_id
+		dataType: string
+		lineageTag: d73e98cb-c31e-4d39-926d-2b1cc746c19a
+		summarizeBy: none
+		sourceColumn: casefile_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column mr_number
+		dataType: string
+		lineageTag: 5d848979-a2d2-4c4c-8f43-f3bda6e57afe
+		summarizeBy: none
+		sourceColumn: mr_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column first_name
+		dataType: string
+		lineageTag: 06c5e5ff-efc1-497c-b3e3-7515412a1192
+		summarizeBy: none
+		sourceColumn: first_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_name
+		dataType: string
+		lineageTag: 70c7e80f-4252-48ef-b9cd-d19e5ca4b162
+		summarizeBy: none
+		sourceColumn: last_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column dob
+		dataType: string
+		lineageTag: 02e541a0-04e4-4e24-a608-858011a952ac
+		summarizeBy: none
+		sourceColumn: dob
+
+		annotation SummarizationSetBy = Automatic
+
+	column gender
+		dataType: string
+		lineageTag: 4a9a4673-c9bc-4966-8f41-1e04043e78de
+		summarizeBy: none
+		sourceColumn: gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column race
+		dataType: string
+		lineageTag: 72f61b6f-f555-4977-90cc-7b4c9a0722f2
+		summarizeBy: none
+		sourceColumn: race
+
+		annotation SummarizationSetBy = Automatic
+
+	column ethnicity
+		dataType: string
+		lineageTag: 12b20b46-ab7b-4d51-85ce-791ee380296e
+		summarizeBy: none
+		sourceColumn: ethnicity
+
+		annotation SummarizationSetBy = Automatic
+
+	column admission_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 909d7318-fe94-47dc-b925-b27f86a0430b
+		summarizeBy: none
+		sourceColumn: admission_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column discharge_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 7825da52-a0cc-4a79-8c8f-2bb0173e7762
+		summarizeBy: none
+		sourceColumn: discharge_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column discharge_type_code
+		dataType: string
+		lineageTag: 521d2fb9-184a-42da-9f30-e99aa43678fc
+		summarizeBy: none
+		sourceColumn: discharge_type_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column discharge_or_transition_name
+		dataType: string
+		lineageTag: 2e055fe8-5eca-4804-a3d9-8f9644d8d6d1
+		summarizeBy: none
+		sourceColumn: discharge_or_transition_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column anticipated_discharge_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 27984599-684c-47e6-83c8-8871a38c4c6b
+		summarizeBy: none
+		sourceColumn: anticipated_discharge_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column level_of_care
+		dataType: string
+		lineageTag: 075b3c64-d186-4e67-8c16-8f61511fdc87
+		summarizeBy: none
+		sourceColumn: level_of_care
+
+		annotation SummarizationSetBy = Automatic
+
+	column next_level_of_care
+		dataType: string
+		lineageTag: 79db099f-6572-4761-839d-4921e9a4b466
+		summarizeBy: none
+		sourceColumn: next_level_of_care
+
+		annotation SummarizationSetBy = Automatic
+
+	column location_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 92b2a06c-93d0-4cdc-88fc-a6c60b3d6086
+		summarizeBy: sum
+		sourceColumn: location_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column location_name
+		dataType: string
+		lineageTag: 79c04e5f-c1bd-49e3-89f5-6f6c470d8bbd
+		summarizeBy: none
+		sourceColumn: location_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column building_name
+		dataType: string
+		lineageTag: 5300db3a-575e-4f1e-ac21-79867f3e178d
+		summarizeBy: none
+		sourceColumn: building_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column room_name
+		dataType: string
+		lineageTag: 069f2a08-79a9-422c-9d69-b7a8fc1941eb
+		summarizeBy: none
+		sourceColumn: room_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column bed_name
+		dataType: string
+		lineageTag: 92bc4bf6-c0cb-41b6-9637-00a4c994314d
+		summarizeBy: none
+		sourceColumn: bed_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column payment_method
+		dataType: string
+		lineageTag: 7809f40b-728c-47a5-95f4-d90f72e9f9e7
+		summarizeBy: none
+		sourceColumn: payment_method
+
+		annotation SummarizationSetBy = Automatic
+
+	column payment_method_category
+		dataType: string
+		lineageTag: 96072363-3977-4904-a6b1-95d15b5e44ab
+		summarizeBy: none
+		sourceColumn: payment_method_category
+
+		annotation SummarizationSetBy = Automatic
+
+	column referrer_name
+		dataType: string
+		lineageTag: e870cf4f-4852-4f28-9b57-cae50581b4f3
+		summarizeBy: none
+		sourceColumn: referrer_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column first_contact_name
+		dataType: string
+		lineageTag: d6f84baf-591d-4d75-9d92-71433d96826e
+		summarizeBy: none
+		sourceColumn: first_contact_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column pre_admission_status
+		dataType: string
+		lineageTag: 12addc17-16d9-4b83-a04f-10ca11b5a35f
+		summarizeBy: none
+		sourceColumn: pre_admission_status
+
+		annotation SummarizationSetBy = Automatic
+
+	column address_city
+		dataType: string
+		lineageTag: e30847e1-5fcf-4088-98f4-08ff327b45f9
+		summarizeBy: none
+		sourceColumn: address_city
+
+		annotation SummarizationSetBy = Automatic
+
+	column state
+		dataType: string
+		lineageTag: 6ea65f83-d3fb-4e59-bc42-31485033f765
+		summarizeBy: none
+		sourceColumn: state
+
+		annotation SummarizationSetBy = Automatic
+
+	column address_zip
+		dataType: string
+		lineageTag: 6b44e3d0-a0e7-4874-b2c9-32d1b5e15147
+		summarizeBy: none
+		sourceColumn: address_zip
+
+		annotation SummarizationSetBy = Automatic
+
+	column preferred_language
+		dataType: string
+		lineageTag: 33a21841-1f43-4e56-b8b3-f6eb3dda411a
+		summarizeBy: none
+		sourceColumn: preferred_language
+
+		annotation SummarizationSetBy = Automatic
+
+	column diagnosis_codes
+		dataType: string
+		lineageTag: 47985269-0e7a-4d89-ad7f-23008e9cfb72
+		summarizeBy: none
+		sourceColumn: diagnosis_codes
+
+		annotation SummarizationSetBy = Automatic
+
+	column date_of_death
+		dataType: string
+		lineageTag: 599d533e-9238-4248-a801-e8468a9ec559
+		summarizeBy: none
+		sourceColumn: date_of_death
+
+		annotation SummarizationSetBy = Automatic
+
+	column cause_of_death
+		dataType: string
+		lineageTag: 77153df3-d66d-4043-b5de-e14fcf27420a
+		summarizeBy: none
+		sourceColumn: cause_of_death
+
+		annotation SummarizationSetBy = Automatic
+
+	column created_at
+		dataType: string
+		lineageTag: c34f2ef0-be94-4f8c-a927-aeba2fa0dc2c
+		summarizeBy: none
+		sourceColumn: created_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_updated_at
+		dataType: string
+		lineageTag: 36d15505-d730-424a-a96b-a4ac18af73b1
+		summarizeBy: none
+		sourceColumn: last_updated_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column program_group
+		dataType: string
+		lineageTag: b668163d-9edd-47d1-a669-299180c9c87c
+		summarizeBy: none
+		sourceColumn: program_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column payor_group
+		dataType: string
+		lineageTag: 17a316b9-125e-4b3e-8594-74fc2170d18e
+		summarizeBy: none
+		sourceColumn: payor_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column discharge_group
+		dataType: string
+		lineageTag: 33608474-d9e1-4b9c-8a25-5edb187ad936
+		summarizeBy: none
+		sourceColumn: discharge_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column day_of_week
+		dataType: string
+		lineageTag: c1c5d5ae-d53a-4e99-960f-e22b0e765f31
+		summarizeBy: none
+		sourceColumn: day_of_week
+
+		annotation SummarizationSetBy = Automatic
+
+	column month
+		dataType: string
+		lineageTag: ae49d87c-a5af-4744-98c4-2641fadb9c09
+		summarizeBy: none
+		sourceColumn: month
+
+		annotation SummarizationSetBy = Automatic
+
+	column week_ending
+		dataType: dateTime
+		formatString: M/D/YY
+		lineageTag: 1757833f-9a5b-4aa7-9645-4a7e24f3b8ce
+		summarizeBy: none
+		sourceColumn: week_ending
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: ee53113b-94e5-4211-b3c0-d29d1ec2e0ca
+		summarizeBy: sum
+		sourceColumn: year
+
+		annotation SummarizationSetBy = Automatic
+
+	column facility
+		dataType: string
+		lineageTag: 6c628115-ed6f-4f78-b5ae-99560fb5f7eb
+		summarizeBy: none
+		sourceColumn: facility
+
+		annotation SummarizationSetBy = Automatic
+
+	column budget_category
+		dataType: string
+		lineageTag: ae60d632-689d-4a50-ad75-562923c6ba21
+		summarizeBy: none
+		sourceColumn: budget_category
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Consolidated program group: Detox + Residential = Inpatient, Female NORA merged into NORA, all others unchanged.
+	column program_group_consolidated =
+			SWITCH(
+			    'census_clean'[program_group],
+			    "Detox",        "Inpatient",
+			    "Residential",  "Inpatient",
+			    "Female NORA",  "NORA",
+			    'census_clean'[program_group]
+			)
+		dataType: string
+		displayFolder: Dimensions
+		lineageTag: 20f99cbe-e8e0-4e30-9e40-bcbdf5bc85ad
+		summarizeBy: none
+		sortByColumn: program_group_sort_order
+
+	/// Sort order for program_group_consolidated. Used to drive custom sort in visuals.
+	column program_group_sort_order =
+			SWITCH(
+			    'census_clean'[program_group],
+			    "Detox",        1,
+			    "Residential",  1,
+			    "Female NORA",  2,
+			    "NORA",         2,
+			    "IOP",          3,
+			    "PHP",          4,
+			    "OP",           5,
+			    "Other",        6,
+			    7
+			)
+		dataType: int64
+		isHidden
+		displayFolder: Dimensions
+		lineageTag: c4fb7538-fa83-4be4-a071-f686441e5543
+		summarizeBy: none
+
+	partition census_clean = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("ljnbfyiwxwkuji25h72yz4rawu-z7vxf66mtbredbojluqefofxsu.datawarehouse.fabric.microsoft.com"),
+				    kipu_lakehouse = Source{[Name="kipu_lakehouse"]}[Data],
+				    dbo_census_clean = kipu_lakehouse{[Schema="dbo",Item="census_clean"]}[Data]
+				in
+				    dbo_census_clean
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

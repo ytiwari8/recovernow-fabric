@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Admissions and Marketing Report"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "67f0710b-7b8d-9993-4cae-8f45ade80c1f"
+  }
+}

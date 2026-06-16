@@ -1,0 +1,107 @@
+table _Measures
+	lineageTag: aaabfa2f-69a1-49f0-8bf3-4c4bc8a24247
+
+	measure Admits = CALCULATE(COUNTROWS(bd_admit_source), bd_admit_source[bd_contact] <> BLANK(), bd_admit_source[bd_contact] <> "", bd_admit_source[bd_contact] <> "0", bd_admit_source[bucket] <> "Other", UPPER(bd_admit_source[insurance]) <> "SCHOLARSHIP")
+		formatString: 0
+		lineageTag: 8a350caf-7395-43ee-aeb1-3c107660e88e
+
+	measure Points = CALCULATE(SUM(bd_admit_source[points]), bd_admit_source[bd_contact] <> BLANK(), bd_admit_source[bd_contact] <> "", bd_admit_source[bd_contact] <> "0", bd_admit_source[bucket] <> "Other", UPPER(bd_admit_source[insurance]) <> "SCHOLARSHIP")
+		formatString: 0.00
+		lineageTag: 54f9d656-ceca-415b-84c2-6054b1f7df9e
+
+	measure 'Admits T4W' = CALCULATE([Admits], DATESINPERIOD(dim_date[Date], MAX(dim_date[Date]), -28, DAY))
+		formatString: 0
+		lineageTag: 98677be8-e8f4-4bb6-8212-98142d7342ff
+
+	measure 'Points T4W' = CALCULATE([Points], DATESINPERIOD(dim_date[Date], MAX(dim_date[Date]), -28, DAY))
+		formatString: 0.00
+		lineageTag: 0fe6b57e-0656-4a98-a5a1-ee24f51df619
+
+	measure 'Monthly Admit Target' = VAR EraInContext = IF(MAX(dim_date[Date]) <= DATE(2026,4,30), "Through Apr 2026", "From May 2026") RETURN CALCULATE(SUM(bd_targets[admit_target]), bd_targets[era] = EraInContext)
+		formatString: 0
+		lineageTag: 41dca3bd-01ce-42c3-8486-b83e8b51c21b
+
+	measure 'Monthly Point Target' = VAR EraInContext = IF(MAX(dim_date[Date]) <= DATE(2026,4,30), "Through Apr 2026", "From May 2026") RETURN CALCULATE(SUM(bd_targets[point_target]), bd_targets[era] = EraInContext)
+		formatString: 0.00
+		lineageTag: 34bbd5c6-7f49-4e5f-a12e-7c6e1dd5dc21
+
+	measure 'Weekly Admit Target' = DIVIDE([Monthly Admit Target], 4)
+		formatString: 0.0
+		lineageTag: 89f45390-514c-4a39-8c1d-052531c0e292
+
+	measure 'Weekly Point Target' = DIVIDE([Monthly Point Target], 4)
+		formatString: 0.00
+		lineageTag: 0383c3bd-cb45-4d62-aa1f-87e5a8ba8e36
+
+	measure 'Admits vs Weekly Target %' = DIVIDE([Admits], [Weekly Admit Target])
+		formatString: 0.0%
+		lineageTag: 776a3474-0e54-4986-9996-c75b37dc0f70
+
+	measure 'Points vs Weekly Target %' = DIVIDE([Points], [Weekly Point Target])
+		formatString: 0.0%
+		lineageTag: d911aafd-599e-427f-a129-ac15f888795a
+
+	measure 'Admits T4W vs Monthly Target %' = DIVIDE([Admits T4W], [Monthly Admit Target])
+		formatString: 0.0%
+		lineageTag: 5da9eebe-ab14-4024-949d-22973b0e52d9
+
+	measure 'Points T4W vs Monthly Target %' = DIVIDE([Points T4W], [Monthly Point Target])
+		formatString: 0.0%
+		lineageTag: 08476a6d-311d-4b15-90a4-46f6ba9c2055
+
+	measure 'Admits T4W (Latest)' = VAR Anchor = CALCULATE(MAX(bd_admit_source[admission_date]), ALL(dim_date)) RETURN CALCULATE([Admits], DATESINPERIOD(dim_date[Date], Anchor, -28, DAY))
+		formatString: 0
+		lineageTag: cea7d768-c082-4f01-b23f-c607d6a3d3a3
+
+	measure 'Points T4W (Latest)' = VAR Anchor = CALCULATE(MAX(bd_admit_source[admission_date]), ALL(dim_date)) RETURN CALCULATE([Points], DATESINPERIOD(dim_date[Date], Anchor, -28, DAY))
+		formatString: 0.00
+		lineageTag: 8f5551af-a691-4724-8726-46c93f1a802d
+
+	measure 'Admits T4W (Latest) vs Monthly Target %' = DIVIDE([Admits T4W (Latest)], [Monthly Admit Target])
+		formatString: 0.0%
+		lineageTag: 57b66f07-f351-4b89-b0ec-e699aece119e
+
+	measure 'Points T4W (Latest) vs Monthly Target %' = DIVIDE([Points T4W (Latest)], [Monthly Point Target])
+		formatString: 0.0%
+		lineageTag: 3f849bab-c3c4-4a6d-a4a2-03a9781ae6ff
+
+	/// Patient count on a given census date.
+	measure Census = COUNTROWS(census_clean)
+		formatString: 0
+		lineageTag: 5651595b-23f7-43e6-a4ec-958e3cfc604d
+
+	/// Total patient-days in the trailing 28 days, anchored by date context.
+	measure 'Patient Days T4W' = CALCULATE(COUNTROWS(census_clean), DATESINPERIOD(dim_date[Date], MAX(dim_date[Date]), -28, DAY))
+		formatString: 0
+		lineageTag: 2a560403-9b8c-43ec-803c-5e22905093bf
+
+	/// Average Daily Census (ADC) over the trailing 28 days, anchored by date context.
+	measure 'ADC T4W' = DIVIDE([Patient Days T4W], 28)
+		formatString: 0.0
+		lineageTag: c3edb120-46cc-489c-8a7a-109c4aa26692
+
+	/// Unique patients seen in census in the trailing 28 days.
+	measure 'Unique Patients T4W' = CALCULATE(DISTINCTCOUNT(census_clean[mr_number]), DATESINPERIOD(dim_date[Date], MAX(dim_date[Date]), -28, DAY))
+		formatString: 0
+		lineageTag: 2c89cf84-a702-4487-98cb-ea661911c204
+
+	/// ADC T4W anchored to the latest census date (ignores visual date context).
+	measure 'ADC T4W (Latest)' = VAR Anchor = CALCULATE(MAX(census_clean[census_date]), ALL(dim_date)) VAR Days = CALCULATE(COUNTROWS(census_clean), DATESINPERIOD(dim_date[Date], Anchor, -28, DAY)) RETURN DIVIDE(Days, 28)
+		formatString: 0.0
+		lineageTag: 71123dad-1585-4edb-8d8d-42fd660d166c
+
+	/// Latest week ending Thursday based on the most recent admit.
+	measure 'Report As Of' = VAR LatestAdmit = MAX(bd_admit_source[admission_date]) RETURN LatestAdmit + MOD(4 - WEEKDAY(LatestAdmit, 2) + 7, 7)
+		formatString: mm/dd/yyyy
+		lineageTag: 12e209e0-f4c5-4311-a850-7184e0c1144e
+
+	column Value
+		isHidden
+		lineageTag: 1e6d4343-44b2-4834-bc80-cbf91a1ef55f
+		isNameInferred
+		sourceColumn: [Value]
+
+	partition _Measures = calculated
+		mode: import
+		source = {BLANK()}
+

@@ -1,0 +1,29 @@
+relationship dim_month_to_budget
+	fromColumn: budget.month
+	toColumn: dim_month.month
+
+relationship dim_month_to_census_clean
+	crossFilteringBehavior: bothDirections
+	fromColumn: census_clean.month
+	toColumn: dim_month.month
+
+relationship fin_monthly_entity_dim_entity_facility_code
+	fromColumn: fin_monthly.entity
+	toColumn: dim_entity.facility_code
+
+relationship fin_budget_entity_dim_entity_facility_code
+	fromColumn: fin_budget.entity
+	toColumn: dim_entity.facility_code
+
+relationship fin_budget_weekly_entity_dim_entity_facility_code
+	fromColumn: fin_budget_weekly.entity
+	toColumn: dim_entity.facility_code
+
+relationship Transactions_facility_code_dim_entity_facility_code
+	fromColumn: Transactions.facility_code
+	toColumn: dim_entity.facility_code
+
+relationship fin_unified_entity_dim_entity_facility_code
+	fromColumn: fin_unified.entity
+	toColumn: dim_entity.facility_code
+

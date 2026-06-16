@@ -1,0 +1,39 @@
+table dim_date
+	lineageTag: b2f1873d-6139-4bd9-afa0-1072c1c11ad3
+	dataCategory: Time
+
+	column Date
+		isUnique
+		lineageTag: 21a1cb5d-5e5c-4d0c-a71a-ebe281d9fef1
+		isNameInferred
+		sourceColumn: [Date]
+
+	column Year
+		lineageTag: 1cd805ac-47d1-497a-a1dd-985c09ef6165
+		isNameInferred
+		sourceColumn: [Year]
+
+	column Month
+		lineageTag: 6408b839-41fe-4357-b751-cb33a5fc4f87
+		isNameInferred
+		sourceColumn: [Month]
+
+	column MonthName
+		lineageTag: 7ba216e4-7e3c-4117-985f-aec23cf5f2b1
+		isNameInferred
+		sourceColumn: [MonthName]
+
+	column 'Week Ending'
+		lineageTag: 7a68748f-4ab5-4509-9a32-ae159a65058f
+		isNameInferred
+		sourceColumn: [Week Ending]
+
+	column Era
+		lineageTag: f338d7a5-6b8f-4b60-85c2-cbe322587451
+		isNameInferred
+		sourceColumn: [Era]
+
+	partition dim_date = calculated
+		mode: import
+		source = ADDCOLUMNS(CALENDAR(DATE(2024,1,1), DATE(2027,12,31)), "Year", YEAR([Date]), "Month", FORMAT([Date], "YYYY-MM"), "MonthName", FORMAT([Date], "MMM YYYY"), "Week Ending", [Date] + MOD(4 - WEEKDAY([Date], 2) + 7, 7), "Era", IF([Date] <= DATE(2026,4,30), "Through Apr 2026", "From May 2026"))
+

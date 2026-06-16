@@ -1,0 +1,257 @@
+table ctm_daily_facility_stats
+	lineageTag: 38bd63a5-94af-4675-82ea-428814ca18b4
+	sourceLineageTag: [dbo].[ctm_daily_facility_stats]
+
+	column call_date
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: date
+		lineageTag: c2402f8c-042f-4b32-9a8a-8bef82bacdaf
+		sourceLineageTag: call_date
+		summarizeBy: none
+		sourceColumn: call_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column facility
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: a66c06f6-42da-4d04-af9b-32a9ccb0c36a
+		sourceLineageTag: facility
+		summarizeBy: none
+		sourceColumn: facility
+
+		annotation SummarizationSetBy = Automatic
+
+	column account_slug
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 1e1f61b0-70df-44b7-bdfb-96203e1335e3
+		sourceLineageTag: account_slug
+		summarizeBy: none
+		sourceColumn: account_slug
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_events
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: f42179d0-3fe5-4b27-b5fb-18637df1e464
+		sourceLineageTag: total_events
+		summarizeBy: sum
+		sourceColumn: total_events
+
+		annotation SummarizationSetBy = Automatic
+
+	column voice_total
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: a9406691-560e-44a9-ad79-cee182d80c25
+		sourceLineageTag: voice_total
+		summarizeBy: sum
+		sourceColumn: voice_total
+
+		annotation SummarizationSetBy = Automatic
+
+	column voice_answered
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: aba810d0-673b-4830-9d20-56d185bbc394
+		sourceLineageTag: voice_answered
+		summarizeBy: sum
+		sourceColumn: voice_answered
+
+		annotation SummarizationSetBy = Automatic
+
+	column voice_missed
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 0969bb90-a3de-42e7-85b3-85e070ff1d91
+		sourceLineageTag: voice_missed
+		summarizeBy: sum
+		sourceColumn: voice_missed
+
+		annotation SummarizationSetBy = Automatic
+
+	column voice_voicemail
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 125da73f-5f6b-41f8-b5e8-6c894b92d442
+		sourceLineageTag: voice_voicemail
+		summarizeBy: sum
+		sourceColumn: voice_voicemail
+
+		annotation SummarizationSetBy = Automatic
+
+	column voice_quick_hangup
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: c360d779-4d96-42c4-874a-2059869b0b2e
+		sourceLineageTag: voice_quick_hangup
+		summarizeBy: sum
+		sourceColumn: voice_quick_hangup
+
+		annotation SummarizationSetBy = Automatic
+
+	column voice_abandoned
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: daf7bfbf-3a9b-4fd5-8cfd-d63ac50b483a
+		sourceLineageTag: voice_abandoned
+		summarizeBy: sum
+		sourceColumn: voice_abandoned
+
+		annotation SummarizationSetBy = Automatic
+
+	column inbound_total
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 049de770-d9c6-4126-96ea-81012f32ce48
+		sourceLineageTag: inbound_total
+		summarizeBy: sum
+		sourceColumn: inbound_total
+
+		annotation SummarizationSetBy = Automatic
+
+	column outbound_total
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: b0afc87b-34ec-4f1e-bdf8-16ce56ae2df4
+		sourceLineageTag: outbound_total
+		summarizeBy: sum
+		sourceColumn: outbound_total
+
+		annotation SummarizationSetBy = Automatic
+
+	column sms_total
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: b7ddedb2-d9c1-40f8-9605-933c1265b285
+		sourceLineageTag: sms_total
+		summarizeBy: sum
+		sourceColumn: sms_total
+
+		annotation SummarizationSetBy = Automatic
+
+	column form_total
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 0f7f3f9b-c389-4f59-9add-fbca5ef4a249
+		sourceLineageTag: form_total
+		summarizeBy: sum
+		sourceColumn: form_total
+
+		annotation SummarizationSetBy = Automatic
+
+	column talk_time_seconds
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 517a93af-a335-4751-8c7c-b8901bcb26f4
+		sourceLineageTag: talk_time_seconds
+		summarizeBy: sum
+		sourceColumn: talk_time_seconds
+
+		annotation SummarizationSetBy = Automatic
+
+	column callbacks_needed
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: c914c9b4-c3c5-4e67-a563-166181f51ec6
+		sourceLineageTag: callbacks_needed
+		summarizeBy: sum
+		sourceColumn: callbacks_needed
+
+		annotation SummarizationSetBy = Automatic
+
+	column callbacks_made_any
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: bf7185e5-0131-409a-a980-4aa6975fd125
+		sourceLineageTag: callbacks_made_any
+		summarizeBy: sum
+		sourceColumn: callbacks_made_any
+
+		annotation SummarizationSetBy = Automatic
+
+	column callbacks_made_same_agent
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: a96d239b-6719-4e93-9f72-7179b321f87d
+		sourceLineageTag: callbacks_made_same_agent
+		summarizeBy: sum
+		sourceColumn: callbacks_made_same_agent
+
+		annotation SummarizationSetBy = Automatic
+
+	column answer_rate_pct
+		dataType: double
+		sourceProviderType: float
+		lineageTag: 0c8d2b49-4711-491e-b987-2f67057dba2c
+		sourceLineageTag: answer_rate_pct
+		summarizeBy: sum
+		sourceColumn: answer_rate_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column miss_rate_pct
+		dataType: double
+		sourceProviderType: float
+		lineageTag: 7e871f8f-a6cd-4935-88af-6ca68f1b2760
+		sourceLineageTag: miss_rate_pct
+		summarizeBy: sum
+		sourceColumn: miss_rate_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column callback_rate_any_pct
+		dataType: double
+		sourceProviderType: float
+		lineageTag: 5d784fb2-3f91-4104-8752-b5a56adb78b8
+		sourceLineageTag: callback_rate_any_pct
+		summarizeBy: sum
+		sourceColumn: callback_rate_any_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column callback_rate_same_pct
+		dataType: double
+		sourceProviderType: float
+		lineageTag: 14f71935-b12b-4e0a-806e-6662e1455ad6
+		sourceLineageTag: callback_rate_same_pct
+		summarizeBy: sum
+		sourceColumn: callback_rate_same_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition ctm_daily_facility_stats = entity
+		mode: directLake
+		source
+			entityName: ctm_daily_facility_stats
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table
+

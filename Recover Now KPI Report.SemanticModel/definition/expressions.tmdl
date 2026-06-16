@@ -1,0 +1,115 @@
+expression 'Errors in Transactions' =
+		let
+		Source = Transactions,
+		  #"Detected Type Mismatches" = let
+		    tableWithOnlyPrimitiveTypes = Table.SelectColumns(Source, Table.ColumnsOfType(Source, {type nullable number, type nullable text, type nullable logical, type nullable date, type nullable datetime, type nullable datetimezone, type nullable time, type nullable duration})),
+		    recordTypeFields = Type.RecordFields(Type.TableRow(Value.Type(tableWithOnlyPrimitiveTypes))),
+		    fieldNames = Record.FieldNames(recordTypeFields),
+		    fieldTypes = List.Transform(Record.ToList(recordTypeFields), each [Type]),
+		    pairs = List.Transform(List.Positions(fieldNames), (i) => {fieldNames{i}, (v) => if v = null or Value.Is(v, fieldTypes{i}) then v else error [Message = "The type of the value does not match the type of the column.", Detail = v], fieldTypes{i}})
+		in
+		    Table.TransformColumns(Source, pairs),
+		  #"Added Index" = Table.AddIndexColumn(#"Detected Type Mismatches", "Row Number" ,1),
+		  #"Kept Errors" = Table.SelectRowsWithErrors(#"Added Index", {"Source.Name", "transaction_id", "date", "account", "entity", "institution", "amount", "direction", "counterparty", "description", "status", "category", "category_override", "Type", "Cleaned Type", "Week Ending"}),
+		  #"Reordered Columns" = Table.ReorderColumns(#"Kept Errors", {"Row Number", "Source.Name", "transaction_id", "date", "account", "entity", "institution", "amount", "direction", "counterparty", "description", "status", "category", "category_override", "Type", "Cleaned Type", "Week Ending"})
+		in
+		  #"Reordered Columns"
+	lineageTag: c17632d4-a6b8-4906-8c8b-35674a225e68
+	queryGroup: 'Query Errors - 4/9/2026 2:44:38 PM'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'Errors in Transactions (2)' =
+		let
+		Source = Transactions,
+		  #"Detected Type Mismatches" = let
+		    tableWithOnlyPrimitiveTypes = Table.SelectColumns(Source, Table.ColumnsOfType(Source, {type nullable number, type nullable text, type nullable logical, type nullable date, type nullable datetime, type nullable datetimezone, type nullable time, type nullable duration})),
+		    recordTypeFields = Type.RecordFields(Type.TableRow(Value.Type(tableWithOnlyPrimitiveTypes))),
+		    fieldNames = Record.FieldNames(recordTypeFields),
+		    fieldTypes = List.Transform(Record.ToList(recordTypeFields), each [Type]),
+		    pairs = List.Transform(List.Positions(fieldNames), (i) => {fieldNames{i}, (v) => if v = null or Value.Is(v, fieldTypes{i}) then v else error [Message = "The type of the value does not match the type of the column.", Detail = v], fieldTypes{i}})
+		in
+		    Table.TransformColumns(Source, pairs),
+		  #"Added Index" = Table.AddIndexColumn(#"Detected Type Mismatches", "Row Number" ,1),
+		  #"Kept Errors" = Table.SelectRowsWithErrors(#"Added Index", {"Source.Name", "transaction_id", "date", "account", "entity", "institution", "amount", "direction", "counterparty", "description", "status", "category", "category_override", "Type", "Cleaned Type", "Week Ending"}),
+		  #"Reordered Columns" = Table.ReorderColumns(#"Kept Errors", {"Row Number", "Source.Name", "transaction_id", "date", "account", "entity", "institution", "amount", "direction", "counterparty", "description", "status", "category", "category_override", "Type", "Cleaned Type", "Week Ending"})
+		in
+		  #"Reordered Columns"
+	lineageTag: 4e7a203f-83fc-47ff-8abc-b52106b2abca
+	queryGroup: 'Query Errors - 5/11/2026 10:26:07 AM'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'Errors in Transactions (3)' =
+		let
+		Source = Transactions,
+		  #"Detected Type Mismatches" = let
+		    tableWithOnlyPrimitiveTypes = Table.SelectColumns(Source, Table.ColumnsOfType(Source, {type nullable number, type nullable text, type nullable logical, type nullable date, type nullable datetime, type nullable datetimezone, type nullable time, type nullable duration})),
+		    recordTypeFields = Type.RecordFields(Type.TableRow(Value.Type(tableWithOnlyPrimitiveTypes))),
+		    fieldNames = Record.FieldNames(recordTypeFields),
+		    fieldTypes = List.Transform(Record.ToList(recordTypeFields), each [Type]),
+		    pairs = List.Transform(List.Positions(fieldNames), (i) => {fieldNames{i}, (v) => if v = null or Value.Is(v, fieldTypes{i}) then v else error [Message = "The type of the value does not match the type of the column.", Detail = v], fieldTypes{i}})
+		in
+		    Table.TransformColumns(Source, pairs),
+		  #"Added Index" = Table.AddIndexColumn(#"Detected Type Mismatches", "Row Number" ,1),
+		  #"Kept Errors" = Table.SelectRowsWithErrors(#"Added Index", {"Source.Name", "transaction_id", "date", "account", "entity", "institution", "amount", "direction", "counterparty", "description", "status", "category", "category_override", "Type", "Cleaned Type", "Week Ending"}),
+		  #"Reordered Columns" = Table.ReorderColumns(#"Kept Errors", {"Row Number", "Source.Name", "transaction_id", "date", "account", "entity", "institution", "amount", "direction", "counterparty", "description", "status", "category", "category_override", "Type", "Cleaned Type", "Week Ending"})
+		in
+		  #"Reordered Columns"
+	lineageTag: 86d55d76-39ab-4847-9354-cae01f8f9a92
+	queryGroup: 'Query Errors - 5/11/2026 10:30:24 AM'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'Errors in Transactions (4)' =
+		let
+		Source = Transactions,
+		  #"Detected Type Mismatches" = let
+		    tableWithOnlyPrimitiveTypes = Table.SelectColumns(Source, Table.ColumnsOfType(Source, {type nullable number, type nullable text, type nullable logical, type nullable date, type nullable datetime, type nullable datetimezone, type nullable time, type nullable duration})),
+		    recordTypeFields = Type.RecordFields(Type.TableRow(Value.Type(tableWithOnlyPrimitiveTypes))),
+		    fieldNames = Record.FieldNames(recordTypeFields),
+		    fieldTypes = List.Transform(Record.ToList(recordTypeFields), each [Type]),
+		    pairs = List.Transform(List.Positions(fieldNames), (i) => {fieldNames{i}, (v) => if v = null or Value.Is(v, fieldTypes{i}) then v else error [Message = "The type of the value does not match the type of the column.", Detail = v], fieldTypes{i}})
+		in
+		    Table.TransformColumns(Source, pairs),
+		  #"Added Index" = Table.AddIndexColumn(#"Detected Type Mismatches", "Row Number" ,1),
+		  #"Kept Errors" = Table.SelectRowsWithErrors(#"Added Index", {"Source.Name", "transaction_id", "date", "account", "entity", "institution", "amount", "direction", "counterparty", "description", "status", "category", "category_override", "Type", "Cleaned Type", "Week Ending"}),
+		  #"Reordered Columns" = Table.ReorderColumns(#"Kept Errors", {"Row Number", "Source.Name", "transaction_id", "date", "account", "entity", "institution", "amount", "direction", "counterparty", "description", "status", "category", "category_override", "Type", "Cleaned Type", "Week Ending"})
+		in
+		  #"Reordered Columns"
+	lineageTag: eeb4fa0a-abf8-4a72-89b2-98f348ed788f
+	queryGroup: 'Query Errors - 5/18/2026 10:20:11 AM'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'Errors in Transactions (5)' =
+		let
+		Source = Transactions,
+		  #"Detected Type Mismatches" = let
+		    tableWithOnlyPrimitiveTypes = Table.SelectColumns(Source, Table.ColumnsOfType(Source, {type nullable number, type nullable text, type nullable logical, type nullable date, type nullable datetime, type nullable datetimezone, type nullable time, type nullable duration})),
+		    recordTypeFields = Type.RecordFields(Type.TableRow(Value.Type(tableWithOnlyPrimitiveTypes))),
+		    fieldNames = Record.FieldNames(recordTypeFields),
+		    fieldTypes = List.Transform(Record.ToList(recordTypeFields), each [Type]),
+		    pairs = List.Transform(List.Positions(fieldNames), (i) => {fieldNames{i}, (v) => if v = null or Value.Is(v, fieldTypes{i}) then v else error [Message = "The type of the value does not match the type of the column.", Detail = v], fieldTypes{i}})
+		in
+		    Table.TransformColumns(Source, pairs),
+		  #"Added Index" = Table.AddIndexColumn(#"Detected Type Mismatches", "Row Number" ,1),
+		  #"Kept Errors" = Table.SelectRowsWithErrors(#"Added Index", {"Source.Name", "transaction_id", "date", "account", "entity", "institution", "amount", "direction", "counterparty", "description", "status", "category", "category_override", "Type", "Cleaned Type", "Week Ending"}),
+		  #"Reordered Columns" = Table.ReorderColumns(#"Kept Errors", {"Row Number", "Source.Name", "transaction_id", "date", "account", "entity", "institution", "amount", "direction", "counterparty", "description", "status", "category", "category_override", "Type", "Cleaned Type", "Week Ending"})
+		in
+		  #"Reordered Columns"
+	lineageTag: d5372364-e0d5-4b86-8314-adea882fdf0c
+	queryGroup: 'Query Errors - 5/18/2026 10:22:06 AM'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

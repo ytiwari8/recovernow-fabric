@@ -1,0 +1,78 @@
+/// Single chart-friendly long-format fact table. Columns: month_ending, entity (facility_code), scenario (Actual or Budget), type (Revenue / S&W / EBITDA), amount. Actuals are sourced from fin_monthly (which combines bank Transactions and 2025 Widespread historical). EBITDA on the actuals side is derived as Revenue minus S&W minus Other Expenses per month-entity. Budget is sourced from fin_budget. All amounts are sign-normalized to positive for Revenue/S&W. EBITDA can be positive or negative.
+table fin_unified
+	lineageTag: 1d14a5ba-9804-4994-a011-7dbbb793a947
+
+	column month_ending
+		lineageTag: 9d1f60e9-e9b5-4ed4-bab8-87a96c64aed3
+		isNameInferred
+		sourceColumn: [month_ending]
+
+	column entity
+		lineageTag: 43967fbe-f76b-4162-93b7-5d1d091e2564
+		isNameInferred
+		sourceColumn: [entity]
+
+	column scenario
+		lineageTag: aea68a3e-ef39-4adb-b3dd-1e7bb742dfa8
+		isNameInferred
+		sourceColumn: [scenario]
+
+	column type
+		lineageTag: e854ea7a-35f5-4f83-876d-a2b4cf0d59f8
+		isNameInferred
+		sourceColumn: [type]
+
+	column amount
+		lineageTag: 9fb6a578-eb20-431b-a4bb-4a5801f231fd
+		isNameInferred
+		sourceColumn: [amount]
+
+	partition fin_unified = calculated
+		mode: import
+		source =
+				VAR ActualsBase =
+				    SUMMARIZE('fin_monthly',
+				        'fin_monthly'[month_ending],
+				        'fin_monthly'[entity]
+				    )
+				VAR ActualsWithMetrics =
+				    ADDCOLUMNS(
+				        ActualsBase,
+				        "rev", CALCULATE(SUM('fin_monthly'[amount]), 'fin_monthly'[type] = "Revenue"),
+				        "sw", CALCULATE(SUM('fin_monthly'[amount]), 'fin_monthly'[type] = "Salaries and Wages"),
+				        "oe", CALCULATE(SUM('fin_monthly'[amount]), 'fin_monthly'[type] = "Other Expenses")
+				    )
+				VAR ActualRevenue =
+				    SELECTCOLUMNS(ActualsWithMetrics,
+				        "month_ending", 'fin_monthly'[month_ending],
+				        "entity", 'fin_monthly'[entity],
+				        "scenario", "Actual",
+				        "type", "Revenue",
+				        "amount", COALESCE([rev], 0)
+				    )
+				VAR ActualSW =
+				    SELECTCOLUMNS(ActualsWithMetrics,
+				        "month_ending", 'fin_monthly'[month_ending],
+				        "entity", 'fin_monthly'[entity],
+				        "scenario", "Actual",
+				        "type", "S&W",
+				        "amount", COALESCE([sw], 0)
+				    )
+				VAR ActualEBITDA =
+				    SELECTCOLUMNS(ActualsWithMetrics,
+				        "month_ending", 'fin_monthly'[month_ending],
+				        "entity", 'fin_monthly'[entity],
+				        "scenario", "Actual",
+				        "type", "EBITDA",
+				        "amount", COALESCE([rev], 0) - COALESCE([sw], 0) - COALESCE([oe], 0)
+				    )
+				VAR BudgetRows =
+				    SELECTCOLUMNS('fin_budget',
+				        "month_ending", 'fin_budget'[month_ending],
+				        "entity", 'fin_budget'[entity],
+				        "scenario", "Budget",
+				        "type", IF('fin_budget'[type] = "Salaries and Wages", "S&W", 'fin_budget'[type]),
+				        "amount", 'fin_budget'[amount]
+				    )
+				RETURN UNION(ActualRevenue, ActualSW, ActualEBITDA, BudgetRows)
+

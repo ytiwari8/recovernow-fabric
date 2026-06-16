@@ -1,0 +1,135 @@
+/// Central measures table for CTM Call Analytics
+table _Measures
+
+	measure 'Total Events' = COUNTROWS(ctm_calls_raw)
+		formatString: #,0
+		displayFolder: 01 Volume
+
+	measure 'Voice Calls' = CALCULATE([Total Events], ctm_calls_raw[is_voice] = TRUE)
+		formatString: #,0
+		displayFolder: 01 Volume
+
+	measure 'Inbound Calls' = CALCULATE([Total Events], ctm_calls_raw[event_type] = "voice", ctm_calls_raw[direction] = "inbound")
+		formatString: #,0
+		displayFolder: 01 Volume
+
+	measure 'Outbound Calls' = CALCULATE([Total Events], ctm_calls_raw[event_type] = "voice", ctm_calls_raw[direction] = "outbound")
+		formatString: #,0
+		displayFolder: 01 Volume
+
+	measure 'SMS Events' = CALCULATE([Total Events], ctm_calls_raw[event_type] = "sms")
+		formatString: #,0
+		displayFolder: 01 Volume
+
+	measure 'Form Submissions' = CALCULATE([Total Events], ctm_calls_raw[event_type] = "form_fill")
+		formatString: #,0
+		displayFolder: 01 Volume
+
+	measure 'Answered Calls' = CALCULATE([Total Events], ctm_calls_raw[outcome] = "answered")
+		formatString: #,0
+		displayFolder: 02 Outcomes
+
+	measure 'Missed Calls' = CALCULATE([Total Events], ctm_calls_raw[outcome] = "missed")
+		formatString: #,0
+		displayFolder: 02 Outcomes
+
+	measure Voicemails = CALCULATE([Total Events], ctm_calls_raw[outcome] = "voicemail")
+		formatString: #,0
+		displayFolder: 02 Outcomes
+
+	measure 'Quick Hangups' = CALCULATE([Total Events], ctm_calls_raw[outcome] = "quick_hangup")
+		formatString: #,0
+		displayFolder: 02 Outcomes
+
+	measure 'Abandoned on Hold' = CALCULATE([Total Events], ctm_calls_raw[outcome] = "abandoned_on_hold")
+		formatString: #,0
+		displayFolder: 02 Outcomes
+
+	measure 'No Contact (Outbound)' = CALCULATE([Total Events], ctm_calls_raw[outcome] = "no_contact")
+		formatString: #,0
+		displayFolder: 02 Outcomes
+
+	measure 'Answer Rate %' = DIVIDE([Answered Calls], [Voice Calls])
+		formatString: 0.0%
+		displayFolder: 03 Rates
+
+	measure 'Miss Rate %' = DIVIDE([Missed Calls] + [Voicemails] + [Abandoned on Hold], [Inbound Calls])
+		formatString: 0.0%
+		displayFolder: 03 Rates
+
+	measure 'Inbound Answer Rate %' = VAR _inbound_answered = CALCULATE([Total Events], ctm_calls_raw[event_type] = "voice", ctm_calls_raw[direction] = "inbound", ctm_calls_raw[outcome] = "answered") RETURN DIVIDE(_inbound_answered, [Inbound Calls])
+		formatString: 0.0%
+		displayFolder: 03 Rates
+
+	measure 'Total Talk Time (sec)' = SUM(ctm_calls_raw[talk_time])
+		formatString: #,0
+		displayFolder: 04 Talk Time
+
+	measure 'Total Talk Time (min)' = DIVIDE([Total Talk Time (sec)], 60)
+		formatString: #,0.0
+		displayFolder: 04 Talk Time
+
+	measure 'Total Talk Time (hr)' = DIVIDE([Total Talk Time (sec)], 3600)
+		formatString: #,0.0
+		displayFolder: 04 Talk Time
+
+	measure 'Avg Talk Time (min)' = DIVIDE([Total Talk Time (min)], [Answered Calls])
+		formatString: 0.0
+		displayFolder: 04 Talk Time
+
+	measure 'Needs Callback' = CALCULATE([Total Events], ctm_calls_raw[needs_callback] = TRUE)
+		formatString: #,0
+		displayFolder: 05 Callback
+
+	measure 'Called Back (Any)' = CALCULATE([Total Events], ctm_calls_raw[callback_status] = "called_back")
+		formatString: #,0
+		displayFolder: 05 Callback
+
+	measure 'Called Back (Same Agent)' = CALCULATE([Total Events], ctm_calls_raw[callback_status] = "called_back", ctm_calls_raw[callback_by_same_agent] = TRUE)
+		formatString: #,0
+		displayFolder: 05 Callback
+
+	measure 'Not Called Back' = CALCULATE([Total Events], ctm_calls_raw[callback_status] = "not_called_back")
+		formatString: #,0
+		displayFolder: 05 Callback
+
+	measure 'Pending Callback' = CALCULATE([Total Events], ctm_calls_raw[callback_status] = "pending")
+		formatString: #,0
+		displayFolder: 05 Callback
+
+	measure 'Callback Rate (Any) %' = DIVIDE([Called Back (Any)], [Needs Callback])
+		formatString: 0.0%
+		displayFolder: 05 Callback
+
+	measure 'Callback Rate (Same Agent) %' = DIVIDE([Called Back (Same Agent)], [Needs Callback])
+		formatString: 0.0%
+		displayFolder: 05 Callback
+
+	measure 'Median Callback Time (min)' = MEDIANX(FILTER(ctm_calls_raw, ctm_calls_raw[callback_status] = "called_back"), ctm_calls_raw[callback_minutes])
+		formatString: 0
+		displayFolder: 05 Callback
+
+	measure 'Avg Callback Time (min)' = AVERAGEX(FILTER(ctm_calls_raw, ctm_calls_raw[callback_status] = "called_back"), ctm_calls_raw[callback_minutes])
+		formatString: 0.0
+		displayFolder: 05 Callback
+
+	measure 'Unique Callers' = DISTINCTCOUNT(ctm_calls_raw[caller_number_bare])
+		formatString: #,0
+		displayFolder: 06 Other
+
+	measure 'New Callers' = CALCULATE([Total Events], ctm_calls_raw[is_new_caller] = TRUE)
+		formatString: #,0
+		displayFolder: 06 Other
+
+	measure 'Unique Agents' = CALCULATE(DISTINCTCOUNT(ctm_calls_raw[agent_id]), ctm_calls_raw[agent_id] <> BLANK())
+		formatString: #,0
+		displayFolder: 06 Other
+
+	column _
+		isNameInferred
+		sourceColumn: [_]
+
+	partition _Measures = calculated
+		mode: import
+		source = ROW("_", BLANK())
+

@@ -1,0 +1,93 @@
+/// Derived weekly targets from fin_budget using even-split allocation. For each Sunday week_ending in the budget period (Jan 4 2026 to Mar 28 2027), the monthly budget for that entity-type is divided by the count of Sundays falling in that calendar month. Covers Revenue, Salaries and Wages, and EBITDA only.
+table fin_budget_weekly
+	lineageTag: e25dc6d6-1e5c-46a0-9a3f-fe3c3e0e6c50
+
+	/// Derived weekly revenue target from monthly budget. Uses even-split across Sundays in the month.
+	measure 'Weekly Revenue Target' = CALCULATE(SUM('fin_budget_weekly'[weekly_target]), 'fin_budget_weekly'[type] = "Revenue")
+		formatString: $#,##0;($#,##0)
+		displayFolder: 08 Weekly Targets
+		lineageTag: 60966924-8277-4425-ab19-2a72a57e2f86
+
+	/// Weekly S&W target.
+	measure 'Weekly S&W Target' = CALCULATE(SUM('fin_budget_weekly'[weekly_target]), 'fin_budget_weekly'[type] = "Salaries and Wages")
+		formatString: $#,##0;($#,##0)
+		displayFolder: 08 Weekly Targets
+		lineageTag: ef649c3d-310e-4c2d-961a-684b0323daa3
+
+	/// Weekly EBITDA target.
+	measure 'Weekly EBITDA Target' = CALCULATE(SUM('fin_budget_weekly'[weekly_target]), 'fin_budget_weekly'[type] = "EBITDA")
+		formatString: $#,##0;($#,##0)
+		displayFolder: 08 Weekly Targets
+		lineageTag: a7407eb2-af3b-407e-84aa-0e4ecd6ce089
+
+	column week_ending
+		lineageTag: 9223455c-9a1e-4651-ad68-d5ff254fa507
+		isNameInferred
+		sourceColumn: [week_ending]
+
+	column month_ending
+		lineageTag: bdf29fc8-f831-4d7d-a1ac-b9a55976c0f2
+		isNameInferred
+		sourceColumn: [month_ending]
+
+	column entity
+		lineageTag: 10d291af-3300-4565-bb30-99691873d0a0
+		isNameInferred
+		sourceColumn: [entity]
+
+	column type
+		lineageTag: 37e44564-e967-4ef1-98ac-fd2b500b051d
+		isNameInferred
+		sourceColumn: [type]
+
+	column weekly_target
+		lineageTag: b2a8e96b-15cf-4382-aa57-f724c1e6c2f3
+		isNameInferred
+		sourceColumn: [weekly_target]
+
+	partition fin_budget_weekly = calculated
+		mode: import
+		source =
+				VAR WeekDates =
+				    SELECTCOLUMNS(
+				        GENERATESERIES(DATE(2026,1,4), DATE(2027,3,28), 7),
+				        "week_ending", [Value]
+				    )
+				VAR WeeksWithMonth =
+				    ADDCOLUMNS(
+				        WeekDates,
+				        "month_end", EOMONTH([week_ending], 0)
+				    )
+				VAR WeeksWithCount =
+				    ADDCOLUMNS(
+				        WeeksWithMonth,
+				        "weeks_in_month",
+				            VAR me = [month_end]
+				            RETURN COUNTROWS(FILTER(WeeksWithMonth, [month_end] = me))
+				    )
+				VAR Result =
+				    GENERATE(
+				        WeeksWithCount,
+				        VAR monthEnd = [month_end]
+				        VAR weeksInMo = [weeks_in_month]
+				        RETURN
+				            SELECTCOLUMNS(
+				                FILTER(
+				                    'fin_budget',
+				                    'fin_budget'[month_ending] = monthEnd
+				                    && 'fin_budget'[type] IN {"Revenue", "Salaries and Wages", "EBITDA"}
+				                ),
+				                "entity", 'fin_budget'[entity],
+				                "type", 'fin_budget'[type],
+				                "weekly_target", 'fin_budget'[amount] / weeksInMo
+				            )
+				    )
+				RETURN
+				    SELECTCOLUMNS(Result,
+				        "week_ending", [week_ending],
+				        "month_ending", [month_end],
+				        "entity", [entity],
+				        "type", [type],
+				        "weekly_target", [weekly_target]
+				    )
+

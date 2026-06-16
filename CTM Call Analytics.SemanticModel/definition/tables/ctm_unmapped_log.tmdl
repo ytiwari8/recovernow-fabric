@@ -1,0 +1,107 @@
+table ctm_unmapped_log
+	lineageTag: aec286a0-f704-4a41-967c-65355ae18d55
+	sourceLineageTag: [dbo].[ctm_unmapped_log]
+
+	column account_id
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 224adb8a-b914-4e7b-b9eb-0c4ea4f6e0b7
+		sourceLineageTag: account_id
+		summarizeBy: sum
+		sourceColumn: account_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column account_slug
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: b76cd37c-6dbf-4790-93af-3231a0abc62f
+		sourceLineageTag: account_slug
+		summarizeBy: none
+		sourceColumn: account_slug
+
+		annotation SummarizationSetBy = Automatic
+
+	column source
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: f8bbc112-7033-41e6-861c-a79024fd29fd
+		sourceLineageTag: source
+		summarizeBy: none
+		sourceColumn: source
+
+		annotation SummarizationSetBy = Automatic
+
+	column call_count
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 3a0ab7a2-b641-4662-99c4-7a51c421b056
+		sourceLineageTag: call_count
+		summarizeBy: sum
+		sourceColumn: call_count
+
+		annotation SummarizationSetBy = Automatic
+
+	column first_seen_date
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: date
+		lineageTag: e58e8d10-72fd-4297-a1e3-7d6d4fe558c7
+		sourceLineageTag: first_seen_date
+		summarizeBy: none
+		sourceColumn: first_seen_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_seen_date
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: date
+		lineageTag: 88eaef28-b6c6-4f97-a0ee-3874e3981211
+		sourceLineageTag: last_seen_date
+		summarizeBy: none
+		sourceColumn: last_seen_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column sample_tracking_label
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: ff67d86c-bdb0-4265-b572-f84adcb42bf9
+		sourceLineageTag: sample_tracking_label
+		summarizeBy: none
+		sourceColumn: sample_tracking_label
+
+		annotation SummarizationSetBy = Automatic
+
+	column source_for_mapping
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: fa2296be-1b22-4bc7-a20b-7d4da0ae5fb1
+		sourceLineageTag: source_for_mapping
+		summarizeBy: none
+		sourceColumn: source_for_mapping
+
+		annotation SummarizationSetBy = Automatic
+
+	column detected_at
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: dca66ce5-a428-4c83-b2ea-f5333ce90bb6
+		sourceLineageTag: detected_at
+		summarizeBy: none
+		sourceColumn: detected_at
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ctm_unmapped_log = entity
+		mode: directLake
+		source
+			entityName: ctm_unmapped_log
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table
+
