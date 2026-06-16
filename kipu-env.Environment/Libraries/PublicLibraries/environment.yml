@@ -1,0 +1,7 @@
+dependencies:
+  - pip:
+      - gspread==6.2.1
+      - google-auth==3.0.0.dev0
+      - sendgrid==7.0.0rc2
+      - openpyxl==3.2.0b1
+      - rapidfuzz==3.14.5
