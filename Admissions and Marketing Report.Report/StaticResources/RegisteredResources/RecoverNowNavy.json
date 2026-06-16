@@ -37,7 +37,10 @@
           { "show": true, "color": { "solid": { "color": "#FFFFFF" } }, "transparency": 0 }
         ],
         "border": [
-          { "show": true, "color": { "solid": { "color": "#E1E1E1" } }, "radius": 4 }
+          { "show": true, "color": { "solid": { "color": "#D2D8E0" } }, "radius": 6 }
+        ],
+        "dropShadow": [
+          { "show": true, "color": { "solid": { "color": "#3A4A63" } }, "position": "Outer", "preset": "Custom", "angle": 90, "shadowDistance": 2, "shadowBlur": 7, "shadowSpread": 0, "transparency": 86 }
         ],
         "title": [
           {

@@ -5,6 +5,16 @@
   "displayOption": "FitToPage",
   "height": 720,
   "width": 1280,
+  "objects": {
+    "background": [
+      {
+        "properties": {
+          "color": { "solid": { "color": { "expr": { "Literal": { "Value": "'#EEF1F5'" } } } } },
+          "transparency": { "expr": { "Literal": { "Value": "0D" } } }
+        }
+      }
+    ]
+  },
   "filterConfig": {
     "filters": []
   }
