@@ -1,0 +1,123 @@
+{
+    "$schema":  "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.10.0/schema.json",
+    "name":  "a3a3a3a3a3a3a3a3a303",
+    "position":  {
+                     "width":  405,
+                     "y":  56,
+                     "z":  3,
+                     "x":  858,
+                     "tabOrder":  300,
+                     "height":  210
+                 },
+    "visual":  {
+                   "visualType":  "lineChart",
+                   "query":  {
+                                 "queryState":  {
+                                                    "Category":  {
+                                                                     "projections":  [
+                                                                                         {
+                                                                                             "field":  {
+                                                                                                           "Column":  {
+                                                                                                                          "Expression":  {
+                                                                                                                                             "SourceRef":  {
+                                                                                                                                                               "Entity":  "dim_date"
+                                                                                                                                                           }
+                                                                                                                                         },
+                                                                                                                          "Property":  "week_ending"
+                                                                                                                      }
+                                                                                                       },
+                                                                                             "nativeQueryRef":  "week_ending",
+                                                                                             "active":  true,
+                                                                                             "queryRef":  "dim_date.week_ending"
+                                                                                         }
+                                                                                     ]
+                                                                 },
+                                                    "Y":  {
+                                                              "projections":  [
+                                                                                  {
+                                                                                      "field":  {
+                                                                                                    "Measure":  {
+                                                                                                                    "Expression":  {
+                                                                                                                                       "SourceRef":  {
+                                                                                                                                                         "Entity":  "calls_detail"
+                                                                                                                                                     }
+                                                                                                                                   },
+                                                                                                                    "Property":  "SEO Calls"
+                                                                                                                }
+                                                                                                },
+                                                                                      "nativeQueryRef":  "SEO Calls",
+                                                                                      "queryRef":  "calls_detail.SEO Calls"
+                                                                                  }
+                                                                              ]
+                                                          }
+                                                },
+                                 "sortDefinition":  {
+                                                        "sort":  [
+                                                                     {
+                                                                         "field":  {
+                                                                                       "Column":  {
+                                                                                                      "Expression":  {
+                                                                                                                         "SourceRef":  {
+                                                                                                                                           "Entity":  "dim_date"
+                                                                                                                                       }
+                                                                                                                     },
+                                                                                                      "Property":  "week_ending"
+                                                                                                  }
+                                                                                   },
+                                                                         "direction":  "Ascending"
+                                                                     }
+                                                                 ],
+                                                        "isDefaultSort":  true
+                                                    }
+                             },
+                   "objects":  {
+                                   "title":  [
+                                                 {
+                                                     "properties":  {
+                                                                        "text":  {
+                                                                                     "expr":  {
+                                                                                                  "Literal":  {
+                                                                                                                  "Value":  "\u0027SEO Calls (Organic + GMB)\u0027"
+                                                                                                              }
+                                                                                              }
+                                                                                 },
+                                                                        "show":  {
+                                                                                     "expr":  {
+                                                                                                  "Literal":  {
+                                                                                                                  "Value":  "true"
+                                                                                                              }
+                                                                                              }
+                                                                                 }
+                                                                    }
+                                                 }
+                                             ],
+                                   "labels":  [
+                                                  {
+                                                      "properties":  {
+                                                                         "show":  {
+                                                                                      "expr":  {
+                                                                                                   "Literal":  {
+                                                                                                                   "Value":  "true"
+                                                                                                               }
+                                                                                               }
+                                                                                  }
+                                                                     }
+                                                  }
+                                              ],
+                                   "categoryAxis":  [
+                                                        {
+                                                            "properties":  {
+                                                                               "axisType":  {
+                                                                                                "expr":  {
+                                                                                                             "Literal":  {
+                                                                                                                             "Value":  "\u0027Categorical\u0027"
+                                                                                                                         }
+                                                                                                         }
+                                                                                            }
+                                                                           }
+                                                        }
+                                                    ]
+                               },
+                   "drillFilterOtherVisuals":  true
+               }
+}
