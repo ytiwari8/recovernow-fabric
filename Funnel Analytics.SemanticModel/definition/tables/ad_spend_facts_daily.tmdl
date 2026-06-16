@@ -126,6 +126,12 @@ table ad_spend_facts_daily
 		displayFolder: Trailing 4 Weeks
 		lineageTag: 34da1e96-47c4-49da-aecd-ecea5e406977
 
+	/// Ad Spend ÷ (PPC inbound calls + PPC forms). Prices all paid contacts, not just calls.
+	measure 'Cost per Inbound Call & Form' = DIVIDE([Ad Spend], [PPC Inbound Calls] + [PPC Forms])
+		formatString: $#,##0
+		displayFolder: Efficiency
+		lineageTag: 405732d9-8f61-483c-8ec1-b618a181cf1d
+
 	column date
 		dataType: dateTime
 		lineageTag: 09d6a6a3-8fba-44b6-84e6-f90dc71a9878

@@ -152,6 +152,45 @@ table calls_detail
 		displayFolder: Trailing 4 Weeks
 		lineageTag: d5e342ce-356a-4659-9d45-cc3c94d79fa0
 
+	/// Inbound calls from a first-time caller — the new-patient demand signal.
+	measure 'New Inbound Calls' = CALCULATE([Inbound Calls], calls_detail[is_new_caller] = TRUE())
+		formatString: #,##0
+		displayFolder: Calls
+		lineageTag: bd23dff2-38e1-460c-af95-7b29a3848374
+
+	measure 'Returning Inbound Calls' = CALCULATE([Inbound Calls], calls_detail[is_new_caller] = FALSE())
+		formatString: #,##0
+		displayFolder: Calls
+		lineageTag: 21c757e2-aa4d-496e-9631-27b97ac4b45d
+
+	measure '% New Callers' = DIVIDE([New Inbound Calls], [Inbound Calls])
+		formatString: 0.0%
+		displayFolder: Calls
+		lineageTag: 94a469c5-f7d0-4227-87bb-dafe4798cb93
+
+	/// Inbound calls from Organic search + GMB (the SEO bucket).
+	measure 'SEO Calls' = CALCULATE([Inbound Calls], calls_detail[tracking_source_type] = "Organic")
+		formatString: #,##0
+		displayFolder: Calls
+		lineageTag: 6b81d398-3db3-4d7a-91be-8590634ee6ba
+
+	/// Web form submissions attributed to PPC.
+	measure 'PPC Forms' = CALCULATE([Call Count], calls_detail[direction] = "form", calls_detail[tracking_source_type] = "PPC")
+		formatString: #,##0
+		displayFolder: Calls
+		lineageTag: 8a5d081c-8978-44e5-afde-b6028b749fc6
+
+	measure 'Missed Calls Called Back' = CALCULATE([Missed Inbound Calls], calls_detail[callback_status] = "called_back")
+		formatString: #,##0
+		displayFolder: Calls
+		lineageTag: 6620c406-909a-4302-864f-3fa6d2426c0c
+
+	/// Of missed inbound calls, the share that were called back.
+	measure 'Callback Rate' = DIVIDE([Missed Calls Called Back], [Missed Inbound Calls])
+		formatString: 0.0%
+		displayFolder: Calls
+		lineageTag: 291cd57a-ea98-47ff-9585-918b14dd4f3e
+
 	column call_id
 		dataType: int64
 		lineageTag: a0fa09c8-0db4-409b-8583-17a7180f8a24
