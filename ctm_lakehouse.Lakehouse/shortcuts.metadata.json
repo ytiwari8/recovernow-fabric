@@ -1,0 +1,14 @@
+[
+  {
+    "name": "ctm-bronze",
+    "path": "/Files",
+    "target": {
+      "type": "AdlsGen2",
+      "adlsGen2": {
+        "connectionId": "22b91667-4c74-48a0-8bc6-12ffe13cf2c6",
+        "location": "https://stkipu001.dfs.core.windows.net",
+        "subpath": "/ctm-bronze"
+      }
+    }
+  }
+]
