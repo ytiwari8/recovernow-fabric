@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "Transform Census Data"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "613a0c2e-afc0-ade6-4eec-a4c53df439f2"
+  }
+}

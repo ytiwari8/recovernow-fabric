@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "Weekly Admits Report_Widespread"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "6b056b68-c111-b773-4333-a2c7d7416e63"
+  }
+}

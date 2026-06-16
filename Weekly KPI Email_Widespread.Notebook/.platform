@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "Weekly KPI Email_Widespread"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "4ef5b78e-eaac-9d2e-4c4d-81419a1adedd"
+  }
+}
