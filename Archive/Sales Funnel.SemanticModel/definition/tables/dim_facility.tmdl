@@ -1,0 +1,38 @@
+table dim_facility
+	lineageTag: 2f6b5daf-5df7-4f2a-a0b7-caf5c4ad1d72
+	sourceLineageTag: [dbo].[dim_facility]
+
+	column facility
+		dataType: string
+		lineageTag: 394b0e14-861e-4764-96a6-2b43dc045fd9
+		sourceLineageTag: facility
+		summarizeBy: none
+		sourceColumn: facility
+
+		annotation SummarizationSetBy = Automatic
+
+	column entity
+		dataType: string
+		lineageTag: 7177d4eb-49c9-4aea-91b1-27fa9a24fe98
+		sourceLineageTag: entity
+		summarizeBy: none
+		sourceColumn: entity
+
+		annotation SummarizationSetBy = Automatic
+
+	column region
+		dataType: string
+		lineageTag: 279e8fc9-71ac-414c-9b06-36dda1ad50e8
+		sourceLineageTag: region
+		summarizeBy: none
+		sourceColumn: region
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_facility = entity
+		mode: directLake
+		source
+			entityName: dim_facility
+			schemaName: dbo
+			expressionSource: 'DirectLake - funnel_lakehouse'
+

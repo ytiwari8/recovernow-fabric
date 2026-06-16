@@ -1,0 +1,250 @@
+table admit_facts
+	lineageTag: f9253317-c95a-4607-af21-22e47707a160
+	sourceLineageTag: [dbo].[admit_facts]
+
+	column mr_number
+		dataType: string
+		lineageTag: 95746d0e-cd8e-4749-9da5-2ca3036aea00
+		sourceLineageTag: mr_number
+		summarizeBy: none
+		sourceColumn: mr_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column admission_date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 5f5d50f0-4d98-4cdc-8cae-1ce74365337e
+		sourceLineageTag: admission_date
+		summarizeBy: none
+		sourceColumn: admission_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column casefile_id
+		dataType: string
+		lineageTag: 76b18288-9fd9-4df1-b30c-5fc83c3ea057
+		sourceLineageTag: casefile_id
+		summarizeBy: none
+		sourceColumn: casefile_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column first_name
+		dataType: string
+		lineageTag: df632a8d-6ce0-45b9-b8a6-5ece7a0d0d77
+		sourceLineageTag: first_name
+		summarizeBy: none
+		sourceColumn: first_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_name
+		dataType: string
+		lineageTag: bc39f1f6-9989-44f7-aac6-e7bf76898c52
+		sourceLineageTag: last_name
+		summarizeBy: none
+		sourceColumn: last_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column dob_date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 488b3a8e-d617-4196-a8bd-56b8da870ca0
+		sourceLineageTag: dob_date
+		summarizeBy: none
+		sourceColumn: dob_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column facility
+		dataType: string
+		lineageTag: 10e8b90b-0a10-4649-bdeb-7d7b76f63f6a
+		sourceLineageTag: facility
+		summarizeBy: none
+		sourceColumn: facility
+
+		annotation SummarizationSetBy = Automatic
+
+	column facility_group
+		dataType: string
+		lineageTag: 24bccf8e-9ea4-4cd4-821d-69279312a6ec
+		sourceLineageTag: facility_group
+		summarizeBy: none
+		sourceColumn: facility_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column location_name
+		dataType: string
+		lineageTag: 2e78f2e3-6aa2-4b7d-b2de-1ead3bd1bc67
+		sourceLineageTag: location_name
+		summarizeBy: none
+		sourceColumn: location_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column program
+		dataType: string
+		lineageTag: 7eda52a5-76fc-4c62-b0db-cac1c191961a
+		sourceLineageTag: program
+		summarizeBy: none
+		sourceColumn: program
+
+		annotation SummarizationSetBy = Automatic
+
+	column level_of_care
+		dataType: string
+		lineageTag: fa14c58f-e861-496b-a483-67a1f64ca96e
+		sourceLineageTag: level_of_care
+		summarizeBy: none
+		sourceColumn: level_of_care
+
+		annotation SummarizationSetBy = Automatic
+
+	column discharge_date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: f8eff34c-b189-4426-9349-48218851c74d
+		sourceLineageTag: discharge_date
+		summarizeBy: none
+		sourceColumn: discharge_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column discharge_type
+		dataType: string
+		lineageTag: 9e6b6e67-4062-44fd-98e2-baf0c9a915d6
+		sourceLineageTag: discharge_type
+		summarizeBy: none
+		sourceColumn: discharge_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column payment_method
+		dataType: string
+		lineageTag: 8a31ed26-357e-40ed-9e5c-53ad4e9fa623
+		sourceLineageTag: payment_method
+		summarizeBy: none
+		sourceColumn: payment_method
+
+		annotation SummarizationSetBy = Automatic
+
+	column insurance_company
+		dataType: string
+		lineageTag: 3f112939-93ff-41d3-b1b2-f5a7e7af5f6b
+		sourceLineageTag: insurance_company
+		summarizeBy: none
+		sourceColumn: insurance_company
+
+		annotation SummarizationSetBy = Automatic
+
+	column match_method
+		dataType: string
+		lineageTag: cb59c9fd-996b-4fbf-967f-21542154240c
+		sourceLineageTag: match_method
+		summarizeBy: none
+		sourceColumn: match_method
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_back_linked
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 68a9a547-497f-4beb-9d5f-e253e8cbe0e5
+		sourceLineageTag: is_back_linked
+		summarizeBy: none
+		sourceColumn: is_back_linked
+
+		annotation SummarizationSetBy = Automatic
+
+	column opener
+		dataType: string
+		lineageTag: da1b9aa6-6d92-4c78-bb74-007296e5b565
+		sourceLineageTag: opener
+		summarizeBy: none
+		sourceColumn: opener
+
+		annotation SummarizationSetBy = Automatic
+
+	column closer
+		dataType: string
+		lineageTag: 570c10e6-02e2-4ba9-a584-186a508abb11
+		sourceLineageTag: closer
+		summarizeBy: none
+		sourceColumn: closer
+
+		annotation SummarizationSetBy = Automatic
+
+	column bd_rep
+		dataType: string
+		lineageTag: 3f156af0-4817-49e8-ab68-c784c2f643e8
+		sourceLineageTag: bd_rep
+		summarizeBy: none
+		sourceColumn: bd_rep
+
+		annotation SummarizationSetBy = Automatic
+
+	column lead_source
+		dataType: string
+		lineageTag: 7581de1b-8349-4ef6-80b7-1356f1bd3a5f
+		sourceLineageTag: lead_source
+		summarizeBy: none
+		sourceColumn: lead_source
+
+		annotation SummarizationSetBy = Automatic
+
+	column build_run_ts
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 840864c0-6de7-4697-a036-f4d45cf5aa92
+		sourceLineageTag: build_run_ts
+		summarizeBy: none
+		sourceColumn: build_run_ts
+
+		annotation SummarizationSetBy = Automatic
+
+	column opportunity_id
+		dataType: string
+		lineageTag: bf79ad14-d596-4fac-9def-6cd874c00be3
+		sourceLineageTag: opportunity_id
+		summarizeBy: none
+		sourceColumn: opportunity_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column source_crm
+		dataType: string
+		lineageTag: 86a8587b-fe73-452b-a661-8f75c06f5eab
+		sourceLineageTag: source_crm
+		summarizeBy: none
+		sourceColumn: source_crm
+
+		annotation SummarizationSetBy = Automatic
+
+	column match_confidence
+		dataType: string
+		lineageTag: 04cbafdc-49f7-49e7-9105-039fc252a219
+		sourceLineageTag: match_confidence
+		summarizeBy: none
+		sourceColumn: match_confidence
+
+		annotation SummarizationSetBy = Automatic
+
+	column treatment_program_crm
+		dataType: string
+		lineageTag: e8e4e0fb-7b21-4a52-b887-068e649c7c57
+		sourceLineageTag: treatment_program_crm
+		summarizeBy: none
+		sourceColumn: treatment_program_crm
+
+		annotation SummarizationSetBy = Automatic
+
+	partition admit_facts = entity
+		mode: directLake
+		source
+			entityName: admit_facts
+			schemaName: dbo
+			expressionSource: 'DirectLake - funnel_lakehouse'
+

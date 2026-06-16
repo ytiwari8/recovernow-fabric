@@ -1,0 +1,180 @@
+table ad_spend_facts_monthly
+	lineageTag: 84ae0d5f-1026-48d1-95ff-7649f4bb2bdf
+	sourceLineageTag: [dbo].[ad_spend_facts_monthly]
+
+	column month_start
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: cd0a0b51-f874-427c-ba0f-c73a5dc1f585
+		sourceLineageTag: month_start
+		summarizeBy: none
+		sourceColumn: month_start
+
+		annotation SummarizationSetBy = Automatic
+
+	column facility
+		dataType: string
+		lineageTag: 611a71fd-239c-4c9b-b392-a352f110039d
+		sourceLineageTag: facility
+		summarizeBy: none
+		sourceColumn: facility
+
+		annotation SummarizationSetBy = Automatic
+
+	column facility_group
+		dataType: string
+		lineageTag: e09d05af-87ae-4654-b8c2-1c89e63de5fe
+		sourceLineageTag: facility_group
+		summarizeBy: none
+		sourceColumn: facility_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column channel
+		dataType: string
+		lineageTag: bfd3b7bf-0104-4144-a96a-090fad3add13
+		sourceLineageTag: channel
+		summarizeBy: none
+		sourceColumn: channel
+
+		annotation SummarizationSetBy = Automatic
+
+	column campaign_id
+		dataType: string
+		lineageTag: 0283231a-d61c-4393-917f-2e884772940e
+		sourceLineageTag: campaign_id
+		summarizeBy: none
+		sourceColumn: campaign_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column campaign_name
+		dataType: string
+		lineageTag: f2e8f46f-7ec6-4d13-bbb6-ecedfc01ae10
+		sourceLineageTag: campaign_name
+		summarizeBy: none
+		sourceColumn: campaign_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column account_id
+		dataType: string
+		lineageTag: cfa0cd17-4071-4234-b4f8-cd089c453293
+		sourceLineageTag: account_id
+		summarizeBy: none
+		sourceColumn: account_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column account_name
+		dataType: string
+		lineageTag: ea7acc8d-baf6-4ee8-80fa-73fc2fc1ed9c
+		sourceLineageTag: account_name
+		summarizeBy: none
+		sourceColumn: account_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column cost
+		dataType: double
+		lineageTag: 536d31c2-632f-411e-a149-d4a50ed7134c
+		sourceLineageTag: cost
+		summarizeBy: sum
+		sourceColumn: cost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column impressions
+		dataType: int64
+		formatString: 0
+		lineageTag: bae87713-a0d5-494f-a5fc-512dd3be61c7
+		sourceLineageTag: impressions
+		summarizeBy: sum
+		sourceColumn: impressions
+
+		annotation SummarizationSetBy = Automatic
+
+	column clicks
+		dataType: int64
+		formatString: 0
+		lineageTag: 4468fac2-2eab-44cd-8933-015122a55ac2
+		sourceLineageTag: clicks
+		summarizeBy: sum
+		sourceColumn: clicks
+
+		annotation SummarizationSetBy = Automatic
+
+	column conversions
+		dataType: double
+		lineageTag: ce9eb52b-5a76-4b2c-93e7-fec8df11dfe4
+		sourceLineageTag: conversions
+		summarizeBy: sum
+		sourceColumn: conversions
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column conversions_value
+		dataType: double
+		lineageTag: 801fdaa0-a9f2-4d8f-bb01-cde965f087f7
+		sourceLineageTag: conversions_value
+		summarizeBy: sum
+		sourceColumn: conversions_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ctr
+		dataType: double
+		lineageTag: abc0f257-4dee-44d6-a1e0-b30132d925da
+		sourceLineageTag: ctr
+		summarizeBy: sum
+		sourceColumn: ctr
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column avg_cpc
+		dataType: double
+		lineageTag: 7ce384aa-8dbb-4853-9062-27e4124763d8
+		sourceLineageTag: avg_cpc
+		summarizeBy: sum
+		sourceColumn: avg_cpc
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column roas
+		dataType: double
+		lineageTag: f3756bc9-a5c5-401d-96a5-04dede15f90b
+		sourceLineageTag: roas
+		summarizeBy: sum
+		sourceColumn: roas
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column pulled_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 8e58e456-3d4f-4aa2-911f-c044bee85c8a
+		sourceLineageTag: pulled_at
+		summarizeBy: none
+		sourceColumn: pulled_at
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ad_spend_facts_monthly = entity
+		mode: directLake
+		source
+			entityName: ad_spend_facts_monthly
+			schemaName: dbo
+			expressionSource: 'DirectLake - funnel_lakehouse'
+

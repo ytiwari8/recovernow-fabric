@@ -1,0 +1,50 @@
+table dazos_leads_weekly
+	lineageTag: 31bf6635-5f2b-4e8e-9a9c-4eea3be21754
+	sourceLineageTag: [dbo].[dazos_leads_weekly]
+
+	column week_ending
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 1a24b810-7424-470b-b2fb-ae99123e78f6
+		sourceLineageTag: week_ending
+		summarizeBy: none
+		sourceColumn: week_ending
+
+		annotation SummarizationSetBy = Automatic
+
+	column source_crm
+		dataType: string
+		lineageTag: 3721a677-3fa0-455d-ad39-103030fec639
+		sourceLineageTag: source_crm
+		summarizeBy: none
+		sourceColumn: source_crm
+
+		annotation SummarizationSetBy = Automatic
+
+	column leads
+		dataType: int64
+		formatString: 0
+		lineageTag: 75808638-7f15-41b8-bb87-7d9bced1b72c
+		sourceLineageTag: leads
+		summarizeBy: sum
+		sourceColumn: leads
+
+		annotation SummarizationSetBy = Automatic
+
+	column build_run_ts
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 87fe42ce-d0a7-4a4b-b416-7a10b864ef6b
+		sourceLineageTag: build_run_ts
+		summarizeBy: none
+		sourceColumn: build_run_ts
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dazos_leads_weekly = entity
+		mode: directLake
+		source
+			entityName: dazos_leads_weekly
+			schemaName: dbo
+			expressionSource: 'DirectLake - funnel_lakehouse'
+

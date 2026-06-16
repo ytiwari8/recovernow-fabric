@@ -1,0 +1,207 @@
+table calls_facts
+	lineageTag: 387afaa8-4c3d-4d8f-85df-c3f07a95dbe1
+	sourceLineageTag: [dbo].[calls_facts]
+
+	column call_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 30ba566d-6845-4e33-bc9c-8d7b5540ff3b
+		sourceLineageTag: call_id
+		summarizeBy: sum
+		sourceColumn: call_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column ctm_account_slug
+		dataType: string
+		lineageTag: 0b3e34ea-335e-47c2-b220-b72c8ac35531
+		sourceLineageTag: ctm_account_slug
+		summarizeBy: none
+		sourceColumn: ctm_account_slug
+
+		annotation SummarizationSetBy = Automatic
+
+	column call_date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 590fc5bf-2500-4d2b-a1f5-1007a57504da
+		sourceLineageTag: call_date
+		summarizeBy: none
+		sourceColumn: call_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column called_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: d50b39ad-c7fd-41f3-8a1f-b2d2e72777ee
+		sourceLineageTag: called_at
+		summarizeBy: none
+		sourceColumn: called_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column unix_time
+		dataType: int64
+		formatString: 0
+		lineageTag: 2de748b8-5c1b-4368-a6a3-a63f7c0d04b0
+		sourceLineageTag: unix_time
+		summarizeBy: sum
+		sourceColumn: unix_time
+
+		annotation SummarizationSetBy = Automatic
+
+	column direction
+		dataType: string
+		lineageTag: a02a2f08-2778-4bb6-b168-48f0a702d841
+		sourceLineageTag: direction
+		summarizeBy: none
+		sourceColumn: direction
+
+		annotation SummarizationSetBy = Automatic
+
+	column event_type
+		dataType: string
+		lineageTag: 7da54a72-b238-468f-b5d6-e065751e6da1
+		sourceLineageTag: event_type
+		summarizeBy: none
+		sourceColumn: event_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column outcome
+		dataType: string
+		lineageTag: a8ee0ff9-0506-4174-8e19-71a4e3a75c09
+		sourceLineageTag: outcome
+		summarizeBy: none
+		sourceColumn: outcome
+
+		annotation SummarizationSetBy = Automatic
+
+	column duration
+		dataType: int64
+		formatString: 0
+		lineageTag: b24df140-2ef9-4000-b353-1c74659fd37a
+		sourceLineageTag: duration
+		summarizeBy: sum
+		sourceColumn: duration
+
+		annotation SummarizationSetBy = Automatic
+
+	column talk_time
+		dataType: int64
+		formatString: 0
+		lineageTag: e8d4101e-13ea-4f82-b05c-8ddc76c16334
+		sourceLineageTag: talk_time
+		summarizeBy: sum
+		sourceColumn: talk_time
+
+		annotation SummarizationSetBy = Automatic
+
+	column caller_number
+		dataType: string
+		lineageTag: baa9fc53-c5fe-44ac-9dae-eb74bc98665b
+		sourceLineageTag: caller_number
+		summarizeBy: none
+		sourceColumn: caller_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column caller_number_bare
+		dataType: string
+		lineageTag: 16af2a33-420f-4c90-bcc8-ddbdfad0c567
+		sourceLineageTag: caller_number_bare
+		summarizeBy: none
+		sourceColumn: caller_number_bare
+
+		annotation SummarizationSetBy = Automatic
+
+	column tracking_number
+		dataType: string
+		lineageTag: 1a246dbd-d180-4930-90b5-268c431c9b63
+		sourceLineageTag: tracking_number
+		summarizeBy: none
+		sourceColumn: tracking_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column tracking_label
+		dataType: string
+		lineageTag: 4d5fe32e-77c0-4335-98c1-b0c46f56abb6
+		sourceLineageTag: tracking_label
+		summarizeBy: none
+		sourceColumn: tracking_label
+
+		annotation SummarizationSetBy = Automatic
+
+	column ctm_source_name
+		dataType: string
+		lineageTag: e6c17bc9-aa92-4fec-bc27-dffd1ac41b6e
+		sourceLineageTag: ctm_source_name
+		summarizeBy: none
+		sourceColumn: ctm_source_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column ctm_agent_id
+		dataType: string
+		lineageTag: d6b86052-977e-4724-b13b-7dd3db0cb39b
+		sourceLineageTag: ctm_agent_id
+		summarizeBy: none
+		sourceColumn: ctm_agent_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column ctm_agent_name
+		dataType: string
+		lineageTag: f3bc09f7-b8cf-4017-b281-248e41fbd160
+		sourceLineageTag: ctm_agent_name
+		summarizeBy: none
+		sourceColumn: ctm_agent_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column ctm_facility
+		dataType: string
+		lineageTag: ed0e4abb-717c-495e-b501-2e3740fc16f1
+		sourceLineageTag: ctm_facility
+		summarizeBy: none
+		sourceColumn: ctm_facility
+
+		annotation SummarizationSetBy = Automatic
+
+	column caller_phone_e164
+		dataType: string
+		lineageTag: c8442063-5e51-42fb-a323-9c1216784a2c
+		sourceLineageTag: caller_phone_e164
+		summarizeBy: none
+		sourceColumn: caller_phone_e164
+
+		annotation SummarizationSetBy = Automatic
+
+	column build_run_ts
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 63204d69-e7c9-4e4a-9472-06af09a13702
+		sourceLineageTag: build_run_ts
+		summarizeBy: none
+		sourceColumn: build_run_ts
+
+		annotation SummarizationSetBy = Automatic
+
+	column matched_opportunity_id
+		dataType: string
+		lineageTag: 3536a9e8-fe18-475a-beff-88730db293b7
+		sourceLineageTag: matched_opportunity_id
+		summarizeBy: none
+		sourceColumn: matched_opportunity_id
+
+		annotation SummarizationSetBy = Automatic
+
+	partition calls_facts = entity
+		mode: directLake
+		source
+			entityName: calls_facts
+			schemaName: dbo
+			expressionSource: 'DirectLake - funnel_lakehouse'
+

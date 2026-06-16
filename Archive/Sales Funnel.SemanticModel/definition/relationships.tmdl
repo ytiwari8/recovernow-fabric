@@ -1,0 +1,16 @@
+relationship fcc0de96-90c0-23b7-aab7-81e8069fbee9
+	fromColumn: ad_spend_facts.facility
+	toColumn: dim_facility.facility
+
+relationship edecacb7-cb88-595d-210f-395bef809391
+	fromColumn: admit_facts.facility
+	toColumn: dim_facility.facility
+
+relationship f798e58a-3035-8bc5-ac2c-9fb4221530e6
+	fromColumn: calls_facts.ctm_facility
+	toColumn: dim_facility.facility
+
+relationship 66510dbe-a405-be93-92ad-d7edc84d683e
+	fromColumn: ad_spend_facts_monthly.facility
+	toColumn: dim_facility.facility
+

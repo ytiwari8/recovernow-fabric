@@ -1,0 +1,358 @@
+table funnel_facts
+	lineageTag: bde244a1-20ca-4423-a394-f93490f9636e
+	sourceLineageTag: [dbo].[funnel_facts]
+
+	column source_crm
+		dataType: string
+		lineageTag: d6227c41-f3be-4ee3-b252-910b76f93793
+		sourceLineageTag: source_crm
+		summarizeBy: none
+		sourceColumn: source_crm
+
+		annotation SummarizationSetBy = Automatic
+
+	column account_id
+		dataType: string
+		lineageTag: 06e342f0-f7c7-46b3-954c-a22c8fb0c236
+		sourceLineageTag: account_id
+		summarizeBy: none
+		sourceColumn: account_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column mr_number
+		dataType: string
+		lineageTag: 4722f977-4960-4cb9-8b10-c50debaea704
+		sourceLineageTag: mr_number
+		summarizeBy: none
+		sourceColumn: mr_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column member_id
+		dataType: string
+		lineageTag: 20aa23c6-347b-4772-800b-f434afc82b40
+		sourceLineageTag: member_id
+		summarizeBy: none
+		sourceColumn: member_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column potential_name
+		dataType: string
+		lineageTag: 6b6e1f12-dcf6-4125-a8ac-2a078749c795
+		sourceLineageTag: potential_name
+		summarizeBy: none
+		sourceColumn: potential_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_first_name
+		dataType: string
+		lineageTag: 59d34ad6-572e-4486-bd7f-72254193b4f7
+		sourceLineageTag: client_first_name
+		summarizeBy: none
+		sourceColumn: client_first_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column client_last_name
+		dataType: string
+		lineageTag: 599607d1-1c2f-4502-84e5-87524a963667
+		sourceLineageTag: client_last_name
+		summarizeBy: none
+		sourceColumn: client_last_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column phone_e164
+		dataType: string
+		lineageTag: 8f878a0c-c8b4-4755-a1c8-174fecb5bd61
+		sourceLineageTag: phone_e164
+		summarizeBy: none
+		sourceColumn: phone_e164
+
+		annotation SummarizationSetBy = Automatic
+
+	column opener
+		dataType: string
+		lineageTag: a98ca70e-694a-470c-b391-d1ceb446798d
+		sourceLineageTag: opener
+		summarizeBy: none
+		sourceColumn: opener
+
+		annotation SummarizationSetBy = Automatic
+
+	column closer
+		dataType: string
+		lineageTag: 665e7de0-d0e5-496a-9bd6-bd1c20742cae
+		sourceLineageTag: closer
+		summarizeBy: none
+		sourceColumn: closer
+
+		annotation SummarizationSetBy = Automatic
+
+	column bd_rep
+		dataType: string
+		lineageTag: 6288d554-398c-48ae-b569-c2afa6d22dea
+		sourceLineageTag: bd_rep
+		summarizeBy: none
+		sourceColumn: bd_rep
+
+		annotation SummarizationSetBy = Automatic
+
+	column lead_source
+		dataType: string
+		lineageTag: 88db8e0a-bb6b-47dc-b2af-a4c2c4bdc669
+		sourceLineageTag: lead_source
+		summarizeBy: none
+		sourceColumn: lead_source
+
+		annotation SummarizationSetBy = Automatic
+
+	column lead_type
+		dataType: string
+		lineageTag: 0c5af2f4-bbea-4449-947e-c6f3ef7f9a1f
+		sourceLineageTag: lead_type
+		summarizeBy: none
+		sourceColumn: lead_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column treatment_program
+		dataType: string
+		lineageTag: b6374837-7154-4fef-aa77-21601abb2fce
+		sourceLineageTag: treatment_program
+		summarizeBy: none
+		sourceColumn: treatment_program
+
+		annotation SummarizationSetBy = Automatic
+
+	column admitting_to_loc
+		dataType: string
+		lineageTag: 0ccfeba7-7d91-4d3f-95b4-b8a0b015f2b9
+		sourceLineageTag: admitting_to_loc
+		summarizeBy: none
+		sourceColumn: admitting_to_loc
+
+		annotation SummarizationSetBy = Automatic
+
+	column vob_status
+		dataType: string
+		lineageTag: f8cbd9fe-4256-4ca8-b4b6-b1f05cfbb8a1
+		sourceLineageTag: vob_status
+		summarizeBy: none
+		sourceColumn: vob_status
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_viable_vob_flag
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 57c42c7e-2231-4f6a-b09e-c7ed5eeb314f
+		sourceLineageTag: is_viable_vob_flag
+		summarizeBy: none
+		sourceColumn: is_viable_vob_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_admit_flag
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 819e676b-9611-4875-b397-0c9d5a94f509
+		sourceLineageTag: is_admit_flag
+		summarizeBy: none
+		sourceColumn: is_admit_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column payment_method
+		dataType: string
+		lineageTag: 71ef9220-458b-4cf3-aa21-4ff518a85e12
+		sourceLineageTag: payment_method
+		summarizeBy: none
+		sourceColumn: payment_method
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_internal_transfer_flag
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 9632f5c0-bdaf-4530-9035-776b44a72b7b
+		sourceLineageTag: is_internal_transfer_flag
+		summarizeBy: none
+		sourceColumn: is_internal_transfer_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_alumni_flag
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 3184fa9f-3af1-4eab-b620-0eb575f3bcbb
+		sourceLineageTag: is_alumni_flag
+		summarizeBy: none
+		sourceColumn: is_alumni_flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column created_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 2fa3dd47-78c0-4276-8e41-a2c81dfdcc04
+		sourceLineageTag: created_at
+		summarizeBy: none
+		sourceColumn: created_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column modified_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 9d2b104e-c1c8-4cab-aeb9-184cb4dd4b25
+		sourceLineageTag: modified_at
+		summarizeBy: none
+		sourceColumn: modified_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column source_loaded_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 2b139a74-ee2e-4b35-a850-480139fde671
+		sourceLineageTag: source_loaded_at
+		summarizeBy: none
+		sourceColumn: source_loaded_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column first_call_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 584cab2b-36ab-4c44-9cb1-20961dd2f4c0
+		sourceLineageTag: first_call_id
+		summarizeBy: sum
+		sourceColumn: first_call_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column first_call_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 5eb65834-1499-4f74-b944-dc1fbcd37bd0
+		sourceLineageTag: first_call_at
+		summarizeBy: none
+		sourceColumn: first_call_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column first_call_date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 15eb9267-1d9d-4ac0-99a2-8526c86d0f22
+		sourceLineageTag: first_call_date
+		summarizeBy: none
+		sourceColumn: first_call_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column first_call_source
+		dataType: string
+		lineageTag: f060746a-8cab-4244-8110-97eb8d7285c9
+		sourceLineageTag: first_call_source
+		summarizeBy: none
+		sourceColumn: first_call_source
+
+		annotation SummarizationSetBy = Automatic
+
+	column first_call_agent_id
+		dataType: string
+		lineageTag: 3de7911f-323d-4e9e-9241-2a0be45e7cd0
+		sourceLineageTag: first_call_agent_id
+		summarizeBy: none
+		sourceColumn: first_call_agent_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column first_call_agent_name
+		dataType: string
+		lineageTag: 364e056b-0b6a-4cf0-8f0a-96dbdad56bd4
+		sourceLineageTag: first_call_agent_name
+		summarizeBy: none
+		sourceColumn: first_call_agent_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column first_call_facility
+		dataType: string
+		lineageTag: f6c82081-b7eb-440d-9142-b72c99043da7
+		sourceLineageTag: first_call_facility
+		summarizeBy: none
+		sourceColumn: first_call_facility
+
+		annotation SummarizationSetBy = Automatic
+
+	column first_call_outcome
+		dataType: string
+		lineageTag: ba885432-0c00-4d2e-bb58-677dc3ad8980
+		sourceLineageTag: first_call_outcome
+		summarizeBy: none
+		sourceColumn: first_call_outcome
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_vob
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 8bba2b55-0355-467d-b96e-53f01050725d
+		sourceLineageTag: has_vob
+		summarizeBy: none
+		sourceColumn: has_vob
+
+		annotation SummarizationSetBy = Automatic
+
+	column cohort_anchor_date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: a1ff8939-a671-4b33-8e7d-6f8f0394e050
+		sourceLineageTag: cohort_anchor_date
+		summarizeBy: none
+		sourceColumn: cohort_anchor_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column build_run_ts
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 43867a19-96c5-4f66-9b60-107beefaba8d
+		sourceLineageTag: build_run_ts
+		summarizeBy: none
+		sourceColumn: build_run_ts
+
+		annotation SummarizationSetBy = Automatic
+
+	column opportunity_id
+		dataType: string
+		lineageTag: 4ef6d386-45e7-4632-9928-bcf1c94551c0
+		sourceLineageTag: opportunity_id
+		summarizeBy: none
+		sourceColumn: opportunity_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column dob
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: b54442a7-bc32-43aa-8cc3-0d2cb484a0c5
+		sourceLineageTag: dob
+		summarizeBy: none
+		sourceColumn: dob
+
+		annotation SummarizationSetBy = Automatic
+
+	partition funnel_facts = entity
+		mode: directLake
+		source
+			entityName: funnel_facts
+			schemaName: dbo
+			expressionSource: 'DirectLake - funnel_lakehouse'
+
