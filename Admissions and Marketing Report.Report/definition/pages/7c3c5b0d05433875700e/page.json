@@ -9,13 +9,26 @@
     "background": [
       {
         "properties": {
-          "color": { "solid": { "color": { "expr": { "Literal": { "Value": "'#EEF1F5'" } } } } },
-          "transparency": { "expr": { "Literal": { "Value": "0D" } } }
+          "color": {
+            "solid": {
+              "color": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'#EEF1F5'"
+                  }
+                }
+              }
+            }
+          },
+          "transparency": {
+            "expr": {
+              "Literal": {
+                "Value": "0D"
+              }
+            }
+          }
         }
       }
     ]
-  },
-  "filterConfig": {
-    "filters": []
   }
 }

@@ -61,13 +61,13 @@
       ]
     },
     {
-      "name": "RegisteredResources",
-      "type": "RegisteredResources",
+      "name": "awKpiCardVisualB2F4E7A9C6D14E83A91B7C58F2A6D341E",
+      "type": "CustomVisual",
       "items": [
         {
-          "name": "RecoverNowNavy",
-          "path": "RecoverNowNavy.json",
-          "type": "CustomTheme"
+          "name": "resources/awKpiCardVisualB2F4E7A9C6D14E83A91B7C58F2A6D341E.pbiviz.json",
+          "path": "awKpiCardVisualB2F4E7A9C6D14E83A91B7C58F2A6D341E.pbiviz.json",
+          "type": "CustomVisualMetadata"
         }
       ]
     }

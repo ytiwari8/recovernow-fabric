@@ -1,0 +1,29 @@
+{
+  "version": "1.0.7.0",
+  "author": {
+    "name": "Custom Visual Developer",
+    "email": "developer@example.com"
+  },
+  "resources": [
+    {
+      "resourceId": "rId0",
+      "sourceType": 5,
+      "file": "resources/awKpiCardVisualB2F4E7A9C6D14E83A91B7C58F2A6D341E.pbiviz.json"
+    }
+  ],
+  "visual": {
+    "name": "awKpiCardVisual",
+    "displayName": "AW KPI Card",
+    "guid": "awKpiCardVisualB2F4E7A9C6D14E83A91B7C58F2A6D341E",
+    "visualClassName": "Visual",
+    "version": "1.0.7.0",
+    "description": "AdventureWorks-style KPI card with label, value, delta pill and sparkline. Designed in Claude Design.",
+    "supportUrl": "https://example.com",
+    "gitHubUrl": "https://github.com/example/aw-kpi-card-visual"
+  },
+  "metadata": {
+    "pbivizjson": {
+      "resourceId": "rId0"
+    }
+  }
+}

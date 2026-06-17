@@ -1,0 +1,234 @@
+{
+  "visual": {
+    "name": "awKpiCardVisual",
+    "displayName": "AW KPI Card",
+    "guid": "awKpiCardVisualB2F4E7A9C6D14E83A91B7C58F2A6D341E",
+    "visualClassName": "Visual",
+    "version": "1.0.7.0",
+    "description": "AdventureWorks-style KPI card with label, value, delta pill and sparkline. Designed in Claude Design.",
+    "supportUrl": "https://example.com",
+    "gitHubUrl": "https://github.com/example/aw-kpi-card-visual"
+  },
+  "author": {
+    "name": "Custom Visual Developer",
+    "email": "developer@example.com"
+  },
+  "apiVersion": "5.11.0",
+  "style": "style/visual.less",
+  "stringResources": {},
+  "capabilities": {
+    "dataRoles": [
+      {
+        "displayName": "Value",
+        "name": "value",
+        "kind": "Measure",
+        "description": "The headline metric shown on the card (e.g. Total Sales)."
+      },
+      {
+        "displayName": "Previous Value",
+        "name": "previousValue",
+        "kind": "Measure",
+        "description": "Previous-period value used to compute the delta % when Delta % is not supplied."
+      },
+      {
+        "displayName": "Delta %",
+        "name": "deltaPct",
+        "kind": "Measure",
+        "description": "Optional pre-computed delta as a percentage (e.g. 12.4 = +12.4%, or 0.124 if formatted as percent)."
+      },
+      {
+        "displayName": "Trend Axis",
+        "name": "trendAxis",
+        "kind": "Grouping",
+        "description": "Date or category column that becomes the X-axis of the sparkline."
+      },
+      {
+        "displayName": "Trend Value",
+        "name": "trendValue",
+        "kind": "Measure",
+        "description": "Numeric measure plotted on the sparkline by Trend Axis."
+      }
+    ],
+    "objects": {
+      "card": {
+        "displayName": "Card",
+        "properties": {
+          "label": {
+            "displayName": "Label override",
+            "description": "Override the card label. Leaves the Value field's display name when blank.",
+            "type": {
+              "text": true
+            }
+          },
+          "icon": {
+            "displayName": "Icon",
+            "type": {
+              "enumeration": [
+                {
+                  "displayName": "Trending up",
+                  "value": "trending"
+                },
+                {
+                  "displayName": "Layers (cost)",
+                  "value": "layers"
+                },
+                {
+                  "displayName": "Sparkle (profit)",
+                  "value": "sparkle"
+                },
+                {
+                  "displayName": "Gauge (margin)",
+                  "value": "gauge"
+                },
+                {
+                  "displayName": "Cart (orders)",
+                  "value": "cart"
+                },
+                {
+                  "displayName": "Receipt (AOV)",
+                  "value": "receipt"
+                }
+              ]
+            }
+          },
+          "accent": {
+            "displayName": "Accent colour",
+            "type": {
+              "fill": {
+                "solid": {
+                  "color": true
+                }
+              }
+            }
+          },
+          "invertDelta": {
+            "displayName": "Invert delta colours",
+            "description": "When on, a negative delta is shown in green (good) and positive in red (bad). Use for cost-style metrics where lower is better.",
+            "type": {
+              "bool": true
+            }
+          },
+          "showSparkline": {
+            "displayName": "Show sparkline",
+            "type": {
+              "bool": true
+            }
+          },
+          "smoothLine": {
+            "displayName": "Smooth line",
+            "description": "Apply curve interpolation and downsample dense series for a smoother sparkline.",
+            "type": {
+              "bool": true
+            }
+          },
+          "aggregation": {
+            "displayName": "Headline aggregation",
+            "description": "How to roll up the per-row values into the big number. Use Average for ratio measures like AOV or Margin% when a Trend Axis is bound.",
+            "type": {
+              "enumeration": [
+                {
+                  "displayName": "Auto (subtotal, then sum)",
+                  "value": "auto"
+                },
+                {
+                  "displayName": "Sum",
+                  "value": "sum"
+                },
+                {
+                  "displayName": "Average",
+                  "value": "avg"
+                },
+                {
+                  "displayName": "Last",
+                  "value": "last"
+                },
+                {
+                  "displayName": "First",
+                  "value": "first"
+                },
+                {
+                  "displayName": "Min",
+                  "value": "min"
+                },
+                {
+                  "displayName": "Max",
+                  "value": "max"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "dataViewMappings": [
+      {
+        "conditions": [
+          {
+            "value": {
+              "max": 1
+            },
+            "previousValue": {
+              "max": 1
+            },
+            "deltaPct": {
+              "max": 1
+            },
+            "trendAxis": {
+              "max": 1
+            },
+            "trendValue": {
+              "max": 1
+            }
+          }
+        ],
+        "categorical": {
+          "categories": {
+            "for": {
+              "in": "trendAxis"
+            },
+            "dataReductionAlgorithm": {
+              "top": {
+                "count": 1000
+              }
+            }
+          },
+          "values": {
+            "select": [
+              {
+                "bind": {
+                  "to": "value"
+                }
+              },
+              {
+                "bind": {
+                  "to": "previousValue"
+                }
+              },
+              {
+                "bind": {
+                  "to": "deltaPct"
+                }
+              },
+              {
+                "bind": {
+                  "to": "trendValue"
+                }
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "privileges": []
+  },
+  "content": {
+    "js": "var awKpiCardVisualB2F4E7A9C6D14E83A91B7C58F2A6D341E;(()=>{\"use strict\";var e={754(e,t,a){a.d(t,{Kx:()=>l,PA:()=>p,St:()=>r,Tn:()=>o,jF:()=>u,ks:()=>m,sk:()=>d});var i=a(639);class s{}class n extends s{}class l{}class r extends s{}class o extends n{}class c extends s{constructor(e){super(),Object.assign(this,e)}getFormattingSlice(e,t){const a=this.type,i=this.name,s={displayName:t&&this.displayNameKey?t.getDisplayName(this.displayNameKey):this.displayName,description:t&&this.descriptionKey?t.getDisplayName(this.descriptionKey):this.description,uid:e+\"-\"+i};return Object.assign(Object.assign({},s),{control:{type:a,properties:this.getFormattingComponent(e,t)}})}getFormattingComponent(e,t){return{descriptor:i.y(e,this),value:this.value}}getRevertToDefaultDescriptor(e){return[{objectName:e,propertyName:this.name}]}setPropertiesValues(e,t){var a;const s=null===(a=null==e?void 0:e[t])||void 0===a?void 0:a[this.name];this.value=i.D(this,s,this.value)}}class u extends c{constructor(e){super(e),this.type=\"ToggleSwitch\"}}class d extends c{constructor(e){super(e),this.type=\"ColorPicker\"}getFormattingComponent(e){return Object.assign(Object.assign({},super.getFormattingComponent(e)),{defaultColor:this.defaultColor,isNoFillItemSupported:this.isNoFillItemSupported})}}class p extends c{constructor(e){super(e),this.type=\"Dropdown\"}getFormattingComponent(e){return Object.assign(Object.assign({},super.getFormattingComponent(e)),{items:this.items})}}class m extends c{constructor(e){super(e),this.type=\"TextInput\"}getFormattingComponent(e){return Object.assign(Object.assign({},super.getFormattingComponent(e)),{placeholder:this.placeholder})}}},667(e,t,a){a.d(t,{A:()=>s});var i=a(754);const s=class{constructor(e){this.localizationManager=e}populateFormattingSettingsModel(e,t){var a,s;const n=new e,l=null===(a=null==t?void 0:t.metadata)||void 0===a?void 0:a.objects;return l&&(null===(s=n.cards)||void 0===s||s.forEach(e=>{var t;e instanceof i.St&&(null===(t=e.topLevelSlice)||void 0===t||t.setPropertiesValues(l,e.name)),(e instanceof i.Tn?[e]:e.groups).forEach(t=>{var a,i,s,n;null===(a=t.topLevelSlice)||void 0===a||a.setPropertiesValues(l,e.name),null===(i=null==t?void 0:t.slices)||void 0===i||i.forEach(t=>{null==t||t.setPropertiesValues(l,e.name)}),null===(n=null===(s=null==t?void 0:t.container)||void 0===s?void 0:s.containerItems)||void 0===n||n.forEach(t=>{var a;null===(a=null==t?void 0:t.slices)||void 0===a||a.forEach(t=>{null==t||t.setPropertiesValues(l,e.name)})})})})),n}buildFormattingModel(e){const t={cards:[]};return e.cards.filter(({visible:e=!0})=>e).forEach(e=>{var a;const s={displayName:this.localizationManager&&e.displayNameKey?this.localizationManager.getDisplayName(e.displayNameKey):e.displayName,description:this.localizationManager&&e.descriptionKey?this.localizationManager.getDisplayName(e.descriptionKey):e.description,groups:[],uid:e.name+\"-card\",analyticsPane:e.analyticsPane},n=e.name;if(e.topLevelSlice){const t=e.topLevelSlice.getFormattingSlice(n,this.localizationManager);t.suppressDisplayName=!0,s.topLevelToggle=t}null===(a=e.onPreProcess)||void 0===a||a.call(e);const l=e instanceof i.Tn;(l?[e].filter(({visible:e=!0})=>e):e.groups.filter(({visible:e=!0})=>e)).forEach(e=>{const t=e.name+\"-group\",a={displayName:l?void 0:this.localizationManager&&e.displayNameKey?this.localizationManager.getDisplayName(e.displayNameKey):e.displayName,description:l?void 0:this.localizationManager&&e.descriptionKey?this.localizationManager.getDisplayName(e.descriptionKey):e.description,slices:[],uid:t,collapsible:e.collapsible,delaySaveSlices:e.delaySaveSlices,disabled:e.disabled,disabledReason:e.disabledReason};s.groups.push(a);const i={};if(e.container){const s=e.container,l=t+\"-container\",r={displayName:this.localizationManager&&s.displayNameKey?this.localizationManager.getDisplayName(s.displayNameKey):s.displayName,description:this.localizationManager&&s.descriptionKey?this.localizationManager.getDisplayName(s.descriptionKey):s.description,containerItems:[],uid:l};s.containerItems.forEach(e=>{const t=e.displayNameKey?e.displayNameKey:e.displayName,a=l+t,s={displayName:this.localizationManager&&e.displayNameKey?this.localizationManager.getDisplayName(e.displayNameKey):e.displayName,slices:[],uid:a};this.buildFormattingSlices({slices:e.slices,objectName:n,sliceNames:i,formattingSlices:s.slices}),r.containerItems.push(s)}),a.container=r}if(e.slices){if(e.topLevelSlice){const t=e.topLevelSlice.getFormattingSlice(n,this.localizationManager);t.suppressDisplayName=!0,(null==a.displayName?s:a).topLevelToggle=t}this.buildFormattingSlices({slices:e.slices,objectName:n,sliceNames:i,formattingSlices:a.slices})}}),s.revertToDefaultDescriptors=this.getRevertToDefaultDescriptor(e),t.cards.push(s)}),t}buildFormattingSlices({slices:e,objectName:t,sliceNames:a,formattingSlices:i}){null==e||e.filter(({visible:e=!0})=>e).forEach(e=>{const s=null==e?void 0:e.getFormattingSlice(t,this.localizationManager);s&&(void 0===a[e.name]?a[e.name]=0:(a[e.name]++,s.uid=`${s.uid}-${a[e.name]}`),i.push(s))})}getRevertToDefaultDescriptor(e){var t;const a={},s=[];let n,l=[];return e instanceof i.St&&e.topLevelSlice&&s.push(...null===(t=e.topLevelSlice)||void 0===t?void 0:t.getRevertToDefaultDescriptor(e.name)),(e instanceof i.Tn?[e].filter(({visible:e=!0})=>e):e.groups.filter(({visible:e=!0})=>e)).forEach(t=>{var i,r;n=this.getSlicesRevertToDefaultDescriptor(e.name,t.slices,a,t.topLevelSlice),null===(r=null===(i=t.container)||void 0===i?void 0:i.containerItems)||void 0===r||r.forEach(t=>{l=l.concat(this.getSlicesRevertToDefaultDescriptor(e.name,t.slices,a))}),s.push(...n.concat(l))}),s}getSlicesRevertToDefaultDescriptor(e,t,a,i){let s=[];return i&&(a[i.name]=!0,s=s.concat(i.getRevertToDefaultDescriptor(e))),null==t||t.forEach(t=>{t&&!a[t.name]&&(a[t.name]=!0,s=s.concat(t.getRevertToDefaultDescriptor(e)))}),s}}},674(e,t,a){a.d(t,{O:()=>s.A,z:()=>i});var i=a(754),s=a(667)},639(e,t,a){function i(e,t){return{objectName:e,propertyName:t.name,selector:t.selector,altConstantValueSelector:t.altConstantSelector,instanceKind:t.instanceKind}}function s(e,t,a){return null==t||\"object\"==typeof t&&!t.solid?a:t.solid?{value:null==t?void 0:t.solid.color}:\"Dropdown\"===(null==e?void 0:e.type)&&e.items?e.items.find(e=>e.value==t):t}a.d(t,{D:()=>s,y:()=>i})},927(e,t,a){a.d(t,{s:()=>n});const i=\"http://www.w3.org/2000/svg\",s={trending:[\"M3 17l6-6 4 4 7-7\",\"M14 8h6v6\"],layers:[\"M12 3 3 8l9 5 9-5-9-5z\",\"M3 13l9 5 9-5M3 18l9 5 9-5\"],sparkle:[\"M12 4l1.6 4.4L18 10l-4.4 1.6L12 16l-1.6-4.4L6 10l4.4-1.6L12 4z\",\"M19 16l.7 1.8L21.5 19l-1.8.7L19 21l-.7-1.8L16.5 19l1.8-.7L19 16z\"],gauge:[\"M3 16a9 9 0 1 1 18 0\",\"M12 16l4-4\"],cart:[\"M3 4h2l2.5 12a2 2 0 0 0 2 1.6h7.5a2 2 0 0 0 2-1.5L21 8H6.5\",\"M9 20m-1.2 0a1.2 1.2 0 1 0 2.4 0 1.2 1.2 0 1 0 -2.4 0\",\"M17 20m-1.2 0a1.2 1.2 0 1 0 2.4 0 1.2 1.2 0 1 0 -2.4 0\"],receipt:[\"M5 3h14v18l-3-2-3 2-3-2-3 2-2-2V3z\",\"M8 8h8M8 12h8M8 16h5\"],\"arrow-up\":[\"M12 19V5M5 12l7-7 7 7\"],\"arrow-down\":[\"M12 5v14M5 12l7 7 7-7\"]};function n(e,t=14,a=1.8){const n=document.createElementNS(i,\"svg\");n.setAttribute(\"width\",String(t)),n.setAttribute(\"height\",String(t)),n.setAttribute(\"viewBox\",\"0 0 24 24\"),n.setAttribute(\"fill\",\"none\"),n.setAttribute(\"stroke\",\"currentColor\"),n.setAttribute(\"stroke-width\",String(a)),n.setAttribute(\"stroke-linecap\",\"round\"),n.setAttribute(\"stroke-linejoin\",\"round\");for(const t of s[e]){const e=document.createElementNS(i,\"path\");e.setAttribute(\"d\",t),n.appendChild(e)}return n}},980(e,t,a){a.d(t,{S:()=>r});var i=a(674),s=i.z.Tn,n=i.z.Kx;class l extends s{label=new i.z.ks({name:\"label\",displayName:\"Label override\",value:\"\",placeholder:\"Falls back to Value's display name\"});icon=new i.z.PA({name:\"icon\",displayName:\"Icon\",items:[{displayName:\"Trending up\",value:\"trending\"},{displayName:\"Layers (cost)\",value:\"layers\"},{displayName:\"Sparkle (profit)\",value:\"sparkle\"},{displayName:\"Gauge (margin)\",value:\"gauge\"},{displayName:\"Cart (orders)\",value:\"cart\"},{displayName:\"Receipt (AOV)\",value:\"receipt\"}],value:{displayName:\"Trending up\",value:\"trending\"}});accent=new i.z.sk({name:\"accent\",displayName:\"Accent colour\",value:{value:\"#6366F1\"}});invertDelta=new i.z.jF({name:\"invertDelta\",displayName:\"Invert delta colours\",value:!1});showSparkline=new i.z.jF({name:\"showSparkline\",displayName:\"Show sparkline\",value:!0});smoothLine=new i.z.jF({name:\"smoothLine\",displayName:\"Smooth line\",value:!0});aggregation=new i.z.PA({name:\"aggregation\",displayName:\"Headline aggregation\",items:[{displayName:\"Auto (subtotal, then sum)\",value:\"auto\"},{displayName:\"Sum\",value:\"sum\"},{displayName:\"Average\",value:\"avg\"},{displayName:\"Last\",value:\"last\"},{displayName:\"First\",value:\"first\"},{displayName:\"Min\",value:\"min\"},{displayName:\"Max\",value:\"max\"}],value:{displayName:\"Auto (subtotal, then sum)\",value:\"auto\"}});name=\"card\";displayName=\"Card\";slices=[this.label,this.icon,this.accent,this.invertDelta,this.showSparkline,this.smoothLine,this.aggregation]}class r extends n{cardSettings=new l;cards=[this.cardSettings]}},54(e,t,a){a.d(t,{K:()=>n});const i=\"http://www.w3.org/2000/svg\";function s(e,t){if(e.length<t||t<2)return e;const a=Math.floor(t/2),i=[];for(let t=0;t<e.length;t++){let s=0,n=0;const l=Math.max(0,t-a),r=Math.min(e.length-1,t+a);for(let t=l;t<=r;t++)s+=e[t],n++;i.push(s/n)}return i}function n(e,t){const{width:a,height:n,stroke:l,gradientId:r,smooth:o}=t,c=document.createElementNS(i,\"svg\");if(c.setAttribute(\"viewBox\",`0 0 ${a} ${n}`),c.setAttribute(\"preserveAspectRatio\",\"none\"),c.setAttribute(\"width\",\"100%\"),c.setAttribute(\"height\",\"100%\"),e.length<2)return c;let u;if(o){u=function(e){if(e.length<=40)return e;const t=[],a=e.length/40;for(let i=0;i<40;i++){const s=Math.floor(i*a),n=Math.max(s+1,Math.floor((i+1)*a));let l=0,r=0;for(let t=s;t<n&&t<e.length;t++)l+=e[t],r++;t.push(r>0?l/r:e[s])}return t}(e);for(let e=0;e<2;e++)u=s(u,7)}else u=e;const d=Math.min(...u),p=Math.max(...u)-d||1,m=u.map((e,t)=>[3+t/(u.length-1)*(a-6),3+(1-(e-d)/p)*(n-6)]),h=o?function(e){if(0===e.length)return\"\";if(1===e.length)return`M${e[0][0].toFixed(2)} ${e[0][1].toFixed(2)}`;if(2===e.length)return`M${e[0][0].toFixed(2)} ${e[0][1].toFixed(2)} L${e[1][0].toFixed(2)} ${e[1][1].toFixed(2)}`;const t=.5;let a=`M${e[0][0].toFixed(2)} ${e[0][1].toFixed(2)}`;for(let i=0;i<e.length-1;i++){const s=e[Math.max(0,i-1)],n=e[i],l=e[i+1],r=e[Math.min(e.length-1,i+2)],o=n[0]+(l[0]-s[0])/6*t,c=n[1]+(l[1]-s[1])/6*t,u=l[0]-(r[0]-n[0])/6*t,d=l[1]-(r[1]-n[1])/6*t;a+=` C${o.toFixed(2)} ${c.toFixed(2)}, ${u.toFixed(2)} ${d.toFixed(2)}, ${l[0].toFixed(2)} ${l[1].toFixed(2)}`}return a}(m):function(e){return e.map((e,t)=>`${t?\"L\":\"M\"}${e[0].toFixed(2)} ${e[1].toFixed(2)}`).join(\" \")}(m),g=`${h} L ${m[m.length-1][0].toFixed(2)} ${n-3} L 3 ${n-3} Z`,v=document.createElementNS(i,\"defs\"),f=document.createElementNS(i,\"linearGradient\");f.setAttribute(\"id\",r),f.setAttribute(\"x1\",\"0\"),f.setAttribute(\"x2\",\"0\"),f.setAttribute(\"y1\",\"0\"),f.setAttribute(\"y2\",\"1\");const y=document.createElementNS(i,\"stop\");y.setAttribute(\"offset\",\"0%\"),y.setAttribute(\"stop-color\",l),y.setAttribute(\"stop-opacity\",\"0.18\");const b=document.createElementNS(i,\"stop\");b.setAttribute(\"offset\",\"100%\"),b.setAttribute(\"stop-color\",l),b.setAttribute(\"stop-opacity\",\"0\"),f.appendChild(y),f.appendChild(b),v.appendChild(f),c.appendChild(v);const N=document.createElementNS(i,\"path\");N.setAttribute(\"d\",g),N.setAttribute(\"fill\",`url(#${r})`),c.appendChild(N);const S=document.createElementNS(i,\"path\");return S.setAttribute(\"d\",h),S.setAttribute(\"fill\",\"none\"),S.setAttribute(\"stroke\",l),S.setAttribute(\"stroke-width\",\"1.6\"),S.setAttribute(\"stroke-linecap\",\"round\"),S.setAttribute(\"stroke-linejoin\",\"round\"),c.appendChild(S),c}},789(e,t,a){a.d(t,{b:()=>o});var i=a(674),s=a(980),n=a(927),l=a(54);let r=0;class o{host;target;formattingSettingsService;settings;constructor(e){this.host=e.host,this.target=e.element,this.target.classList.add(\"kpi-host\"),this.formattingSettingsService=new i.O}update(e){try{const t=e.dataViews?.[0];for(this.settings=this.formattingSettingsService.populateFormattingSettingsModel(s.S,t);this.target.firstChild;)this.target.removeChild(this.target.firstChild);if(!t||!t.categorical)return void this.renderEmpty(\"Drag a measure into Value to begin.\");const a=this.scanRoles(t);if(!a.value)return void this.renderEmpty(\"Drag a measure into Value to begin.\");const i=this.settings.cardSettings.aggregation.value.value,n=this.aggregate(a.value,i),l=a.previousValue?this.aggregate(a.previousValue,i):null,r=a.deltaPct?this.aggregate(a.deltaPct,i):null,o=a.value.source.format||\"\",c=this.resolveLabel(a.value.source.displayName),u=this.formatValue(n,o),d=this.computeDeltaPct(r,n,l,a.deltaPct?.source.format),p=this.extractTrend(a.trendValue),m=this.buildCard({label:c,value:u,deltaPct:d,trend:p,viewport:e.viewport});this.target.appendChild(m)}catch(e){this.renderEmpty(\"Error: \"+String(e))}}getFormattingModel(){return this.formattingSettingsService.buildFormattingModel(this.settings)}scanRoles(e){const t={},a=e.categorical?.values;if(!a)return t;for(const e of a){const a=e.source.roles||{};a.value&&!t.value&&(t.value=e),a.previousValue&&!t.previousValue&&(t.previousValue=e),a.deltaPct&&!t.deltaPct&&(t.deltaPct=e),a.trendValue&&!t.trendValue&&(t.trendValue=e)}return t}aggregate(e,t){if(!e)return null;if(\"auto\"===t){const t=e.subtotal;if(null!=t){const e=Number(t);if(Number.isFinite(e))return e}return this.reduceCol(e,this.sniffAuto(e))}return this.reduceCol(e,t)}sniffAuto(e){const t=(e.source?.format||\"\").toLowerCase(),a=(e.source?.displayName||\"\").toLowerCase();return t.indexOf(\"%\")>=0||/\\bavg\\b|\\baverage\\b|\\bper\\b|\\brate\\b|\\bratio\\b|\\bmargin\\b|\\bao[vV]\\b/.test(a)?\"avg\":\"sum\"}reduceCol(e,t){if(!e.values||0===e.values.length)return null;const a=[];for(const t of e.values){if(null==t)continue;const e=Number(t);Number.isNaN(e)||a.push(e)}if(0===a.length)return null;switch(t){case\"sum\":default:return a.reduce((e,t)=>e+t,0);case\"avg\":return a.reduce((e,t)=>e+t,0)/a.length;case\"last\":return a[a.length-1];case\"first\":return a[0];case\"min\":return Math.min(...a);case\"max\":return Math.max(...a)}}extractTrend(e){if(!e||!e.values)return[];const t=[];for(const a of e.values){if(null==a)continue;const e=Number(a);Number.isNaN(e)||t.push(e)}return t}resolveLabel(e){return(this.settings.cardSettings.label.value||\"\").trim()||e||\"Metric\"}computeDeltaPct(e,t,a,i){return null!=e?i&&i.indexOf(\"%\")>=0?100*e:e:null!=t&&null!=a&&0!==a?(t-a)/Math.abs(a)*100:null}formatValue(e,t){if(null==e)return\"—\";const a=t.indexOf(\"%\")>=0,i=/[$€£¥]|USD|EUR|GBP/.test(t);return a?(100*e).toFixed(1)+\"%\":i?this.fmtCompactCurrency(e):Math.abs(e)>=1e6?this.fmtCompactNumber(e):Number.isInteger(e)?e.toLocaleString(\"en-US\"):e.toLocaleString(\"en-US\",{maximumFractionDigits:1})}fmtCompactCurrency(e){const t=Math.abs(e),a=e<0?\"-\":\"\";return t>=1e9?a+\"$\"+(t/1e9).toFixed(2)+\"B\":t>=1e6?a+\"$\"+(t/1e6).toFixed(2)+\"M\":t>=1e3?a+\"$\"+(t/1e3).toFixed(1)+\"K\":a+\"$\"+t.toLocaleString(\"en-US\")}fmtCompactNumber(e){const t=Math.abs(e),a=e<0?\"-\":\"\";return t>=1e9?a+(t/1e9).toFixed(2)+\"B\":t>=1e6?a+(t/1e6).toFixed(2)+\"M\":t>=1e3?a+(t/1e3).toFixed(1)+\"K\":a+t.toLocaleString(\"en-US\")}renderEmpty(e){const t=document.createElement(\"div\");t.className=\"kpi-empty\",t.textContent=e,this.target.appendChild(t)}buildCard(e){const t=this.settings.cardSettings,a=t.accent.value.value||\"#6366F1\",i=t.icon.value.value||\"trending\",s=!!t.invertDelta.value,o=!!t.showSparkline.value,c=!!t.smoothLine.value,u=e.viewport.width,d=e.viewport.height,p=Math.max(.78,Math.min(1.4,Math.min(u/220,d/130))),m=document.createElement(\"div\");m.className=\"kpi-card\",m.style.setProperty(\"--accent\",a),m.style.setProperty(\"--accent-soft\",this.softFromAccent(a));const h=document.createElement(\"div\");h.className=\"kpi-head\";const g=document.createElement(\"span\");g.className=\"kpi-label\",g.textContent=e.label,g.style.fontSize=(11*p).toFixed(1)+\"px\",h.appendChild(g);const v=document.createElement(\"div\");v.className=\"kpi-badge accent\",v.appendChild((0,n.s)(i,Math.round(12*p),1.8)),h.appendChild(v),m.appendChild(h);const f=document.createElement(\"div\");f.className=\"kpi-value\",f.textContent=e.value,f.style.fontSize=(28*p).toFixed(1)+\"px\",f.style.fontWeight=\"700\",f.style.letterSpacing=\"-0.03em\",m.appendChild(f);const y=document.createElement(\"div\");if(y.className=\"kpi-row\",null!=e.deltaPct&&Number.isFinite(e.deltaPct)){const t=e.deltaPct>=0,a=s?!t:t,i=document.createElement(\"span\");i.className=\"kpi-delta \"+(a?\"pos\":\"neg\"),i.appendChild((0,n.s)(t?\"arrow-up\":\"arrow-down\",Math.round(9*p),2.6));const l=document.createElement(\"span\");l.textContent=Math.abs(e.deltaPct).toFixed(1)+\"%\",i.appendChild(l),y.appendChild(i)}const b=document.createElement(\"span\");if(b.className=\"kpi-vs\",b.textContent=\"vs. last period\",b.style.fontSize=(10.5*p).toFixed(1)+\"px\",y.appendChild(b),m.appendChild(y),o&&e.trend.length>=2){const t=document.createElement(\"div\");t.className=\"kpi-spark\",t.appendChild((0,l.K)(e.trend,{width:140,height:32,stroke:a,gradientId:\"spark-grad-\"+ ++r,smooth:c})),m.appendChild(t)}else if(o){const e=document.createElement(\"div\");e.className=\"kpi-spark\",m.appendChild(e)}return m}softFromAccent(e){const t=/^#?([0-9a-f]{6})$/i.exec(e.trim());if(!t)return\"#EEF0FE\";const a=parseInt(t[1],16),i=a>>8&255,s=255&a,n=e=>Math.round(.12*e+224.4),l=e=>e.toString(16).padStart(2,\"0\");return\"#\"+l(n(a>>16&255))+l(n(i))+l(n(s))}}}},t={};function a(i){var s=t[i];if(void 0!==s)return s.exports;var n=t[i]={exports:{}};return e[i](n,n.exports,a),n.exports}a.d=(e,t)=>{for(var i in t)a.o(t,i)&&!a.o(e,i)&&Object.defineProperty(e,i,{enumerable:!0,get:t[i]})},a.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t),a.r=e=>{\"undefined\"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:\"Module\"}),Object.defineProperty(e,\"__esModule\",{value:!0})};var i={};(()=>{a.r(i),a.d(i,{default:()=>n});var e=a(789),t=window.powerbi,s={name:\"awKpiCardVisualB2F4E7A9C6D14E83A91B7C58F2A6D341E\",displayName:\"AW KPI Card\",class:\"Visual\",apiVersion:\"5.11.0\",create:t=>{if(e.b)return new e.b(t);throw\"Visual instance not found\"},createModalDialog:(e,t,a)=>{const i=globalThis.dialogRegistry;e in i&&new i[e](t,a)},custom:!0};void 0!==t&&(t.visuals=t.visuals||{},t.visuals.plugins=t.visuals.plugins||{},t.visuals.plugins.awKpiCardVisualB2F4E7A9C6D14E83A91B7C58F2A6D341E=s);const n=s})(),awKpiCardVisualB2F4E7A9C6D14E83A91B7C58F2A6D341E=i})();",
+    "css": ".kpi-host {\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;\n  font-size: 13px;\n  color: #0E1525;\n  -webkit-font-smoothing: antialiased;\n  letter-spacing: -0.005em;\n  background: transparent;\n  padding: 6px;\n  box-sizing: border-box;\n}\n.kpi-empty {\n  color: #8A91A1;\n  font-size: 12px;\n  text-align: center;\n  padding: 16px;\n}\n.kpi-card {\n  --accent: #6366F1;\n  --accent-soft: #EEF0FE;\n  position: relative;\n  width: 100%;\n  height: 100%;\n  padding: 12px 14px 0;\n  border-radius: 14px;\n  background: #FFFFFF;\n  border: 1px solid #ECEEF3;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n  box-sizing: border-box;\n  transition: border-color 0.15s ease, box-shadow 0.15s ease;\n}\n.kpi-card:hover {\n  border-color: #D7DBE4;\n  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.04);\n}\n.kpi-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  margin-bottom: 6px;\n}\n.kpi-label {\n  font-size: 11px;\n  color: #8A91A1;\n  font-weight: 500;\n  letter-spacing: -0.005em;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  max-width: 70%;\n}\n.kpi-badge {\n  width: 22px;\n  height: 22px;\n  border-radius: 6px;\n  display: grid;\n  place-items: center;\n  color: #5E6677;\n  background: #F8F9FC;\n  flex-shrink: 0;\n}\n.kpi-badge.accent {\n  color: var(--accent);\n  background: var(--accent-soft);\n}\n.kpi-badge svg {\n  display: block;\n}\n.kpi-value {\n  font-size: 28px;\n  font-weight: 700;\n  letter-spacing: -0.03em;\n  font-variant-numeric: tabular-nums;\n  color: #0E1525;\n  line-height: 1.05;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.kpi-row {\n  display: flex;\n  align-items: baseline;\n  gap: 8px;\n  margin-top: 4px;\n}\n.kpi-delta {\n  display: inline-flex;\n  align-items: center;\n  gap: 2px;\n  font-size: 11px;\n  font-weight: 600;\n  padding: 1px 6px 1px 4px;\n  border-radius: 5px;\n  font-variant-numeric: tabular-nums;\n  line-height: 1.4;\n}\n.kpi-delta svg {\n  display: block;\n}\n.kpi-delta.pos {\n  color: #0E9F6E;\n  background: #E6F6EF;\n}\n.kpi-delta.neg {\n  color: #DC2D4A;\n  background: #FCE9EC;\n}\n.kpi-vs {\n  font-size: 10.5px;\n  color: #8A91A1;\n}\n.kpi-spark {\n  height: 32px;\n  margin: 6px -14px -1px;\n  margin-top: auto;\n  flex-shrink: 0;\n}\n.kpi-spark svg {\n  width: 100%;\n  height: 100%;\n  display: block;\n}\n\n",
+    "iconBase64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2RpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDpBOEJGMzkxN0NBRDNFMDExQTcxQ0JFODI3ODBCQUE5RSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo3NEY1QjA1NUQ0OTAxMUUwQTgxREI2NjMxMkNEMUNEMyIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo3NEY1QjA1NEQ0OTAxMUUwQTgxREI2NjMxMkNEMUNEMyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IFdpbmRvd3MiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5Mjk5RDU1ODBGRDRFMDExQTcxQ0JFODI3ODBCQUE5RSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpBOEJGMzkxN0NBRDNFMDExQTcxQ0JFODI3ODBCQUE5RSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PpDoNX0AAAI3SURBVHjarJRLSFVRFIY9t7SiRDGLoEEPCRJRaCSYkxCiFCXCF+LIMExQLkilgumgwkbdBuWDRC2EomhURCOjgagkXEgKLUKhidobM6H0+i34rxyPnuvEA5/rXPda/1l7739vJxKJxG3ls93+hEKhTILxJhgMftmsiPxdhHw4CfepeR8dCyjWwwB0kZy3iVgCoQ2ewnmXxhrBD7Cgr/ZQVA17fDRPw2UYhzK6G99IsBse6/0QNME+H8FT4EA/YiPqOgA1q4IMzBNuw6iKjkCpj+Av+AdnEEmD3bxfhzvuDk30HaEaLsEkXCO53rN+Bwg5qsvTuj/TjGYtx9nINhRmEx7AYWiFW7AXOuEcbPOUvIZ2mnrl+PkQUbNEh4QHNKUSDdsSBWEOlmxTEfvs26FL9Khe211if6Acgee+xo7xzMgBxfq9qPe3fgWBGN2lEnqtG9nExM7CV3jp3bDos2bKJB0nHFRxAxRpA/5CIXyHh5ABv6GZqd9dJ6iz2SjbxMMypGhJFtTlNzu3kK7xgDxpove8U66FK2A+s6nul5gVVMEL+Ak7lG/T+g9JcIOGar2CRUoogxMwpP/bLTJMB9bRhDbkk5bBUU0y3ES0xS04CBfN9RSHiY90vJK0BHaSzG9h2eejS3RJeVfdtrGzuGyd8CX7Yq6ExuCH63jaVMPkFOv6OibB6DKs2+VEQp+WYBoqERn2sVWWRNN0YurIfeL14U6YkpkLYCSG6e0yqdCxvKBLIm5FgAEAV0nKuwMYRUsAAAAASUVORK5CYII="
+  },
+  "visualEntryPoint": "",
+  "externalJS": [],
+  "assets": {
+    "icon": "assets/icon.png"
+  }
+}

@@ -168,12 +168,6 @@ table calls_detail
 		displayFolder: Calls
 		lineageTag: 94a469c5-f7d0-4227-87bb-dafe4798cb93
 
-	/// Inbound calls from Organic search + GMB (the SEO bucket).
-	measure 'SEO Calls' = CALCULATE([Inbound Calls], calls_detail[tracking_source_type] = "Organic")
-		formatString: #,##0
-		displayFolder: Calls
-		lineageTag: 6b81d398-3db3-4d7a-91be-8590634ee6ba
-
 	/// Web form submissions attributed to PPC.
 	measure 'PPC Forms' = CALCULATE([Call Count], calls_detail[direction] = "form", calls_detail[tracking_source_type] = "PPC")
 		formatString: #,##0
@@ -190,6 +184,24 @@ table calls_detail
 		formatString: 0.0%
 		displayFolder: Calls
 		lineageTag: 291cd57a-ea98-47ff-9585-918b14dd4f3e
+
+	/// Inbound calls from non-paid internet: GMB/local listings, organic search, website, and paid directories. Branded search is excluded (see Brand Calls). Derived from tracking_label.
+	measure 'SEO Calls' = CALCULATE([Inbound Calls], calls_detail[tracking_source_type] = "SEO")
+		formatString: #,##0
+		displayFolder: Calls
+		lineageTag: 1750f32e-574b-4728-bde3-6731912b6cf5
+
+	/// Inbound calls from branded organic search (someone searching the facility/brand name). Split out from SEO so SEO reflects non-brand demand.
+	measure 'Brand Calls' = CALCULATE([Inbound Calls], calls_detail[tracking_source_type] = "Brand")
+		formatString: #,##0
+		displayFolder: Calls
+		lineageTag: 32ca8434-6fa8-43fa-bd35-2a94fcbb9219
+
+	/// Inbound calls to unattributed brand/main-line and rep-direct numbers (no channel signal in tracking_label).
+	measure 'Direct Calls' = CALCULATE([Inbound Calls], calls_detail[tracking_source_type] = "Direct")
+		formatString: #,##0
+		displayFolder: Calls
+		lineageTag: 0f8d21d4-cf99-4a81-8926-394b31745427
 
 	column call_id
 		dataType: int64

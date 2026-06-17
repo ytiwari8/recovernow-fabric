@@ -2313,28 +2313,53 @@ print("Merged admissions_funnel_zoho_history")
 # Tracking Source Type (channel). Full table (not windowed) so Power BI has all
 # history; filter by date there.
 # ============================================================================
-def classify_channel_expr(src):
-    s = F.regexp_replace(F.lower(F.trim(F.coalesce(src, F.lit("")))), r"\s+", " ")
-    return (F.when(s == "outbound calls", F.lit("Outbound"))
-             .when(s.rlike(r"ai agent|tawk to"), F.lit("Chat"))
-             .when(s.rlike(r"billing number|metro atlanta treatment|3rd mh|pre assessments|other static") | (s == "mat"), F.lit("Other"))
-             .when(s.rlike(r"^ppc |^ppc-|^meta |google ads|facebook paid|facebook cta|fb ads|geofencing|linkedin|pmax|performance max"), F.lit("PPC"))
-             .when(s == "print", F.lit("Other"))
-             .when(s.rlike(r"organic|seo|gmb|bing local"), F.lit("Organic"))
-             .when(s.rlike(r"referral|facility transfer"), F.lit("Referral"))
-             .when(s.rlike(r"direct|target number|website"), F.lit("Direct"))
-             .when(s.isin("eating disorder treatment centers","longbranch recovery",
-                          "recover now greater atlanta","chattanooga recovery center",
-                          "graceland recovery","green acres wellness","lotus wellness",
-                          "tides edge detox","beaches recovery","widespread wellness","recover now"), F.lit("Direct"))
-             .otherwise(F.lit("Other")))
+FACILITY_NAMES = [
+    "eating disorder treatment centers","longbranch recovery",
+    "recover now greater atlanta","chattanooga recovery center",
+    "graceland recovery","green acres wellness","lotus wellness",
+    "tides edge detox","beaches recovery","widespread wellness","recover now",
+]
+
+def _norm(c):
+    return F.regexp_replace(F.lower(F.trim(F.coalesce(c, F.lit("")))), r"\s+", " ")
+
+def classify_channel(label, src):
+    # Channel is derived from tracking_label (the physical DNI number's label),
+    # which preserves the true acquisition channel. `source` is only a coarse
+    # facility-name rollup, so we fall back to it only when the label is
+    # blank or "Unused". SEO = any non-paid internet (GMB/local, organic,
+    # website, paid directories). Brand search is its own bucket.
+    lab = _norm(label)
+    s   = _norm(src)
+    has_label = (F.length(lab) > 0) & (~lab.rlike(r"unused"))
+    by_label = (F.when(lab.rlike(r"outbound"), F.lit("Outbound"))
+        .when(lab.rlike(r"live chat|tawk|multi-ai|ai agent"), F.lit("Chat"))
+        .when(lab.rlike(r"google ads|ppc|pmax|fb ads|facebook|meta ads|geofencing|linkedin|twitter"), F.lit("PPC"))
+        .when(lab.rlike(r"print|brochure|billboard|flyer|magnet|press release|college"), F.lit("Offline"))
+        .when(lab.rlike(r"transfer|referral"), F.lit("Referral"))
+        .when(lab.rlike(r"brand & ssl"), F.lit("Brand"))
+        .when(lab.rlike(r"gmb|local listing|online listing|listings|yahoo local|organic|seo|website|web visitor|site visitor|psychology today|directories|recovery\.com"), F.lit("SEO"))
+        .when(lab.rlike(r"direct|main line|target number"), F.lit("Direct"))
+        .when(lab.isin(*FACILITY_NAMES), F.lit("Direct"))
+        .otherwise(F.lit(None)))
+    by_source = (F.when(s == "outbound calls", F.lit("Outbound"))
+        .when(s.rlike(r"ai agent|tawk to"), F.lit("Chat"))
+        .when(s.rlike(r"billing number|metro atlanta treatment|3rd mh|pre assessments|other static") | (s == "mat"), F.lit("Other"))
+        .when(s.rlike(r"^ppc |^ppc-|^meta |google ads|facebook paid|facebook cta|fb ads|geofencing|linkedin|pmax|performance max|bing paid"), F.lit("PPC"))
+        .when(s == "print", F.lit("Offline"))
+        .when(s.rlike(r"organic|seo|gmb|bing local"), F.lit("SEO"))
+        .when(s.rlike(r"referral|facility transfer"), F.lit("Referral"))
+        .when(s.rlike(r"direct|target number|website"), F.lit("Direct"))
+        .when(s.isin(*FACILITY_NAMES), F.lit("Direct"))
+        .otherwise(F.lit("Other")))
+    return F.when(has_label & by_label.isNotNull(), by_label).otherwise(by_source)
 
 calls_detail = (spark.table("ctm_lakehouse.dbo.ctm_calls_raw")
     .withColumn("day", F.col("call_date"))
     .withColumn("week_ending", week_ending(F.col("call_date")))
     .withColumn("month_ending", F.last_day(F.col("call_date")))
     .withColumn("location", norm_fac(F.col("facility_resolved")))
-    .withColumn("tracking_source_type", classify_channel_expr(F.col("source")))
+    .withColumn("tracking_source_type", classify_channel(F.col("tracking_label"), F.col("source")))
     .select(
         F.col("id").alias("call_id"),
         "day", "week_ending", "month_ending",
